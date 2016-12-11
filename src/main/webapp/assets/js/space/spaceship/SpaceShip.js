@@ -1,0 +1,156 @@
+Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'Explosion', 'Bullet'], function() {
+
+    var RelativePointsObject = Engine.require("RelativePointsObject");
+    var Explosion = Engine.require("Explosion");
+    var Vector = Engine.require("Vector");
+    var Bullet = Engine.require("Bullet");
+    var Point = Engine.require("Point");
+    var Gun = Engine.require("Gun");
+
+    function SpaceShip(x,y){
+        RelativePointsObject.apply(this, arguments);
+        this.points = [
+            new Point(0, 15),
+            new Point(-12, -12),
+            new Point(12, -12)
+        ];
+
+        this.vector = new Vector(0,0);
+        this.turnToLeft = false;
+        this.turnToRight = false;
+        this.hasAcceleration = false;
+        this.guns = [new Gun(0, 0)];
+        this.fireStarted = false;
+        this.alive = true;
+    }
+    SpaceShip.prototype = Object.create(RelativePointsObject.prototype);
+    SpaceShip.prototype.constructor = SpaceShip;
+
+    SpaceShip.prototype.update = function(){
+        if(this.hasAcceleration){
+            var acceleration = 0.1;
+            var x = Math.cos(this.angle + Math.PI/2)*acceleration;
+            var y = Math.sin(this.angle + Math.PI/2)*acceleration;
+            var vector = new Vector(x, y);
+            this.vector.append(vector);
+        }
+        if(this.turnToLeft){
+            this.angle-=0.07;
+        }
+        if(this.turnToRight){
+            this.angle+=0.07;
+        }
+
+        this.x+=this.vector.x;
+        this.y+=this.vector.y;
+        if(this.fireStarted) {
+            for(var i = 0; i< this.guns.length; i++) {
+                var gun = this.guns[i];
+                if(gun.canFire()) {
+                    var bullet = gun.fire();
+                    bullet.correct(this);
+                    this.listenClb(bullet);
+                }
+            }
+        }
+    };
+
+    SpaceShip.prototype.listen = function(clb){
+        this.listenClb = clb;
+        var me = this;
+        this.keyDownListener = function(event) {
+            var keyCode = event.keyCode;
+            if(keyCode == 39){
+                event.preventDefault();
+                me.turnToRight = true;
+            } else if(keyCode == 37){
+                event.preventDefault();
+                me.turnToLeft = true;
+
+            } else if(keyCode == 38){
+                event.preventDefault();
+                me.hasAcceleration = true;
+            } else if(keyCode == 40){
+                event.preventDefault();
+            } else if(keyCode == 32) {
+                me.fireStarted = true;
+            }
+        };
+        this.keyUpListener = function(event) {
+            var keyCode = event.keyCode;
+            console.log(keyCode);
+            if(keyCode == 39){
+                event.preventDefault();
+                me.turnToRight = false;
+
+            } else if(keyCode == 37){
+                event.preventDefault();
+                me.turnToLeft = false;
+
+            } else if(keyCode == 38){
+                event.preventDefault();
+                me.hasAcceleration = false;
+            } else if(keyCode == 32) {
+                me.fireStarted = false;
+            }
+        };
+        document.body.addEventListener('keydown', this.keyDownListener);
+        document.body.addEventListener('keyup', this.keyUpListener);
+    };
+
+    SpaceShip.prototype.isAlive = function() {
+        return this.alive;
+    };
+
+    SpaceShip.prototype.unListen = function(){
+        if(this.keyDownListener) {
+            document.body.removeEventListener('keydown', this.keyDownListener);
+            this.keyDownListener = null;
+        }
+        if(this.keyUpListener) {
+            document.body.removeEventListener('keyup', this.keyUpListener);
+            this.keyUpListener = null;
+        }
+    };
+    SpaceShip.prototype.draw = function(context, appContext){
+        var shift = appContext.shift;
+        var positionX = this.x + shift.x;
+        var positionY = this.y + shift.y;
+        if(positionX < 0 || positionX > appContext.startup.width) {
+            return;
+        } else if(positionY < 0 || positionY > appContext.startup.width) {
+            return;
+        }
+        context.save();
+        context.translate(positionX, positionY);
+        context.strokeStyle = "lightblue";
+        context.moveTo(0, 0);
+        context.lineTo(this.vector.x * 5, this.vector.y * 5);
+        context.stroke();
+
+        context.rotate(this.angle);
+        context.strokeStyle = "#59f741";
+        this.placePoints(context);
+
+        for(var i = 0; i < this.guns.length; i++) {
+            var gun = this.guns[i];
+            gun.draw(context);
+        }
+        context.restore();
+    };
+
+    SpaceShip.prototype.onImpact = function(object, appContext) {
+        if(object instanceof Bullet) {
+            if(object.ship === this) {
+                return [];
+            }
+        } else if(object instanceof Gun) {
+            return [];
+        }
+        this.alive = false;
+        return [new Explosion(this.x, this.y, this.vector, 30)];
+    };
+
+
+    return SpaceShip;
+});

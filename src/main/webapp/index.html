@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="assets/css/style.css"/>
+    <script src="assets/js/org/forweb/forweb.js"></script>
+    <script src="assets/js/PathBuilder.js"></script>
+    <script src="assets/js/CanvasPathBuilder.js"></script>
+    <script>
+        function startup() {
+            var PathBuilder = Engine.require('PathBuilder');
+            var CanvasPathBuilder = Engine.require('CanvasPathBuilder');
+            Engine.pathBuilder = [new PathBuilder(1), new CanvasPathBuilder(1)];
+            Engine.load("Startup", function(){
+                Engine.require('Startup').start();
+            })
+        }
+    </script>
+</head>
+<body onload="startup()">
+</body>
+</html>
