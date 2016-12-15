@@ -1,7 +1,8 @@
-Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'Explosion', 'Bullet'], function() {
+Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'Geometry', 'Explosion', 'Bullet'], function() {
 
     var RelativePointsObject = Engine.require("RelativePointsObject");
     var Explosion = Engine.require("Explosion");
+    var Geometry = Engine.require("Geometry");
     var Vector = Engine.require("Vector");
     var Bullet = Engine.require("Bullet");
     var Point = Engine.require("Point");
@@ -10,9 +11,9 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'E
     function SpaceShip(x,y){
         RelativePointsObject.apply(this, arguments);
         this.points = [
-            new Point(0, 15),
-            new Point(-12, -12),
-            new Point(12, -12)
+            new Point(-12, 12),
+            new Point(15, 0),
+            new Point(-12, -12)
         ];
 
         this.vector = new Vector(0,0);
@@ -29,8 +30,8 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'E
     SpaceShip.prototype.update = function(){
         if(this.hasAcceleration){
             var acceleration = 0.1;
-            var x = Math.cos(this.angle + Math.PI/2)*acceleration;
-            var y = Math.sin(this.angle + Math.PI/2)*acceleration;
+            var x = Math.cos(this.angle)*acceleration;
+            var y = Math.sin(this.angle)*acceleration;
             var vector = new Vector(x, y);
             this.vector.append(vector);
         }
@@ -49,6 +50,8 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'E
                 if(gun.canFire()) {
                     var bullet = gun.fire();
                     bullet.correct(this);
+                    var angle = Geometry.truncate(this.angle + Math.PI);
+                    this.vector.append(new Vector(Math.cos(angle) * 0.2, Math.sin(angle)* 0.2));
                     this.listenClb(bullet);
                 }
             }

@@ -1,6 +1,7 @@
-Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function() {
+Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point'], function() {
 
     var BaseObject = Engine.require("BaseObject");
+    var Explosion = Engine.require("Explosion");
     var Geometry = Engine.require("Geometry");
     var Vector = Engine.require("Vector");
     var Point = Engine.require("Point");
@@ -9,8 +10,6 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function(
         BaseObject.apply(this, arguments);
         this.points = [];
         this.vector = null;
-        this.oldX = -100;
-        this.oldY = -100;
         var me = this;
         this.ship = null;
         this.alive = true;
@@ -30,8 +29,8 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function(
         this.y = translated.y;
         this.angle += spaceShip.angle;
         this.vector = new Vector(
-            Bullet.speed * Math.cos(this.angle + Math.PI / 2),
-            Bullet.speed * Math.sin(this.angle + Math.PI / 2)
+            Bullet.speed * Math.cos(this.angle),
+            Bullet.speed * Math.sin(this.angle)
         );
         this.vector.append(spaceShip.vector);
         this.ship = spaceShip;
@@ -47,8 +46,8 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function(
         context.beginPath();
         context.strokeStyle = "#43dff3";
 
-        context.moveTo(0, -2);
-        context.lineTo(0, 2);
+        context.moveTo(-3, 0);
+        context.lineTo(2, 0);
         context.stroke();
         context.restore();
     };
@@ -57,7 +56,7 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function(
         var oldY = this.y;
         this.x += this.vector.x;
         this.y += this.vector.y;
-        this.points = [new Point(oldX, oldY), new Point(this.x, this.y)]
+        this.points = [new Point(oldX, oldY), new Point(this.x, this.y)];
     };
 
     Bullet.prototype.isAlive = function() {
@@ -67,6 +66,7 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Point'], function(
     Bullet.prototype.onImpact = function(object) {
         if(object !== this.ship) {
             this.alive = false;
+            return [new Explosion(this.x, this.y, this.vector, 8, 60)];
         }
         return [];
     };

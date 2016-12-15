@@ -17,8 +17,8 @@ Engine.define("Gun", ['Vector', 'Bullet'], function() {
         context.lineWidth = 1;
         context.rotate(this.angle);
         context.beginPath();
-        context.moveTo(this.x, this.y + 4);
-        context.lineTo(this.x, this.y - 4);
+        context.moveTo(this.x + 5, this.y);
+        context.lineTo(this.x - 5, this.y);
         context.stroke();
         context.closePath();
         context.restore();
