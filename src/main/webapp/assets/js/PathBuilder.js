@@ -7,7 +7,12 @@ Engine.define("PathBuilder", function(){
         var path;
         switch (module) {
             case "Startup":
+            case "Profile":
+            case "WebSocketUtils":
                 path = module;
+                break;
+            case 'Bridge':
+                path = "controls/" + module;
                 break;
             case 'Line':
             case 'Point':

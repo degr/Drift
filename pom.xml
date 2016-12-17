@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.github.degr</groupId>
             <artifactId>geometry</artifactId>
-            <version>0d2316dbfa</version>
+            <version>e4a1fed4e9</version>
         </dependency>
 
         <dependency>

@@ -1,11 +1,14 @@
-Engine.define("Startup", ['Dom', "ScreenUtils", "LayeredCanvas", 'SpaceShip', 'CanvasWindow', 'AsteroidFactory', 'Geometry'], function () {
+Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenUtils", "LayeredCanvas", 'SpaceShip', 'CanvasWindow', 'AsteroidFactory', 'Geometry'], function () {
 
     var AsteroidFactory = Engine.require('AsteroidFactory');
+    var WebSocketUtils = Engine.require('WebSocketUtils');
     var LayeredCanvas = Engine.require('LayeredCanvas');
     var CanvasWindow = Engine.require('CanvasWindow');
     var ScreenUtils = Engine.require('ScreenUtils');
     var SpaceShip = Engine.require('SpaceShip');
     var Geometry = Engine.require('Geometry');
+    var Profile = Engine.require('Profile');
+    var Bridge = Engine.require('Bridge');
     var Dom = Engine.require('Dom');
 
     var Startup = {
@@ -25,6 +28,19 @@ Engine.define("Startup", ['Dom', "ScreenUtils", "LayeredCanvas", 'SpaceShip', 'C
             }
         },
         start: function () {
+            var bridge = new Bridge();
+            var socket = WebSocketUtils.getSocket(
+                Profile.WS_URL,
+                function(r){bridge.onOpen(r)},
+                function(r){bridge.onMessage(r)},
+                function(r){bridge.onClose(r)},
+                function(r){bridge.onError(r)}
+            );
+            var context = {
+                socket: socket,
+                bridge: bridge
+            };
+
             var screen = ScreenUtils.window();
             var me = this;
             this.canvas = new LayeredCanvas(2, screen.width, screen.height);

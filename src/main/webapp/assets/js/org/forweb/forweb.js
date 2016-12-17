@@ -158,6 +158,8 @@ var Engine = (function(){
     function _initModule (name, module, arguments) {
         if (typeof module === 'function') {
             modules[name] = module.apply(window, arguments);
+        } else if(module === undefined) {
+            throw "Module can't be undefined";
         } else {
             modules[name] = module;
         }

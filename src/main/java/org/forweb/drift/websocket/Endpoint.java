@@ -1,45 +1,44 @@
 package org.forweb.drift.websocket;
 
+import org.forweb.drift.context.GameContext;
+import org.forweb.drift.entity.drift.Player;
+import org.forweb.drift.entity.drift.Room;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.EOFException;
 
-@ServerEndpoint(value = "/commandos", configurator = SpringConfigurator.class)
+@ServerEndpoint(value = "/drift", configurator = SpringConfigurator.class)
 public class Endpoint {
 
 
-    public static final int PERSON_RADIUS = 20;
-    public static final int ROCKET_RADIUS = 8;
-    public static final int FIRE_RADIUS = 8;
-    public static final Integer LIFE_AT_START = 100;
-
     public static final long TICK_DELAY = 10;
-    public static final double MOVEMENT_SPEED = 2;
-    public static final int SKIP_FRAMES = 1;
 
-    public static final int CLUSTER_SIZE = 100;
+    public static final int CLUSTER_SIZE = 300;
 
-
-
-    private int id;
-    private int roomId;
-    private Session session;
+    private Player player;
+    private Room room;
+    @Autowired
+    GameContext gameContext;
 
     @OnOpen
     public void onOpen(Session session) {
-        this.session = session;
+        this.room = gameContext.getRoom();
+        this.player = this.room.newPlayer(session);
     }
 
     @OnMessage
     public void onTextMessage(String message) {
+        switch (message) {
+        }
     }
-
 
 
     @OnClose
     public void onClose() {
+        room.removePlayer(this.player);
     }
 
     @OnError

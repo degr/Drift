@@ -25,7 +25,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @Configuration
 @ComponentScan(basePackages = {
         AppInitializer.BASE_PACKAGE,
-        AppInitializer.BASE_PACKAGE + ".controller",
+        AppInitializer.BASE_PACKAGE + ".websocket",
         "org.forweb.database",
         "org.forweb.spring.support",
       /*  AppInitializer.WORD_PACKAGE,*/
