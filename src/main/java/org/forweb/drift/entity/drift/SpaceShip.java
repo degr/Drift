@@ -1,24 +1,42 @@
 package org.forweb.drift.entity.drift;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
 
-public class SpaceShip extends RelativePointsObject{
+public class SpaceShip extends BaseObject{
 
+    @JsonIgnore
     static Point[] points = new Point[]{new Point(-12, 12), new Point(15, 0), new Point(-12, -12)};
-    private boolean turnToLeft;
-    private boolean turnToRight;
+
+    private int turn;
     private boolean hasAcceleration;
     private Gun[] guns;
     private boolean fireStarted;
     private boolean isAlive;
+    @JsonIgnore
     private Room room;
 
-    public SpaceShip(double x, double y, Room room) {
-        super(x, y, 0, SpaceShip.points);
+    @JsonIgnore
+    private IncrementalId ids;
+
+    private boolean updateAcceleration;
+    private boolean updateTurn;
+
+
+    private boolean updateFire;
+
+    public SpaceShip(double x, double y, int id, Room room) {
+        super(x, y, 0, SpaceShip.points, id);
         this.setVector(new Vector(0, 0));
         this.room = room;
+        this.ids = room.getIds();
+        isAlive = true;
+        guns = new Gun[1];
+        guns[0] = new Gun(0, 0, ids.get());
+        turn = 0;
     }
 
     public boolean isAlive() {
@@ -34,10 +52,9 @@ public class SpaceShip extends RelativePointsObject{
             double y = angle.sin() * acceleration;
             this.getVector().append(new Vector(x, y));
         }
-        if(this.turnToLeft){
+        if(this.turn == -1){
             angle.append(-0.07);
-        }
-        if(this.turnToRight){
+        } else if(this.turn == 1){
             angle.append(0.07);
         }
 
@@ -47,7 +64,7 @@ public class SpaceShip extends RelativePointsObject{
             for(int i = 0; i < this.guns.length; i++) {
                 Gun gun = this.guns[i];
                 if(gun.canFire()) {
-                    Bullet bullet = gun.fire();
+                    Bullet bullet = gun.fire(ids);
                     bullet.correct(this);
                     Angle bulletAngle = angle.sum(Math.PI);
                     vector.append(new Vector(bulletAngle.cos() * 0.2, bulletAngle.sin() * 0.2));
@@ -58,10 +75,21 @@ public class SpaceShip extends RelativePointsObject{
     }
 
 
+    @Override
+    public String getType() {
+        return "ship";
+    }
 
-    public BaseObject[] onImpact(BaseObject object) {
+    @JsonIgnore
+    @Override
+    public boolean isRelaivePoints() {
+        return true;
+    }
+
+    @JsonIgnore
+    public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
         if(object instanceof Bullet) {
-            if(((Bullet)object).getSpaceShip() == this) {
+            if(((Bullet) object).getShipId() == this.getId()) {
                 return null;
             }
         } else if(object instanceof Gun) {
@@ -69,34 +97,18 @@ public class SpaceShip extends RelativePointsObject{
         }
         this.isAlive = false;
         BaseObject[] out = new BaseObject[1];
-        out[0] = new Explosion(getX(), getY(), getVector(), 30);
+        out[0] = new Explosion(getX(), getY(), getVector(), 30, ids.get());
         return out;
     };
 
 
-
-
-    public boolean isTurnToLeft() {
-        return turnToLeft;
-    }
-
-    public void setTurnToLeft(boolean turnToLeft) {
-        this.turnToLeft = turnToLeft;
-    }
-
-    public boolean isTurnToRight() {
-        return turnToRight;
-    }
-
-    public void setTurnToRight(boolean turnToRight) {
-        this.turnToRight = turnToRight;
-    }
 
     public boolean isHasAcceleration() {
         return hasAcceleration;
     }
 
     public void setHasAcceleration(boolean hasAcceleration) {
+        updateAcceleration = true;
         this.hasAcceleration = hasAcceleration;
     }
 
@@ -113,6 +125,7 @@ public class SpaceShip extends RelativePointsObject{
     }
 
     public void setFireStarted(boolean fireStarted) {
+        updateFire = true;
         this.fireStarted = fireStarted;
     }
 
@@ -120,11 +133,56 @@ public class SpaceShip extends RelativePointsObject{
         isAlive = alive;
     }
 
+    @Override
+    public boolean hasImpact(BaseObject baseObject) {
+        if(baseObject instanceof Explosion) {
+            return false;
+        } else if(baseObject instanceof Bullet) {
+            return ((Bullet) baseObject).getShipId() != this.getId();
+        } else {
+            return super.hasImpact(baseObject);
+        }
+    }
+
+    @JsonIgnore
     public Room getRoom() {
         return room;
     }
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public void setTurn(int turn) {
+        updateTurn = true;
+        this.turn = turn;
+    }
+
+    public boolean isUpdateAcceleration() {
+        return updateAcceleration;
+    }
+
+    public void setUpdateAcceleration(boolean updateAcceleration) {
+        this.updateAcceleration = updateAcceleration;
+    }
+
+    public boolean isUpdateTurn() {
+        return updateTurn;
+    }
+
+    public void setUpdateTurn(boolean updateTurn) {
+        this.updateTurn = updateTurn;
+    }
+
+    public boolean isUpdateFire() {
+        return updateFire;
+    }
+
+    public void setUpdateFire(boolean updateFire) {
+        this.updateFire = updateFire;
+    }
+
+    public int getTurn() {
+        return turn;
     }
 }

@@ -14,7 +14,7 @@ import java.io.EOFException;
 public class Endpoint {
 
 
-    public static final long TICK_DELAY = 10;
+    public static final long TICK_DELAY = 20;
 
     public static final int CLUSTER_SIZE = 300;
 
@@ -31,7 +31,17 @@ public class Endpoint {
 
     @OnMessage
     public void onTextMessage(String message) {
-        switch (message) {
+        String[] parts = message.split(":");
+        switch (parts[0]) {
+            case "turn":
+                player.getSpaceShip().setTurn("1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1));
+                break;
+            case "accelerate":
+                player.getSpaceShip().setHasAcceleration("1".equals(parts[1]));
+                break;
+            case "fire":
+                player.getSpaceShip().setFireStarted("1".equals(parts[1]));
+                break;
         }
     }
 
@@ -43,7 +53,8 @@ public class Endpoint {
 
     @OnError
     public void onError(Throwable t) throws Throwable {
-        // Most likely cause is a user closing their browser. Check to see if
+        room.removePlayer(this.player);
+        // Most likely cause is a user closing their browser. Check to see i
         // the root cause is EOF and if it is ignore it.
         // Protect against infinite loops.
         int count = 0;

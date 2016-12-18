@@ -21,17 +21,23 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
         context.stroke();
     };
 
+    BaseObject.appendLastPoint = function(input) {
+        var out = [].concat(input);
+        out.push(input[0]);
+        return out;
+    };
+
     BaseObject.prototype.hasImpact = function(baseObject) {
         if(!(baseObject instanceof  BaseObject)) {
             throw "Invalid arguments exception";
         }
-        var thisPoints = this.getPoints();
+        var thisPoints = BaseObject.appendLastPoint(this.getPoints());
         var thisLength = thisPoints.length;
-        var thatPoints = baseObject.getPoints();
+        var thatPoints = BaseObject.appendLastPoint(baseObject.getPoints());
         var thatLength = thatPoints.length;
         while(--thisLength > 0) {
+            var line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
             while(--thatLength > 0) {
-                var line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
                 var line2 = new Line(thatPoints[thatLength], thatPoints[thatLength - 1]);
                 if(Geometry.lineHasIntersections(line1, line2)) {
                     return true;

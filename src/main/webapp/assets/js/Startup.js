@@ -5,15 +5,14 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
     var LayeredCanvas = Engine.require('LayeredCanvas');
     var CanvasWindow = Engine.require('CanvasWindow');
     var ScreenUtils = Engine.require('ScreenUtils');
-    var SpaceShip = Engine.require('SpaceShip');
     var Geometry = Engine.require('Geometry');
     var Profile = Engine.require('Profile');
     var Bridge = Engine.require('Bridge');
     var Dom = Engine.require('Dom');
 
     var Startup = {
-        width: 1500,
-        height: 1500,
+        width: 5000,
+        height: 5000,
         canvas: null,
         spaceShip: null,
         canvasWindow: null,
@@ -28,7 +27,8 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
             }
         },
         start: function () {
-            var bridge = new Bridge();
+            var context = {};
+            var bridge = new Bridge(context);
             var socket = WebSocketUtils.getSocket(
                 Profile.WS_URL,
                 function(r){bridge.onOpen(r)},
@@ -36,26 +36,21 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
                 function(r){bridge.onClose(r)},
                 function(r){bridge.onError(r)}
             );
-            var context = {
-                socket: socket,
-                bridge: bridge
-            };
+            context.socket = socket;
+            context.bridge = bridge;
+            context.objects = Startup.objects;
+            context.startup = Startup;
 
             var screen = ScreenUtils.window();
             var me = this;
             this.canvas = new LayeredCanvas(2, screen.width, screen.height);
             this.canvasWindow = new CanvasWindow(Startup.width, Startup.height);
             Dom.addListeners(Startup.listeners);
-            this.spaceShip = new SpaceShip(60, 60);
-            this.spaceShip.listen(function (item) {
-                me.objects.push(item);
-            });
-            this.objects.push(this.spaceShip);
             this.appContext.startup = this;
             this.appContext.screen = screen;
             document.body.appendChild(this.canvas.container);
-            var asteroidFactory = new AsteroidFactory();
-            this.objects = this.objects.concat(asteroidFactory.createMulty(10, this.width, this.height));
+            //var asteroidFactory = new AsteroidFactory();
+            //this.objects = this.objects.concat(asteroidFactory.createMulty(10, this.width, this.height));
             setInterval(function () {
                 Startup.run()
             }, 20);
@@ -65,7 +60,7 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
             var context = canvas.getContext(0);
             context.clearRect(0, 0, canvas.width, canvas.height);
             var length = this.objects.length;
-            var shift = this.canvasWindow.getShift(this.spaceShip);
+            var shift = this.spaceShip ? this.canvasWindow.getShift(this.spaceShip) : {x: 0, y: 0};
             this.appContext.shift = shift;
             context.beginPath();
             context.strokeStyle = "red";

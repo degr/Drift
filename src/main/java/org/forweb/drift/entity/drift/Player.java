@@ -5,6 +5,8 @@ import javax.websocket.Session;
 public class Player {
     private int id;
     private SpaceShip spaceShip;
+
+
     private boolean fullUpdate;
     private Session session;
 
@@ -13,14 +15,48 @@ public class Player {
         this.id = id;
         this.session = session;
         fullUpdate = true;
+
+
+        new Thread(){
+            public void run() {
+                while(spaceShip.isAlive()) {
+                    try {
+                        sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    fullUpdate = true;
+                }
+            }
+        }.start();
     }
 
     public Session getSession() {
         return session;
     }
 
+    public boolean isFullUpdate() {
+        return fullUpdate;
+    }
+
     @Override
     public int hashCode() {
+        return id;
+    }
+
+    public String toString() {
+        return "Player " + id;
+    }
+
+    public SpaceShip getSpaceShip() {
+        return spaceShip;
+    }
+
+    public void setFullUpdate(boolean fullUpdate) {
+        this.fullUpdate = fullUpdate;
+    }
+
+    public int getId() {
         return id;
     }
 }

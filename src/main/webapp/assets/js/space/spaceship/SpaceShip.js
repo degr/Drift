@@ -8,8 +8,8 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
     var Point = Engine.require("Point");
     var Gun = Engine.require("Gun");
 
-    function SpaceShip(x,y){
-        RelativePointsObject.apply(this, arguments);
+    function SpaceShip(x,y, context){
+        RelativePointsObject.apply(this, [x, y]);
         this.points = [
             new Point(-12, 12),
             new Point(15, 0),
@@ -23,6 +23,7 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
         this.guns = [new Gun(0, 0)];
         this.fireStarted = false;
         this.alive = true;
+        this.context = context;
     }
     SpaceShip.prototype = Object.create(RelativePointsObject.prototype);
     SpaceShip.prototype.constructor = SpaceShip;
@@ -65,18 +66,29 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
             var keyCode = event.keyCode;
             if(keyCode == 39){
                 event.preventDefault();
+                if(!me.turnToLeft) {
+                    me.context.socket.send("turn:1")
+                } else {
+                    me.context.socket.send("turn:0")
+                }
                 me.turnToRight = true;
             } else if(keyCode == 37){
                 event.preventDefault();
+                if(!me.turnToRight) {
+                    me.context.socket.send("turn:-1")
+                } else {
+                    me.context.socket.send("turn:0")
+                }
                 me.turnToLeft = true;
-
             } else if(keyCode == 38){
                 event.preventDefault();
+                me.context.socket.send("accelerate:1");
                 me.hasAcceleration = true;
             } else if(keyCode == 40){
                 event.preventDefault();
             } else if(keyCode == 32) {
                 me.fireStarted = true;
+                me.context.socket.send("fire:1")
             }
         };
         this.keyUpListener = function(event) {
@@ -85,15 +97,25 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
             if(keyCode == 39){
                 event.preventDefault();
                 me.turnToRight = false;
-
+                if(me.turnToLeft) {
+                    me.context.socket.send("turn:-1")
+                } else {
+                    me.context.socket.send("turn:0")
+                }
             } else if(keyCode == 37){
                 event.preventDefault();
                 me.turnToLeft = false;
-
+                if(me.turnToRight) {
+                    me.context.socket.send("turn:1")
+                } else {
+                    me.context.socket.send("turn:0")
+                }
             } else if(keyCode == 38){
                 event.preventDefault();
                 me.hasAcceleration = false;
+                me.context.socket.send("accelerate:0");
             } else if(keyCode == 32) {
+                me.context.socket.send("fire:0");
                 me.fireStarted = false;
             }
         };

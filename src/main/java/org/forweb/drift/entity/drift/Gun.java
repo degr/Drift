@@ -1,5 +1,7 @@
 package org.forweb.drift.entity.drift;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Vector;
 
 public class Gun extends BaseObject{
@@ -9,8 +11,11 @@ public class Gun extends BaseObject{
     private boolean reload;
     private long lastFireTime;
 
-    public Gun(double x, double y, double angle, String color) {
-        super(x, y, angle);
+    public Gun(double x, double y, int id) {
+        this(x, y, 0, "red", id);
+    }
+    public Gun(double x, double y, double angle, String color, int id) {
+        super(x, y, angle, id);
         vector = new Vector(0, 0);
         this.color = color;
         this.reload = false;
@@ -28,13 +33,23 @@ public class Gun extends BaseObject{
         }
     }
 
-    public Bullet fire() {
+    public Bullet fire(IncrementalId ids) {
         reload = true;
-        lastFireTime = System.nanoTime();
-        return new Bullet(getX(), getY(), getAngle().doubleValue());
+        lastFireTime = System.currentTimeMillis();
+        return new Bullet(getX(), getY(), getAngle().doubleValue(), ids.get());
     }
 
 
+    @Override
+    public String getType() {
+        return "gun";
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isRelaivePoints() {
+        return false;
+    }
 
     public Vector getVector() {
         return vector;

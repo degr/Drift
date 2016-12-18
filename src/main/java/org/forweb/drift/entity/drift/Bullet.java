@@ -1,6 +1,8 @@
 package org.forweb.drift.entity.drift;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.PointService;
@@ -12,12 +14,23 @@ public class Bullet extends BaseObject {
         return 5;
     }
 
-    private SpaceShip spaceShip;
+    private int ship;
     private double creationTime;
 
-    public Bullet(double x, double y, double angle) {
-        super(x, y, angle);
+    public Bullet(double x, double y, double angle, int id) {
+        super(x, y, angle, id);
         this.creationTime = System.currentTimeMillis() + 3000;
+    }
+
+    @Override
+    public String getType() {
+        return "bullet";
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isRelaivePoints() {
+        return false;
     }
 
     public boolean isAlive() {
@@ -44,7 +57,7 @@ public class Bullet extends BaseObject {
         );
         Vector vector = getVector();
         vector.append(spaceShip.getVector());
-        this.spaceShip = spaceShip;
+        this.ship = spaceShip.getId();
     }
 
     public void update() {
@@ -60,17 +73,17 @@ public class Bullet extends BaseObject {
     }
 
     @Override
-    public BaseObject[] onImpact(BaseObject object) {
-        if(object != this.spaceShip) {
+    public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
+        if(object.getId() != this.ship) {
             this.creationTime = 0;
             BaseObject[] out = new BaseObject[1];
-            out[0] = new Explosion(getX(), getY(), getVector(), 8, 60);
+            out[0] = new Explosion(getX(), getY(), getVector(), 8, 60, ids.get());
             return out;
         }
         return null;
     }
 
-    public Object getSpaceShip() {
-        return spaceShip;
+    public int getShipId() {
+        return ship;
     }
 }
