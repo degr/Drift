@@ -1,4 +1,4 @@
-Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 'Gun', 'WebSocketUtils'], function(){
+Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', 'Gun', 'WebSocketUtils'], function () {
     var WebSocketUtils = Engine.require('WebSocketUtils');
     var SpaceShip = Engine.require('SpaceShip');
     var Asteroid = Engine.require('Asteroid');
@@ -8,8 +8,8 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
     var Gun = Engine.require('Gun');
 
     function findSpaceShip(objects, id) {
-        for(var i = 0; i < objects.length; i++) {
-            if(objects[i].id == id && objects[i] instanceof SpaceShip) {
+        for (var i = 0; i < objects.length; i++) {
+            if (objects[i].id == id && objects[i] instanceof SpaceShip) {
                 return objects[i];
             }
         }
@@ -20,22 +20,24 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
         this.context = context;
     }
 
-    Bridge.prototype.onOpen = function(r){
+    Bridge.prototype.onOpen = function (r) {
         console.log('on open', r)
     };
-    Bridge.prototype.onClose = function(r) {
+    Bridge.prototype.onClose = function (r) {
         console.log('on close', r)
     };
 
-    Bridge.prototype.onError = function(r) {
+    Bridge.prototype.onError = function (r) {
         console.log('on error', r)
     };
-    Bridge.prototype.onMessage = function(r) {
+    Bridge.prototype.onMessage = function (r) {
         var data = r.data;
         try {
             var object = JSON.parse(data);
             switch (object.type) {
                 case "fullUpdate":
+                    var startDate = new Date();
+                    console.log("full update starts: ", startDate.getMilliseconds());
                     var oldObjects = this.context.objects;
                     var objects = [];
                     this.context.objects = objects;
@@ -45,12 +47,12 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
                     this.context.startup.width = object.x;
                     this.context.startup.height = object.y;
                     var me = this;
-                    while(length--) {
+                    while (length--) {
                         var source = incoming[length];
                         var mapped;
                         switch (source.type) {
                             case 'asteroid':
-                                mapped = new Asteroid(source.x, source.y, source.points.map(function(v){
+                                mapped = new Asteroid(source.x, source.y, source.points.map(function (v) {
                                     return new Point(v.x, v.y)
                                 }));
                                 mapped.rotationSpeed = source.rotationSpeed;
@@ -62,9 +64,9 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
                                 mapped = new Bullet(source.x, source.y, source.angle);
                                 mapped.vector = new Vector(source.vector.x, source.vector.y);
                                 mapped.id = source.id;
-                                if(source.spaceShip) {
+                                if (source.spaceShip) {
                                     var spaceShip = findSpaceShip(source.ship);
-                                    if(spaceShip) {
+                                    if (spaceShip) {
                                         mapped.ship = spaceShip;
                                     }
                                 }
@@ -74,20 +76,21 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
                                 mapped.angle = source.angle;
                                 mapped.vector = new Vector(source.vector.x, source.vector.y);
                                 mapped.id = source.id;
-                                if(object.id === mapped.id) {
+                                if (object.id === mapped.id) {
                                     var old = this.context.startup.spaceShip;
-                                    if(old) {
+                                    if (old) {
                                         old.unListen();
                                     }
                                     this.context.startup.spaceShip = mapped;
-                                    mapped.listen(function(item){
+                                    mapped.listen(function (item) {
                                         me.context.startup.objects.push(item);
                                     })
                                 }
                                 var oldSpaceShip = findSpaceShip(oldObjects, mapped.id);
                                 mapped.turnToLeft = oldSpaceShip ? (oldSpaceShip.turnToLeft ? true : source.turn == -1) : source.turn == -1;
-                                mapped.turnToRight = oldSpaceShip ? (oldSpaceShip.turnToRight ? true : source.turn == 1) : source.turn == 1;;
-                                mapped.guns = source.guns.map(function(v){
+                                mapped.turnToRight = oldSpaceShip ? (oldSpaceShip.turnToRight ? true : source.turn == 1) : source.turn == 1;
+                                ;
+                                mapped.guns = source.guns.map(function (v) {
                                     var gun = new Gun(v.x, v.y);
                                     gun.angle = v.angle || 0;
                                     gun.color = v.color || 'red';
@@ -100,6 +103,9 @@ Engine.define("Bridge", ['Asteroid', 'Vector',  'Bullet', 'Point', 'SpaceShip', 
                         }
                         objects.push(mapped);
                     }
+                    var endDate = new Date();
+                    console.log("full update ends: ", endDate.getMilliseconds(), endDate.getMilliseconds() - startDate.getMilliseconds());
+                    break;
             }
         } catch (e) {
             console.log(e);

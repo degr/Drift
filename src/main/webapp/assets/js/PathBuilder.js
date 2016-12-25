@@ -20,6 +20,7 @@ Engine.define("PathBuilder", function(){
             case 'Geometry':
                 path = "geometry/" + module;
                 break;
+            case 'Timer':
             case 'CanvasWindow':
                 path = "utils/" + module;
                 break;

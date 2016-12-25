@@ -1,4 +1,4 @@
-Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenUtils", "LayeredCanvas", 'SpaceShip', 'CanvasWindow', 'AsteroidFactory', 'Geometry'], function () {
+Engine.define("Startup", ['Dom','Popup', 'Timer', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenUtils", "LayeredCanvas", 'SpaceShip', 'CanvasWindow', 'AsteroidFactory', 'Geometry'], function () {
 
     var AsteroidFactory = Engine.require('AsteroidFactory');
     var WebSocketUtils = Engine.require('WebSocketUtils');
@@ -8,6 +8,8 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
     var Geometry = Engine.require('Geometry');
     var Profile = Engine.require('Profile');
     var Bridge = Engine.require('Bridge');
+    var Timer = Engine.require('Timer');
+    var Popup = Engine.require('Popup');
     var Dom = Engine.require('Dom');
 
     var Startup = {
@@ -27,6 +29,25 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
             }
         },
         start: function () {
+            var form = Dom.el('div', null, [
+                Dom.el('div', null, [
+                    Dom.el('input', {type: 'button', value: 'Sandbox', onclick: function(){
+
+                    }, class: 'button-sandbox'}),
+                    Dom.el('input', {type: 'button', value: 'Free Space', onclick: function(){
+
+                    }, class: 'button-space'})
+                ])
+            ]);
+            var modal = new Popup({
+                controlMinimize: false,
+                controlClose: false,
+                title: Dom.el('h1', null, 'Please select game type')}
+            );
+            modal.setContent(form);
+            modal.show();
+            return;
+
             var context = {};
             var bridge = new Bridge(context);
             var socket = WebSocketUtils.getSocket(
@@ -51,11 +72,14 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
             document.body.appendChild(this.canvas.container);
             //var asteroidFactory = new AsteroidFactory();
             //this.objects = this.objects.concat(asteroidFactory.createMulty(10, this.width, this.height));
-            setInterval(function () {
+            var timer = new Timer(function () {
                 Startup.run()
             }, 20);
+            timer.start();
         },
         run: function () {
+            var startDate = new Date();
+            console.log('start',startDate.getTime());
             var canvas = this.canvas;
             var context = canvas.getContext(0);
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -89,6 +113,8 @@ Engine.define("Startup", ['Dom', 'Profile', 'Bridge', 'WebSocketUtils', "ScreenU
                     this.objects.splice(length, 1);
                 }
             }
+            var endDate = new Date();
+            var time = 20 - (endDate.getMilliseconds() - startDate.getMilliseconds());
         },
         stop: function () {
             Dom.removeListeners(Startup.listeners);
