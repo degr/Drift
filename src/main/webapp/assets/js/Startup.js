@@ -23,15 +23,19 @@ Engine.define("Startup", ['Dom','Popup', 'Timer', 'Profile', 'Bridge', 'WebSocke
                 title: Dom.el('h1', null, 'Please select game type')}
             );
             var clb = function(){
-                document.body.appendChild(me.modal.container);
-                me.modal.show();
+                if(!me.modal.isOpen) {
+                    me.modal.show();
+                }
             };
             var form = Dom.el('div', null, [
                 Dom.el('div', null, [
                     Dom.el('input', {type: 'button', value: 'Sandbox', onclick: function(){
                         Engine.load('Sandbox', function(){
-                            me.modal.hide();
                             var Sandbox = Engine.require('Sandbox');
+                            if(Sandbox.started) {
+                                Sandbox.stop();
+                            }
+                            me.modal.hide();
                             Sandbox.start(clb);
                         });
                     }, class: 'button-sandbox'}),

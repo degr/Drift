@@ -186,6 +186,9 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
             return [];
         }
         this.alive = false;
+        if(this.onDestroy) {
+            this.onDestroy();
+        }
         return [new Explosion(this.x, this.y, this.vector, 30)];
     };
 

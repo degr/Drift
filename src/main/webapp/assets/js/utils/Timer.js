@@ -1,9 +1,10 @@
 Engine.define('Timer', function(){
-    function Timer(clb, timeout) {
+    function Timer(clb, timeout, name) {
         this.clb = clb;
         this.timeout = timeout;
         this.stopTimeout = null;
         this.precision = -1;
+        this.name = name;
     }
 
     Timer.prototype.start = function() {
@@ -20,6 +21,7 @@ Engine.define('Timer', function(){
     };
 
     Timer.prototype.stop = function() {
+        console.log((this.name || 'Unnamed timer') + " timeout cleared" );
         clearTimeout(this.stopTimeout);
         this.precision = -1;
     };

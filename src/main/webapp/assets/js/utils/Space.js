@@ -1,8 +1,9 @@
-Engine.define('Space', ['ScreenUtils', 'Dom', 'Timer', 'CanvasWindow', 'LayeredCanvas', 'Geometry'], function () {
+Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWindow', 'LayeredCanvas', 'Geometry'], function () {
 
     var LayeredCanvas = Engine.require('LayeredCanvas');
     var CanvasWindow = Engine.require('CanvasWindow');
     var ScreenUtils = Engine.require('ScreenUtils');
+    var StringUtils = Engine.require('StringUtils');
     var Geometry = Engine.require('Geometry');
     var Timer = Engine.require('Timer');
     var Dom = Engine.require('Dom');
@@ -37,14 +38,14 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'Timer', 'CanvasWindow', 'LayeredC
         this.appContext.screen = screen;
         document.body.appendChild(this.canvas.container);
 
-        var timer = new Timer(function () {
+        this.timer = new Timer(function () {
             me.run()
-        }, 20);
-        timer.start();
+        }, 20, StringUtils.unique());
+        this.timer.start();
     };
 
     Space.prototype.run = function () {
-        console.log((new Date()).getMilliseconds());
+        //console.log((new Date()).getMilliseconds());
         var me = this;
         var canvas = this.canvas;
         var context = canvas.getContext(0);
@@ -83,7 +84,9 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'Timer', 'CanvasWindow', 'LayeredC
 
     Space.prototype.stop = function () {
         Dom.removeListeners(this.listeners);
+        this.timer.stop();
         this.spaceShip.unListen();
+        this.canvas.container.remove();
     };
 
     Space.prototype.calculateImpacts = function (obj) {

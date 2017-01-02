@@ -11,6 +11,7 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
             if(Sandbox.started) {
                 throw "Can't start sandbox thread, becaus previous is not stopped";
             }
+            Sandbox.started = true;
 
             var maxX = 5000;
             var maxY = 5000;
@@ -26,6 +27,9 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
             spaceShip.listen(function(obj){
                 Sandbox.space.objects.push(obj)
             });
+            spaceShip.onDestroy = function(){
+                clb();
+            };
             this.space.spaceShip = spaceShip;
             this.space.objects.push(spaceShip);
             var asteroidFactory = new AsteroidFactory();
@@ -40,6 +44,7 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
             this.space.stop();
             if(Sandbox.clb) {
                 Sandbox.clb();
+                Sandbox.clb = null;
             }
         }
     };
