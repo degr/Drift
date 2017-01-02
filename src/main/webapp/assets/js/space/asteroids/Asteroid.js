@@ -5,9 +5,10 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
     var Vector = Engine.require("Vector");
     var Point = Engine.require("Point");
 
-    function Asteroid(x,y, points){
+    function Asteroid(x,y, points, active){
         RelativePointsObject.apply(this, [x, y]);
 
+        this.active = active;
         this.vector = new Vector(
             Math.random() * 2 - 1,
             Math.random() * 2 - 1
@@ -46,9 +47,9 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         var shift = appContext.shift;
         var positionX = this.x + shift.x;
         var positionY = this.y + shift.y;
-        if(positionX < 0 || positionX > appContext.startup.width) {
+        if(positionX < 0 || positionX > appContext.space.width) {
             return;
-        } else if(positionY < 0 || positionY > appContext.startup.width) {
+        } else if(positionY < 0 || positionY > appContext.space.width) {
             return;
         }
 
@@ -65,19 +66,19 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         if(!(object instanceof Asteroid)) {
             this.alive = false;
             var out = [new Explosion(this.x, this.y, this.vector, 30)];
-            if(this.points.length > 3) {
+            if(this.active && this.points.length > 3) {
                 var start = Math.ceil(this.points.length / 2);
                 var p1 = [], i;
                 for(i = 0; i <= start; i++) {
                     p1.push(this.points[i]);
                 }
-                out.push(new Asteroid(this.x, this.y, p1));
+                out.push(new Asteroid(this.x, this.y, p1, this.active));
                 var p2 = [];
                 for(i = start; i < this.points.length; i++) {
                     p2.push(this.points[i]);
                 }
                 p2.push(this.points[0]);
-                out.push(new Asteroid(this.x, this.y, p2));
+                out.push(new Asteroid(this.x, this.y, p2, this.active));
             }
             return out;
         } else {

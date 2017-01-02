@@ -1,6 +1,7 @@
-Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'Geometry', 'Explosion', 'Bullet'], function() {
+Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject', 'Point', 'Geometry', 'Explosion', 'Bullet'], function() {
 
     var RelativePointsObject = Engine.require("RelativePointsObject");
+    var BaseObject = Engine.require("BaseObject");
     var Explosion = Engine.require("Explosion");
     var Geometry = Engine.require("Geometry");
     var Vector = Engine.require("Vector");
@@ -15,7 +16,7 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
             new Point(15, 0),
             new Point(-12, -12)
         ];
-
+        this.invincible = true;
         this.vector = new Vector(0,0);
         this.turnToLeft = false;
         this.turnToRight = false;
@@ -53,16 +54,18 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
                     bullet.correct(this);
                     var angle = Geometry.truncate(this.angle + Math.PI);
                     this.vector.append(new Vector(Math.cos(angle) * 0.2, Math.sin(angle)* 0.2));
-                    this.listenClb(bullet);
+                    this.context.space.objects.push(bullet);
                 }
             }
         }
     };
 
-    SpaceShip.prototype.listen = function(clb){
-        this.listenClb = clb;
+    SpaceShip.prototype.listen = function(){
         var me = this;
         this.keyDownListener = function(event) {
+            if(me.invincible) {
+                me.invincible = false;
+            }
             var keyCode = event.keyCode;
             if(keyCode == 39){
                 event.preventDefault();
@@ -141,13 +144,23 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
         var shift = appContext.shift;
         var positionX = this.x + shift.x;
         var positionY = this.y + shift.y;
-        if(positionX < 0 || positionX > appContext.startup.width) {
+        if(positionX < 0 || positionX > appContext.space.width) {
             return;
-        } else if(positionY < 0 || positionY > appContext.startup.width) {
+        } else if(positionY < 0 || positionY > appContext.space.width) {
             return;
         }
         context.save();
         context.translate(positionX, positionY);
+
+        context.beginPath();
+        if(this.invincible) {
+            context.strokeStyle = "yellow";
+            context.arc(0, 0, 30, 0, Math.PI * 2);
+            context.stroke();
+            context.closePath();
+            context.beginPath();
+        }
+
         context.strokeStyle = "lightblue";
         context.moveTo(0, 0);
         context.lineTo(this.vector.x * 5, this.vector.y * 5);
@@ -175,7 +188,6 @@ Engine.define("SpaceShip", ['Vector', 'Gun', 'RelativePointsObject', 'Point', 'G
         this.alive = false;
         return [new Explosion(this.x, this.y, this.vector, 30)];
     };
-
 
     return SpaceShip;
 });

@@ -159,6 +159,9 @@ Engine.define('Geometry', ['Point', 'Line'], function () {
             return ab >= bc && ab >= ca ? pointC : (ca >= ab && ca >= bc ? pointB : pointA);
         },
         getDistance: function (point1, point2) {
+            if(!point1 || !point2) {
+                console.log('lol');
+            }
             var x1 = point1.x;
             var y1 = point1.y;
             var x2 = point2.x;

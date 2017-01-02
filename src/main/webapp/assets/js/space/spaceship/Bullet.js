@@ -8,7 +8,6 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
 
     function Bullet(x, y, angle) {
         BaseObject.apply(this, arguments);
-        this.points = [];
         this.vector = null;
         var me = this;
         this.ship = null;
@@ -22,12 +21,19 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
 
 
     Bullet.prototype.correct = function(spaceShip) {
+        //this.points = [new Point(oldX, ol
         this.x += spaceShip.x;
         this.y += spaceShip.y;
         var translated = Geometry.translate(spaceShip, this, spaceShip.angle);
         this.x = translated.x;
         this.y = translated.y;
         this.angle += spaceShip.angle;
+
+        this.points = [
+            new Point(this.x, this.y),
+            new Point(this.x + 5 * Math.cos(this.angle), this.y + 5 * Math.sin(this.angle))
+        ];
+        this.oldPoint = this.points[0];
         this.vector = new Vector(
             Bullet.speed * Math.cos(this.angle),
             Bullet.speed * Math.sin(this.angle)
@@ -44,19 +50,30 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
         context.translate(this.x + shift.x, this.y+ shift.y);
         context.rotate(this.angle);
         context.beginPath();
-        context.strokeStyle = "#43dff3";
+        context.strokeStyle = "white";
 
         context.moveTo(-3, 0);
         context.lineTo(2, 0);
         context.stroke();
         context.restore();
+
+        context.beginPath();
+        context.strokeStyle = "red";
+        context.moveTo(this.points[0].x+ shift.x, this.points[0].y+ shift.y);
+        context.lineTo(this.points[1].x+ shift.x, this.points[1].y+ shift.y);
+        context.stroke();
+
+
+
     };
     Bullet.prototype.update = function() {
-        var oldX = this.x;
-        var oldY = this.y;
         this.x += this.vector.x;
         this.y += this.vector.y;
-        this.points = [new Point(oldX, oldY), new Point(this.x, this.y)];
+        this.oldPoint = this.points[0].clone();
+        this.points[0].x += this.vector.x;
+        this.points[0].y += this.vector.y;
+        this.points[1].x += this.vector.x;
+        this.points[1].y += this.vector.y;
     };
 
     Bullet.prototype.isAlive = function() {
@@ -69,6 +86,10 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
             return [new Explosion(this.x, this.y, this.vector, 8, 60)];
         }
         return [];
+    };
+
+    Bullet.prototype.getPoints = function(){
+        return [this.oldPoint, this.points[1]];
     };
 
     return Bullet;

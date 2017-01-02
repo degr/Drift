@@ -41,11 +41,11 @@ Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', '
                     var oldObjects = this.context.objects;
                     var objects = [];
                     this.context.objects = objects;
-                    this.context.startup.objects = objects;
+                    this.context.space.objects = objects;
                     var incoming = object.objects;
                     var length = incoming.length;
-                    this.context.startup.width = object.x;
-                    this.context.startup.height = object.y;
+                    this.context.space.width = object.x;
+                    this.context.space.height = object.y;
                     var me = this;
                     while (length--) {
                         var source = incoming[length];
@@ -77,19 +77,19 @@ Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', '
                                 mapped.vector = new Vector(source.vector.x, source.vector.y);
                                 mapped.id = source.id;
                                 if (object.id === mapped.id) {
-                                    var old = this.context.startup.spaceShip;
+                                    var old = this.context.space.spaceShip;
                                     if (old) {
                                         old.unListen();
                                     }
-                                    this.context.startup.spaceShip = mapped;
+                                    this.context.space.spaceShip = mapped;
                                     mapped.listen(function (item) {
-                                        me.context.startup.objects.push(item);
+                                        me.context.space.objects.push(item);
                                     })
                                 }
                                 var oldSpaceShip = findSpaceShip(oldObjects, mapped.id);
                                 mapped.turnToLeft = oldSpaceShip ? (oldSpaceShip.turnToLeft ? true : source.turn == -1) : source.turn == -1;
                                 mapped.turnToRight = oldSpaceShip ? (oldSpaceShip.turnToRight ? true : source.turn == 1) : source.turn == 1;
-                                ;
+
                                 mapped.guns = source.guns.map(function (v) {
                                     var gun = new Gun(v.x, v.y);
                                     gun.angle = v.angle || 0;

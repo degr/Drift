@@ -8,6 +8,7 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
         this.x = x;
         this.y = y;
         this.angle = angle || 0;
+        this.invincible = false;
     }
 
     BaseObject.prototype.placePoints = function(context, points) {
@@ -22,14 +23,21 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
     };
 
     BaseObject.appendLastPoint = function(input) {
-        var out = [].concat(input);
-        out.push(input[0]);
-        return out;
+        if(input.length > 2) {
+            var out = [].concat(input);
+            out.push(input[0]);
+            return out;
+        } else {
+            return input;
+        }
     };
 
     BaseObject.prototype.hasImpact = function(baseObject) {
         if(!(baseObject instanceof  BaseObject)) {
             throw "Invalid arguments exception";
+        }
+        if(baseObject.invincible || this.invincible){
+            return false;
         }
         var thisPoints = BaseObject.appendLastPoint(this.getPoints());
         var thisLength = thisPoints.length;
@@ -39,7 +47,7 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
             var line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
             while(--thatLength > 0) {
                 var line2 = new Line(thatPoints[thatLength], thatPoints[thatLength - 1]);
-                if(Geometry.lineHasIntersections(line1, line2)) {
+                if (Geometry.lineHasIntersections(line1, line2)) {
                     return true;
                 }
             }

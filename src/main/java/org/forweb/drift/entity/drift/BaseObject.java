@@ -14,8 +14,9 @@ abstract public class BaseObject {
     private double x;
     private double y;
     private Angle angle;
-    private Point[] points;
+    protected Point[] points;
     private Vector vector;
+    private boolean invincible;
 
 
     private int id;
@@ -28,15 +29,16 @@ abstract public class BaseObject {
         this.setY(y);
         this.setAngle(new Angle(angle));
         this.setPoints(points);
+        this.invincible = false;
     }
 
     abstract public String getType();
     @JsonIgnore
     abstract public boolean isRelaivePoints();
 
-    public static Point zero = new Point(0, 0);
+    private static Point zero = new Point(0, 0);
 
-    static Point[] getPoints(Point[] points, double x, double y, Angle angle) {
+    private static Point[] getPoints(Point[] points, double x, double y, Angle angle) {
         Point[] out = new Point[points.length];
         for(int i = 0; i < points.length; i++) {
             Point p = PointService.translate(zero, points[i], angle);
@@ -57,25 +59,28 @@ abstract public class BaseObject {
     }
 
     public boolean hasImpact(BaseObject baseObject) {
-        Point[] thisPoints = getPoints();
-        if(thisPoints == null) {
+        if (this.invincible || baseObject.isInvincible()) {
             return false;
         }
-        if(this.isRelaivePoints()) {
+        Point[] thisPoints = getPoints();
+        if (thisPoints == null) {
+            return false;
+        }
+        if (this.isRelaivePoints()) {
             thisPoints = BaseObject.getPoints(getPoints(), getX(), getY(), getAngle());
         }
         int thisLength = thisPoints.length;
-        if(thisLength <= 1) {
+        if (thisLength <= 1) {
             return false;
         }
         thisLength++;
         thisPoints = appendLastPoint(thisPoints);
         try {
             Point[] thatPoints = baseObject.getPoints();
-            if(thatPoints == null) {
+            if (thatPoints == null) {
                 return false;
             }
-            if(baseObject.isRelaivePoints()) {
+            if (baseObject.isRelaivePoints()) {
                 thatPoints = BaseObject.getPoints(
                         baseObject.getPoints(),
                         baseObject.getX(),
@@ -99,7 +104,7 @@ abstract public class BaseObject {
                     }
                 }
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw e;
         }
         return false;
@@ -160,5 +165,9 @@ abstract public class BaseObject {
 
     public int hashCode() {
         return id;
+    }
+
+    public boolean isInvincible() {
+        return invincible;
     }
 }
