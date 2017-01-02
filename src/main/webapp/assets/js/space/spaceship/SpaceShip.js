@@ -60,68 +60,9 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         }
     };
 
-    SpaceShip.prototype.listen = function(){
-        var me = this;
-        this.keyDownListener = function(event) {
-            if(me.invincible) {
-                me.invincible = false;
-            }
-            var keyCode = event.keyCode;
-            if(keyCode == 39){
-                event.preventDefault();
-                if(!me.turnToLeft) {
-                    me.context.socket.send("turn:1")
-                } else {
-                    me.context.socket.send("turn:0")
-                }
-                me.turnToRight = true;
-            } else if(keyCode == 37){
-                event.preventDefault();
-                if(!me.turnToRight) {
-                    me.context.socket.send("turn:-1")
-                } else {
-                    me.context.socket.send("turn:0")
-                }
-                me.turnToLeft = true;
-            } else if(keyCode == 38){
-                event.preventDefault();
-                me.context.socket.send("accelerate:1");
-                me.hasAcceleration = true;
-            } else if(keyCode == 40){
-                event.preventDefault();
-            } else if(keyCode == 32) {
-                me.fireStarted = true;
-                me.context.socket.send("fire:1")
-            }
-        };
-        this.keyUpListener = function(event) {
-            var keyCode = event.keyCode;
-            console.log(keyCode);
-            if(keyCode == 39){
-                event.preventDefault();
-                me.turnToRight = false;
-                if(me.turnToLeft) {
-                    me.context.socket.send("turn:-1")
-                } else {
-                    me.context.socket.send("turn:0")
-                }
-            } else if(keyCode == 37){
-                event.preventDefault();
-                me.turnToLeft = false;
-                if(me.turnToRight) {
-                    me.context.socket.send("turn:1")
-                } else {
-                    me.context.socket.send("turn:0")
-                }
-            } else if(keyCode == 38){
-                event.preventDefault();
-                me.hasAcceleration = false;
-                me.context.socket.send("accelerate:0");
-            } else if(keyCode == 32) {
-                me.context.socket.send("fire:0");
-                me.fireStarted = false;
-            }
-        };
+    SpaceShip.prototype.listen = function(keyDownListener, keyUpListener){
+        this.keyDownListener = keyDownListener;
+        this.keyUpListener = keyUpListener;
         document.body.addEventListener('keydown', this.keyDownListener);
         document.body.addEventListener('keyup', this.keyUpListener);
     };

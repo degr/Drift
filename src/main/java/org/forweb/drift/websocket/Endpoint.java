@@ -3,6 +3,7 @@ package org.forweb.drift.websocket;
 import org.forweb.drift.context.GameContext;
 import org.forweb.drift.entity.drift.Player;
 import org.forweb.drift.entity.drift.Room;
+import org.forweb.drift.entity.drift.SpaceShip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
@@ -32,19 +33,35 @@ public class Endpoint {
     @OnMessage
     public void onTextMessage(String message) {
         String[] parts = message.split(":");
+        SpaceShip spaceShip = player.getSpaceShip();
         switch (parts[0]) {
             case "turn":
-                player.getSpaceShip().setTurn("1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1));
+                if(spaceShip.isInvincible()) {
+                    spaceShip.setInvincible(false);
+                }
+                spaceShip.setTurn("1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1));
                 break;
             case "accelerate":
-                player.getSpaceShip().setHasAcceleration("1".equals(parts[1]));
+                if(spaceShip.isInvincible()) {
+                    spaceShip.setInvincible(false);
+                }
+                spaceShip.setHasAcceleration("1".equals(parts[1]));
                 break;
             case "fire":
-                player.getSpaceShip().setFireStarted("1".equals(parts[1]));
+                if(spaceShip.isInvincible()) {
+                    spaceShip.setInvincible(false);
+                }
+                spaceShip.setFireStarted("1".equals(parts[1]));
                 break;
         }
     }
 
+    private void onInvincible(SpaceShip spaceShip) {
+        if(spaceShip.isInvincible()) {
+            spaceShip.setInvincible(false);
+            spaceShip.setUpdateInvincible(true);
+        }
+    }
 
     @OnClose
     public void onClose() {

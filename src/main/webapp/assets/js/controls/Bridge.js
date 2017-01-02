@@ -28,6 +28,7 @@ Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', '
     };
 
     Bridge.prototype.onError = function (r) {
+        alert('error!');
         console.log('on error', r)
     };
     Bridge.prototype.onMessage = function (r) {
@@ -72,31 +73,7 @@ Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', '
                                 }
                                 break;
                             case 'ship':
-                                mapped = new SpaceShip(source.x, source.y, this.context);
-                                mapped.angle = source.angle;
-                                mapped.vector = new Vector(source.vector.x, source.vector.y);
-                                mapped.id = source.id;
-                                if (object.id === mapped.id) {
-                                    var old = this.context.space.spaceShip;
-                                    if (old) {
-                                        old.unListen();
-                                    }
-                                    this.context.space.spaceShip = mapped;
-                                    mapped.listen(function (item) {
-                                        me.context.space.objects.push(item);
-                                    })
-                                }
-                                var oldSpaceShip = findSpaceShip(oldObjects, mapped.id);
-                                mapped.turnToLeft = oldSpaceShip ? (oldSpaceShip.turnToLeft ? true : source.turn == -1) : source.turn == -1;
-                                mapped.turnToRight = oldSpaceShip ? (oldSpaceShip.turnToRight ? true : source.turn == 1) : source.turn == 1;
-
-                                mapped.guns = source.guns.map(function (v) {
-                                    var gun = new Gun(v.x, v.y);
-                                    gun.angle = v.angle || 0;
-                                    gun.color = v.color || 'red';
-                                    gun.reload = v.reload || false;
-                                    return gun;
-                                });
+                                mapped = mapSpaceShip(source, this.context, object);
                                 break;
                             default:
                                 throw "unknown class";
@@ -111,6 +88,83 @@ Engine.define("Bridge", ['Asteroid', 'Vector', 'Bullet', 'Point', 'SpaceShip', '
             console.log(e);
         }
     };
+    
+    function mapSpaceShip(source, context, object) {
+        var out = new SpaceShip(source.x, source.y, context);
+        out.angle = source.angle;
+        out.vector = new Vector(source.vector.x, source.vector.y);
+        out.id = source.id;
+        out.invincible = source.invincible;
+        var old = null;
+        if (object.id === out.id) {
+            old = context.space.spaceShip;
+            if (old) {
+                old.unListen();
+            }
+            context.space.spaceShip = out;
+            var keyDownListener = function(event) {
+                var keyCode = event.keyCode;
+                if(keyCode == 39){
+                    event.preventDefault();
+                    if(!out.turnToLeft) {
+                        context.socket.send("turn:1")
+                    } else {
+                        context.socket.send("turn:0")
+                    }
+                } else if(keyCode == 37){
+                    event.preventDefault();
+                    if(!out.turnToRight) {
+                        context.socket.send("turn:-1")
+                    } else {
+                        context.socket.send("turn:0")
+                    }
+                } else if(keyCode == 38){
+                    event.preventDefault();
+                    context.socket.send("accelerate:1");
+                } else if(keyCode == 40){
+                    event.preventDefault();
+                } else if(keyCode == 32) {
+                    context.socket.send("fire:1")
+                }
+            };
+            var keyUpListener = function(event) {
+                var keyCode = event.keyCode;
+                if(keyCode == 39){
+                    event.preventDefault();
+                    if(out.turnToLeft) {
+                        context.socket.send("turn:-1")
+                    } else {
+                        context.socket.send("turn:0")
+                    }
+                } else if(keyCode == 37){
+                    event.preventDefault();
+                    if(out.turnToRight) {
+                        context.socket.send("turn:1")
+                    } else {
+                        context.socket.send("turn:0")
+                    }
+                } else if(keyCode == 38){
+                    event.preventDefault();
+                    context.socket.send("accelerate:0");
+                } else if(keyCode == 32) {
+                    context.socket.send("fire:0");
+                }
+            };
+            out.listen(keyDownListener, keyUpListener);
+        }
+
+        out.turnToLeft = source.turn == -1;
+        out.turnToRight = source.turn == 1;
+
+        out.guns = source.guns.map(function (v) {
+            var gun = new Gun(v.x, v.y);
+            gun.angle = v.angle || 0;
+            gun.color = v.color || 'red';
+            gun.reload = v.reload || false;
+            return gun;
+        });
+        return out;
+    }
 
     return Bridge;
 });

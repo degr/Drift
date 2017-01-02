@@ -22,17 +22,21 @@ public class SpaceShip extends BaseObject{
     @JsonIgnore
     private IncrementalId ids;
 
+    @JsonIgnore
     private boolean updateAcceleration;
+    @JsonIgnore
     private boolean updateTurn;
-
-
+    @JsonIgnore
     private boolean updateFire;
+    @JsonIgnore
+    private boolean updateInvincible;
 
     public SpaceShip(double x, double y, int id, Room room) {
         super(x, y, 0, SpaceShip.points, id);
         this.setVector(new Vector(0, 0));
         this.room = room;
         this.ids = room.getIds();
+        setInvincible(true);
         isAlive = true;
         guns = new Gun[1];
         guns[0] = new Gun(0, 0, ids.get());
@@ -157,32 +161,39 @@ public class SpaceShip extends BaseObject{
         updateTurn = true;
         this.turn = turn;
     }
-
+    @JsonIgnore
     public boolean isUpdateAcceleration() {
         return updateAcceleration;
     }
-
     public void setUpdateAcceleration(boolean updateAcceleration) {
         this.updateAcceleration = updateAcceleration;
     }
-
+    @JsonIgnore
     public boolean isUpdateTurn() {
         return updateTurn;
     }
-
     public void setUpdateTurn(boolean updateTurn) {
         this.updateTurn = updateTurn;
     }
-
+    @JsonIgnore
     public boolean isUpdateFire() {
         return updateFire;
     }
-
     public void setUpdateFire(boolean updateFire) {
         this.updateFire = updateFire;
     }
 
     public int getTurn() {
         return turn;
+    }
+
+    @JsonIgnore
+    public void setUpdateInvincible(boolean updateInvincible) {
+        this.updateInvincible = updateInvincible;
+    }
+
+    @JsonIgnore
+    public boolean isUpdateInvincible() {
+        return updateInvincible;
     }
 }

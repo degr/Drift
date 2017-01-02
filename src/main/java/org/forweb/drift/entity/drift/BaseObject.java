@@ -23,6 +23,8 @@ abstract public class BaseObject {
     public BaseObject(double x, double y, double angle, int id) {
         this(x, y, angle, null, id);
     }
+
+
     public BaseObject(double x, double y, double angle, Point[] points, int id) {
         this.id = id;
         this.setX(x);
@@ -169,5 +171,9 @@ abstract public class BaseObject {
 
     public boolean isInvincible() {
         return invincible;
+    }
+
+    public void setInvincible(boolean invincible) {
+        this.invincible = invincible;
     }
 }

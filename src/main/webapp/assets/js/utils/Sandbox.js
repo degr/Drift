@@ -19,14 +19,45 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
             this.clb = clb;
             this.space = new Space(maxX, maxY);
             var spaceShip = new SpaceShip(maxX / 2, maxY / 2, {
-                space: this.space,
-                socket: {send: function(){
+                space: this.space
+            });
+            var keyDownListener = function(event) {
+                if(spaceShip.invincible) {
+                    spaceShip.invincible = false;
+                }
+                var keyCode = event.keyCode;
+                if(keyCode == 39){
+                    event.preventDefault();
+                    spaceShip.turnToRight = true;
+                } else if(keyCode == 37){
+                    event.preventDefault();
+                    spaceShip.turnToLeft = true;
+                } else if(keyCode == 38){
+                    event.preventDefault();
+                    spaceShip.hasAcceleration = true;
+                } else if(keyCode == 40){
+                    event.preventDefault();
+                } else if(keyCode == 32) {
+                    spaceShip.fireStarted = true;
+                }
+            };
+            var keyUpLitener = function(event){
+                var keyCode = event.keyCode;
+                if(keyCode == 39){
+                    event.preventDefault();
+                    spaceShip.turnToRight = false;
+                } else if(keyCode == 37){
+                    event.preventDefault();
+                    spaceShip.turnToLeft = false;
+                } else if(keyCode == 38){
+                    event.preventDefault();
+                    spaceShip.hasAcceleration = false;
+                } else if(keyCode == 32) {
+                    spaceShip.fireStarted = false;
+                }
+            };
+            spaceShip.listen(keyDownListener, keyUpLitener);
 
-                }}
-            });
-            spaceShip.listen(function(obj){
-                Sandbox.space.objects.push(obj)
-            });
             spaceShip.onDestroy = function(){
                 clb();
             };

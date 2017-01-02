@@ -23,8 +23,6 @@ public class DriftTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        long start = System.currentTimeMillis();
-        System.out.println("start " + start);
         try {
             Set<BaseObject> objects = me.getObjects();
             Iterator<BaseObject> iterator = objects.iterator();
@@ -77,8 +75,6 @@ public class DriftTimerTask extends TimerTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        long end = System.currentTimeMillis();
-        System.out.println("end " + end + "; " + (end -start));
     }
 }
 

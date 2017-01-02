@@ -41,8 +41,11 @@ Engine.define("Startup", ['Dom','Popup', 'Timer', 'Profile', 'Bridge', 'WebSocke
                     }, class: 'button-sandbox'}),
                     Dom.el('input', {type: 'button', value: 'Free Space', onclick: function(){
                         Engine.load('FreeSpace', function(){
+                            var FreeSpace = Engine.require('FreeSpace');
+                            if(FreeSpace.started) {
+                                FreeSpace.stop();
+                            }
                             me.modal.hide();
-                            var FreeSpace = Engine.require('Sandbox');
                             FreeSpace.start(clb);
                         })
                     }, class: 'button-space'})
@@ -50,26 +53,7 @@ Engine.define("Startup", ['Dom','Popup', 'Timer', 'Profile', 'Bridge', 'WebSocke
             ]);
             this.modal.setContent(form);
             this.modal.show();
-            return;
-
-            var context = {};
-            var bridge = new Bridge(context);
-            var socket = WebSocketUtils.getSocket(
-                Profile.WS_URL,
-                function(r){bridge.onOpen(r)},
-                function(r){bridge.onMessage(r)},
-                function(r){bridge.onClose(r)},
-                function(r){bridge.onError(r)}
-            );
-            context.socket = socket;
-            context.bridge = bridge;
-            context.objects = Startup.objects;
-
-
-        },
-
+        }
     };
-
-
     return Startup;
 });
