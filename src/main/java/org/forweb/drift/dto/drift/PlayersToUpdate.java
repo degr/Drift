@@ -13,19 +13,19 @@ public class PlayersToUpdate {
     public PlayersToUpdate(Set<Player> players) {
         for(Player player : players) {
             SpaceShip spaceShip = player.getSpaceShip();
-            String data = "";
-            if(spaceShip.isUpdateAcceleration()) {
-                data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0");
-            }
-            if(spaceShip.isUpdateFire()) {
-                data += "|t:" + spaceShip.getTurn();
-            }
-            if(spaceShip.isUpdateFire()) {
-                data += "|f:" + (spaceShip.isFireStarted() ? "1" : "0");
-            }
-            if(!"".equals(data)) {
-                data = spaceShip.getId() + data;
-                if(ships == null) {
+            if(spaceShip.isUpdateRequire()) {
+                spaceShip.setUpdateRequire(false);
+                String data = String.valueOf(spaceShip.getId());
+                if (spaceShip.isUpdateAcceleration()) {
+                    data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0");
+                }
+                if (spaceShip.isUpdateTurn()) {
+                    data += "|t:" + spaceShip.getTurn();
+                }
+                if (spaceShip.isUpdateFire()) {
+                    data += "|f:" + (spaceShip.isFireStarted() ? "1" : "0");
+                }
+                if (ships == null) {
                     ships = new ArrayList<>();
                 }
                 ships.add(data);

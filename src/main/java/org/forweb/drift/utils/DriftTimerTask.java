@@ -1,16 +1,17 @@
 package org.forweb.drift.utils;
 
 
+import org.forweb.drift.dto.PlayersDto;
 import org.forweb.drift.dto.drift.PlayersToUpdate;
 import org.forweb.drift.dto.drift.RoomDto;
 import org.forweb.drift.entity.drift.BaseObject;
 import org.forweb.drift.entity.drift.Player;
 import org.forweb.drift.entity.drift.Room;
+import org.forweb.drift.entity.drift.SpaceShip;
+import org.springframework.security.access.method.P;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TimerTask;
+import java.util.*;
 
 public class DriftTimerTask extends TimerTask {
 
@@ -51,7 +52,7 @@ public class DriftTimerTask extends TimerTask {
             try {
                 PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
                 String playersUpdate = playersToUpdate.hasPlayers() ?
-                        me.getMapper().writeValueAsString(playersToUpdate.getShips())
+                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips()))
                         : null;
                 for (Player player : me.getPlayers()) {
 
@@ -61,11 +62,15 @@ public class DriftTimerTask extends TimerTask {
                             allObjects = me.getMapper().writeValueAsString(new RoomDto(me, player));
                         }
                         message = allObjects;
+
+                        if(message != null) {
+                            player.getSession().getBasicRemote().sendText(message);
+                        }
                     } else {
                         message = playersUpdate;
-                    }
-                    if(message != null) {
-                        player.getSession().getBasicRemote().sendText(message);
+                        if(message != null) {
+                            player.getSession().getBasicRemote().sendText(message);
+                        }
                     }
 
                 }

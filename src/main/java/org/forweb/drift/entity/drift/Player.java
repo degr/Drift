@@ -17,18 +17,16 @@ public class Player {
         fullUpdate = true;
 
 
-        new Thread(){
-            public void run() {
-                while(spaceShip.isAlive()) {
-                    try {
-                        sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    fullUpdate = true;
+        new Thread(() -> {
+            while(spaceShip.isAlive()) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                fullUpdate = true;
             }
-        }.start();
+        }).start();
     }
 
     public Session getSession() {

@@ -39,19 +39,32 @@ public class Endpoint {
                 if(spaceShip.isInvincible()) {
                     spaceShip.setInvincible(false);
                 }
-                spaceShip.setTurn("1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1));
+                int turn = "1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1);
+                if(spaceShip.getTurn() != turn) {
+                    spaceShip.setTurn(turn);
+                    spaceShip.setUpdateTurn(true);
+                    spaceShip.setUpdateRequire(true);
+                }
                 break;
             case "accelerate":
                 if(spaceShip.isInvincible()) {
                     spaceShip.setInvincible(false);
                 }
-                spaceShip.setHasAcceleration("1".equals(parts[1]));
+                boolean hasAcceleration = "1".equals(parts[1]);
+                if(spaceShip.isHasAcceleration() != hasAcceleration) {
+                    spaceShip.setHasAcceleration(hasAcceleration);
+                    spaceShip.setUpdateRequire(true);
+                }
                 break;
             case "fire":
                 if(spaceShip.isInvincible()) {
                     spaceShip.setInvincible(false);
                 }
-                spaceShip.setFireStarted("1".equals(parts[1]));
+                boolean fireStarted = "1".equals(parts[1]);
+                if(spaceShip.isFireStarted() != fireStarted) {
+                    spaceShip.setFireStarted(fireStarted);
+                    spaceShip.setUpdateRequire(true);
+                }
                 break;
         }
     }

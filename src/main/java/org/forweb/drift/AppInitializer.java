@@ -2,16 +2,14 @@ package org.forweb.drift;
 
 
 import org.forweb.database.HibernateSupport;
+import org.forweb.drift.filter.CacheFilter;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.SessionTrackingMode;
+import javax.servlet.*;
 import java.util.EnumSet;
 
 public class AppInitializer extends AbstractSecurityWebApplicationInitializer {
@@ -20,7 +18,7 @@ public class AppInitializer extends AbstractSecurityWebApplicationInitializer {
     static final String BASE_PACKAGE = "org.forweb.drift";
     static final String WORD_PACKAGE = "org.forweb.word";
     public static String ROOT;
-    public static Boolean DEV = false;
+    public static Boolean DEV = true;
 
 
     @Override
@@ -40,6 +38,10 @@ public class AppInitializer extends AbstractSecurityWebApplicationInitializer {
         addServlet(new DispatcherServlet(rootContext), "dispatcher", "/server/*", servletContext);
         servletContext.addListener(new ContextLoaderListener(rootContext));
         servletContext.addListener(new RequestContextListener());
+        if(DEV) {
+            FilterRegistration.Dynamic cacheFilter = servletContext.addFilter("cache", CacheFilter.class);
+            cacheFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+        }
 
         servletContext.setSessionTrackingModes(EnumSet.of(SessionTrackingMode.COOKIE));
         //addFilter("UrlRewriteFilter", new UrlRewriteFilter(), servletContext);

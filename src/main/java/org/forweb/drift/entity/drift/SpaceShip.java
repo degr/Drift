@@ -30,6 +30,7 @@ public class SpaceShip extends BaseObject{
     private boolean updateFire;
     @JsonIgnore
     private boolean updateInvincible;
+    private boolean updateRequire;
 
     public SpaceShip(double x, double y, int id, Room room) {
         super(x, y, 0, SpaceShip.points, id);
@@ -195,5 +196,13 @@ public class SpaceShip extends BaseObject{
     @JsonIgnore
     public boolean isUpdateInvincible() {
         return updateInvincible;
+    }
+
+    public void setUpdateRequire(boolean updateRequire) {
+        this.updateRequire = updateRequire;
+    }
+
+    public boolean isUpdateRequire() {
+        return updateRequire;
     }
 }

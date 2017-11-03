@@ -12,6 +12,9 @@ Engine.define("PathBuilder", function(){
                 path = module;
                 break;
             case 'Bridge':
+            case 'FullUpdater':
+            case 'ObjectsSearch':
+            case 'SpaceShipUpdater':
                 path = "controls/" + module;
                 break;
             case 'Line':
