@@ -33,12 +33,12 @@ public class Bullet extends BaseObject {
 
     @JsonIgnore
     @Override
-    public boolean isRelaivePoints() {
+    public boolean isRelativePoints() {
         return false;
     }
 
     public boolean isAlive() {
-        return System.currentTimeMillis() - this.creationTime > 0;
+        return !(this.creationTime == 0) && !(System.currentTimeMillis() > this.creationTime);
     }
 
     public void correct(SpaceShip spaceShip) {
@@ -72,13 +72,12 @@ public class Bullet extends BaseObject {
     }
 
     public void update() {
-        Point[] points = getPoints();
-        this.oldPoint = points[0];
+        this.oldPoint = this.points[0];
         Vector vector = getVector();
         this.setX(getX() + vector.x);
         this.setY(getY() + vector.y);
-        points[0] = new Point(points[0].getX() + vector.x, points[0].getY() + vector.y);
-        points[1] = new Point(points[1].getX() + vector.x, points[1].getY() + vector.y);
+        this.points[0] = new Point(this.points[0].getX() + vector.x, this.points[0].getY() + vector.y);
+        this.points[1] = new Point(this.points[1].getX() + vector.x, this.points[1].getY() + vector.y);
     }
 
     @Override
@@ -92,12 +91,20 @@ public class Bullet extends BaseObject {
     @Override
     public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
         if(object.getId() != this.ship) {
-            this.creationTime = 0;
             BaseObject[] out = new BaseObject[1];
             out[0] = new Explosion(getX(), getY(), getVector(), 8, 60, ids.get());
+            this.creationTime = 0;
             return out;
         }
         return null;
+    }
+
+    public boolean hasImpact(BaseObject baseObject) {
+        if(baseObject instanceof SpaceShip && baseObject.getId() == this.ship) {
+            return false;
+        } else {
+            return super.hasImpact(baseObject);
+        }
     }
 
     public int getShipId() {

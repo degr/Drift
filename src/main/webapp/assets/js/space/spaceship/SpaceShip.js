@@ -10,6 +10,7 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
     var Gun = Engine.require("Gun");
 
     function SpaceShip(x,y, context){
+        window.appContext = context;
         RelativePointsObject.apply(this, [x, y]);
         this.points = [
             new Point(-12, 12),
@@ -25,11 +26,13 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         this.fireStarted = false;
         this.alive = true;
         this.context = context;
+        this.updateCount = 0;
     }
     SpaceShip.prototype = Object.create(RelativePointsObject.prototype);
     SpaceShip.prototype.constructor = SpaceShip;
 
     SpaceShip.prototype.update = function(){
+        this.updateCount++;
         if(this.hasAcceleration){
             var acceleration = 0.1;
             var x = Math.cos(this.angle)*acceleration;
@@ -46,6 +49,7 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
 
         this.x+=this.vector.x;
         this.y+=this.vector.y;
+        this.context.socket.send("position:" + (new Date()).getTime() +"|"+ this.x + "|" + this.y + "|" + this.updateCount);
         if(this.fireStarted) {
             for(var i = 0; i< this.guns.length; i++) {
                 var gun = this.guns[i];

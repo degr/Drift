@@ -35,7 +35,6 @@ Engine.define('FreeSpace', ['Bridge', 'Space', 'WebSocketUtils', 'Profile'], fun
             );
 
             context.bridge = bridge;
-            context.objects = this.space.objects;
             this.space.start();
         },
         stop: function() {

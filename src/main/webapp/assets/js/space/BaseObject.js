@@ -42,9 +42,9 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
         var thisPoints = BaseObject.appendLastPoint(this.getPoints());
         var thisLength = thisPoints.length;
         var thatPoints = BaseObject.appendLastPoint(baseObject.getPoints());
-        var thatLength = thatPoints.length;
         while(--thisLength > 0) {
             var line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
+            var thatLength = thatPoints.length;
             while(--thatLength > 0) {
                 var line2 = new Line(thatPoints[thatLength], thatPoints[thatLength - 1]);
                 if (Geometry.lineHasIntersections(line1, line2)) {

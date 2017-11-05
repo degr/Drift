@@ -36,11 +36,11 @@ abstract public class BaseObject {
 
     abstract public String getType();
     @JsonIgnore
-    abstract public boolean isRelaivePoints();
+    abstract public boolean isRelativePoints();
 
     private static Point zero = new Point(0, 0);
 
-    private static Point[] getPoints(Point[] points, double x, double y, Angle angle) {
+    private static Point[] translatePoints(Point[] points, double x, double y, Angle angle) {
         Point[] out = new Point[points.length];
         for(int i = 0; i < points.length; i++) {
             Point p = PointService.translate(zero, points[i], angle);
@@ -50,10 +50,14 @@ abstract public class BaseObject {
     }
 
     private static Point[] appendLastPoint(Point[] input) {
-        Point[] out = new Point[input.length + 1];
-        System.arraycopy(input, 0, out, 0, input.length);
-        out[input.length] = input[0];
-        return out;
+        if(input.length == 2) {
+            return input;
+        } else {
+            Point[] out = new Point[input.length + 1];
+            System.arraycopy(input, 0, out, 0, input.length);
+            out[input.length] = input[0];
+            return out;
+        }
     }
 
     public int getId() {
@@ -61,29 +65,36 @@ abstract public class BaseObject {
     }
 
     public boolean hasImpact(BaseObject baseObject) {
-        if (this.invincible || baseObject.isInvincible()) {
+        if (this.isInvincible() || baseObject.isInvincible()) {
             return false;
         }
         Point[] thisPoints = getPoints();
         if (thisPoints == null) {
             return false;
         }
-        if (this.isRelaivePoints()) {
-            thisPoints = BaseObject.getPoints(getPoints(), getX(), getY(), getAngle());
+        if (this.isRelativePoints()) {
+            thisPoints = BaseObject.translatePoints(getPoints(), getX(), getY(), getAngle());
         }
         int thisLength = thisPoints.length;
         if (thisLength <= 1) {
             return false;
         }
-        thisLength++;
         thisPoints = appendLastPoint(thisPoints);
+        thisLength = thisPoints.length;
         try {
+            /*if((this instanceof Bullet && baseObject instanceof Asteroid) || (baseObject instanceof Bullet && this instanceof Asteroid)) {
+                double distance = LineService.getDistance(this.getX(), this.getY(), baseObject.getX(), baseObject.getY());
+                if(distance < 100) {
+                    System.out.println(distance);
+                }
+            }*/
+
             Point[] thatPoints = baseObject.getPoints();
             if (thatPoints == null) {
                 return false;
             }
-            if (baseObject.isRelaivePoints()) {
-                thatPoints = BaseObject.getPoints(
+            if (baseObject.isRelativePoints()) {
+                thatPoints = BaseObject.translatePoints(
                         baseObject.getPoints(),
                         baseObject.getX(),
                         baseObject.getY(),
@@ -94,11 +105,12 @@ abstract public class BaseObject {
             if (thatLength <= 1) {
                 return false;
             }
-            thatLength++;
             thatPoints = appendLastPoint(thatPoints);
+
 
             while (--thisLength > 0) {
                 Line line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
+                thatLength = thatPoints.length;
                 while (--thatLength > 0) {
                     Line line2 = new Line(thatPoints[thatLength], thatPoints[thatLength - 1]);
                     if (LineService.lineHasIntersections(line1, line2)) {

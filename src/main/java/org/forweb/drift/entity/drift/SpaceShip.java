@@ -16,6 +16,9 @@ public class SpaceShip extends BaseObject{
     private Gun[] guns;
     private boolean fireStarted;
     private boolean isAlive;
+
+    public int updateCount = 0;
+
     @JsonIgnore
     private Room room;
 
@@ -49,6 +52,7 @@ public class SpaceShip extends BaseObject{
     }
 
     public void update() {
+        updateCount++;
         Angle angle = getAngle();
         Vector vector = getVector();
         if(this.hasAcceleration){
@@ -87,7 +91,7 @@ public class SpaceShip extends BaseObject{
 
     @JsonIgnore
     @Override
-    public boolean isRelaivePoints() {
+    public boolean isRelativePoints() {
         return true;
     }
 
@@ -100,7 +104,7 @@ public class SpaceShip extends BaseObject{
         } else if(object instanceof Gun) {
             return null;
         }
-        this.isAlive = false;
+        this.setAlive(false);
         BaseObject[] out = new BaseObject[1];
         out[0] = new Explosion(getX(), getY(), getVector(), 30, ids.get());
         return out;
@@ -142,8 +146,8 @@ public class SpaceShip extends BaseObject{
     public boolean hasImpact(BaseObject baseObject) {
         if(baseObject instanceof Explosion) {
             return false;
-        } else if(baseObject instanceof Bullet) {
-            return ((Bullet) baseObject).getShipId() != this.getId();
+        } else if(baseObject instanceof Bullet && ((Bullet) baseObject).getShipId() == this.getId()) {
+            return false;
         } else {
             return super.hasImpact(baseObject);
         }

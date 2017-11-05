@@ -25,7 +25,7 @@ public class Explosion extends BaseObject {
 
     @JsonIgnore
     @Override
-    public boolean isRelaivePoints() {
+    public boolean isRelativePoints() {
         return false;
     }
 

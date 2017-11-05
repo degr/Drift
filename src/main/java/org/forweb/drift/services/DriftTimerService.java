@@ -1,36 +1,42 @@
-package org.forweb.drift.utils;
+package org.forweb.drift.services;
 
 
 import org.forweb.drift.dto.PlayersDto;
 import org.forweb.drift.dto.drift.PlayersToUpdate;
 import org.forweb.drift.dto.drift.RoomDto;
-import org.forweb.drift.entity.drift.BaseObject;
-import org.forweb.drift.entity.drift.Player;
-import org.forweb.drift.entity.drift.Room;
-import org.forweb.drift.entity.drift.SpaceShip;
-import org.springframework.security.access.method.P;
+import org.forweb.drift.entity.drift.*;
+import org.forweb.drift.utils.ArrayUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TimerTask;
 
-public class DriftTimerTask extends TimerTask {
+public class DriftTimerService extends TimerTask {
 
     private Room me;
 
-    public DriftTimerTask(Room room) {
+    public DriftTimerService(Room room) {
         this.me = room;
     }
 
+    //public static boolean GAME_IN_PLAY = true;
 
     @Override
     public void run() {
         try {
             Set<BaseObject> objects = me.getObjects();
             Iterator<BaseObject> iterator = objects.iterator();
+            BaseObject[] newObjects = null;
             while (iterator.hasNext()) {
                 BaseObject obj = iterator.next();
+                /*if(!GAME_IN_PLAY && obj instanceof Bullet) {
+                    System.out.println("bullet");
+                }*/
                 if (obj.isAlive()) {
-                    obj.update();
+                    //if(GAME_IN_PLAY) {
+                        obj.update();
+                    //}
                     if (obj.getX() > me.getX()) {
                         obj.setX(0);
                     } else if (obj.getX() < 0) {
@@ -41,9 +47,26 @@ public class DriftTimerTask extends TimerTask {
                     } else if (obj.getY() < 0) {
                         obj.setY(me.getY());
                     }
-                    me.calculateImpacts(obj);
+                    BaseObject[] nObjects = me.calculateImpacts(obj);
+                    if (nObjects != null) {
+                        if (newObjects == null) {
+                            newObjects = nObjects;
+                        } else {
+                            newObjects = ArrayUtils.concat(newObjects, nObjects);
+                        }
+                    }
                 } else {
-                    objects.remove(obj);
+                    if(obj instanceof SpaceShip) {
+                        System.out.println("lol");
+                    }
+                    iterator.remove();
+                }
+            }
+
+
+            if (newObjects != null) {
+                for (BaseObject object : newObjects) {
+                    objects.add(object);
                 }
             }
 
@@ -51,9 +74,10 @@ public class DriftTimerTask extends TimerTask {
             String message;
             try {
                 PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
-                String playersUpdate = playersToUpdate.hasPlayers() ?
-                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips()))
+                String playersUpdate = newObjects != null || playersToUpdate.hasPlayers() ?
+                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects))
                         : null;
+
                 for (Player player : me.getPlayers()) {
 
                     if (player.isFullUpdate()) {
@@ -63,17 +87,18 @@ public class DriftTimerTask extends TimerTask {
                         }
                         message = allObjects;
 
-                        if(message != null) {
+                        if (message != null) {
                             player.getSession().getBasicRemote().sendText(message);
                         }
                     } else {
                         message = playersUpdate;
-                        if(message != null) {
+                        if (message != null) {
                             player.getSession().getBasicRemote().sendText(message);
                         }
                     }
-
                 }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -3,7 +3,8 @@ package org.forweb.drift.entity.drift;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.forweb.drift.utils.AngleSerializer;
-import org.forweb.drift.utils.DriftTimerTask;
+import org.forweb.drift.utils.ArrayUtils;
+import org.forweb.drift.services.DriftTimerService;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.services.LineService;
@@ -44,7 +45,7 @@ public class Room {
 
     private void startTimer() {
         timer = new Timer();
-        timer.scheduleAtFixedRate(new DriftTimerTask(this), TICK_DELAY, TICK_DELAY);
+        timer.scheduleAtFixedRate(new DriftTimerService(this), TICK_DELAY, TICK_DELAY);
     }
 
     public Room(double x, double y, List<BaseObject> initialObjects, IncrementalId ids) {
@@ -59,11 +60,12 @@ public class Room {
         objects = new HashSet<>(initialObjects);
     }
 
-    public void calculateImpacts(BaseObject obj) {
+    public BaseObject[] calculateImpacts(BaseObject obj) {
         Iterator<BaseObject> iterator = this.objects.iterator();
+        BaseObject[] out = null;
         while(iterator.hasNext()) {
             BaseObject obj1 = iterator.next();
-            if(obj1 != obj) {
+            if(obj1 != obj && obj1.isAlive()) {
                 double distance = LineService.getDistance(
                         new Point(obj.getX(), obj.getY()),
                         new Point(obj1.getX(), obj1.getY())
@@ -74,16 +76,29 @@ public class Room {
                         BaseObject[] imp1 = obj.onImpact(obj1, ids);
                         BaseObject[] imp2 = obj1.onImpact(obj, ids);
                         if(imp1 != null && imp1.length > 0) {
-                            Collections.addAll(this.objects, imp1);
+                            if(out == null) {
+                                out = imp1;
+                            } else {
+                                out = ArrayUtils.concat(out, imp2);
+                            }
                         }
                         if(imp2 != null && imp2.length > 0) {
-                            Collections.addAll(this.objects, imp2);
+                            if(out == null) {
+                                out = imp2;
+                            } else {
+                                out = ArrayUtils.concat(out, imp2);
+                            }
                         }
+
                     }
                 }
             }
         }
+
+
+        return out;
     }
+
 
     public Set<BaseObject> getObjects() {
         return objects;

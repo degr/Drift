@@ -17,7 +17,7 @@ public class Asteroid extends BaseObject{
         super(x, y, 0, null, id);
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        if(points == null || points.length > 0){
+        if(points == null || points.length == 0){
             int limit = (int)Math.ceil(random.nextDouble() * 7) + 3;
             double sector = Math.PI * 2 / limit;
             points = new Point[limit];
@@ -41,6 +41,7 @@ public class Asteroid extends BaseObject{
     }
 
     public void update(){
+        if(true)return;
         Vector v = getVector();
         setX(getX() + v.x);
         setY(getY() + v.y);
@@ -54,7 +55,7 @@ public class Asteroid extends BaseObject{
 
     @JsonIgnore
     @Override
-    public boolean isRelaivePoints() {
+    public boolean isRelativePoints() {
         return true;
     }
 
@@ -85,7 +86,7 @@ public class Asteroid extends BaseObject{
             for(i = start; i < points.length; i++) {
                 p2[i - start] = points[i];
             }
-            p2[start + 1] = points[0];
+            p2[p2.length - 1] = points[0];
             out[1] = new Asteroid(x, y, p2, ids.get());
         } else {
             out = new BaseObject[1];

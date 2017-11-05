@@ -16,7 +16,7 @@ public class Player {
         this.session = session;
         fullUpdate = true;
 
-
+/*
         new Thread(() -> {
             while(spaceShip.isAlive()) {
                 try {
@@ -26,7 +26,7 @@ public class Player {
                 }
                 fullUpdate = true;
             }
-        }).start();
+        }).start();*/
     }
 
     public Session getSession() {

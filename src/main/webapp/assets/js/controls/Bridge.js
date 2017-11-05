@@ -33,10 +33,17 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
                     break;
                 case 'ships':
                     var ships = object.ships;
-                    for(var i = 0; i < ships.length; i++) {
-                        this.spaceShipUpdater.simpleUpdate(ships[i]);
+                    if(ships) {
+                        for (var i = 0; i < ships.length; i++) {
+                            this.spaceShipUpdater.simpleUpdate(ships[i]);
+                        }
+                    }
+                    if(object.newObjects) {
+                        this.fullUpdater.append(object.newObjects);
                     }
                     break;
+                default:
+                    throw "Unknown update object. Type: " + object.type;
             }
         } catch (e) {
             console.log(e);

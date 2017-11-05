@@ -37,6 +37,9 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                     case 'f':
                         spaceShip.fireStarted = value === '1';
                         break;
+                    case 'i':
+                        spaceShip.invincible = value === '1';
+                        break;
                 }
             }
         }
@@ -44,30 +47,30 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
     };
     SpaceShipUpdater.prototype.update = function(source, id) {
         var context = this.context;
-        var out = new SpaceShip(source.x, source.y, context);
-        out.angle = source.angle;
-        out.vector = new Vector(source.vector.x, source.vector.y);
-        out.id = source.id;
-        out.invincible = source.invincible;
+        var spaceShip = new SpaceShip(source.x, source.y, context);
+        spaceShip.angle = source.angle;
+        spaceShip.vector = new Vector(source.vector.x, source.vector.y);
+        spaceShip.id = source.id;
+        spaceShip.invincible = source.invincible;
         var old = null;
-        if (id === out.id) {
+        if (id === spaceShip.id) {
             old = context.space.spaceShip;
             if (old) {
                 old.unListen();
             }
-            context.space.spaceShip = out;
+            context.space.spaceShip = spaceShip;
             var keyDownListener = function(event) {
                 var keyCode = event.keyCode;
                 if(keyCode === 39){
                     event.preventDefault();
-                    if(!out.turnToLeft) {
+                    if(!spaceShip.turnToLeft) {
                         context.socket.send("turn:1")
                     } else {
                         context.socket.send("turn:0")
                     }
                 } else if(keyCode === 37){
                     event.preventDefault();
-                    if(!out.turnToRight) {
+                    if(!spaceShip.turnToRight) {
                         context.socket.send("turn:-1")
                     } else {
                         context.socket.send("turn:0")
@@ -78,6 +81,7 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                 } else if(keyCode === 40){
                     event.preventDefault();
                 } else if(keyCode === 32) {
+                    spaceShip.fireStarted = true;
                     context.socket.send("fire:1")
                 }
             };
@@ -85,14 +89,14 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                 var keyCode = event.keyCode;
                 if(keyCode === 39){
                     event.preventDefault();
-                    if(out.turnToLeft) {
+                    if(spaceShip.turnToLeft) {
                         context.socket.send("turn:-1")
                     } else {
                         context.socket.send("turn:0")
                     }
                 } else if(keyCode === 37){
                     event.preventDefault();
-                    if(out.turnToRight) {
+                    if(spaceShip.turnToRight) {
                         context.socket.send("turn:1")
                     } else {
                         context.socket.send("turn:0")
@@ -101,23 +105,24 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                     event.preventDefault();
                     context.socket.send("accelerate:0");
                 } else if(keyCode === 32) {
+                    spaceShip.fireStarted = false;
                     context.socket.send("fire:0");
                 }
             };
-            out.listen(keyDownListener, keyUpListener);
+            spaceShip.listen(keyDownListener, keyUpListener);
         }
 
-        out.turnToLeft = source.turn === -1;
-        out.turnToRight = source.turn === 1;
+        spaceShip.turnToLeft = source.turn === -1;
+        spaceShip.turnToRight = source.turn === 1;
 
-        out.guns = source.guns.map(function (v) {
+        spaceShip.guns = source.guns.map(function (v) {
             var gun = new Gun(v.x, v.y);
             gun.angle = v.angle || 0;
             gun.color = v.color || 'red';
             gun.reload = v.reload || false;
             return gun;
         });
-        return out;
+        return spaceShip;
     };
 
     return SpaceShipUpdater;

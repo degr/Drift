@@ -4,6 +4,7 @@ import org.forweb.drift.entity.drift.Player;
 import org.forweb.drift.entity.drift.SpaceShip;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -17,13 +18,20 @@ public class PlayersToUpdate {
                 spaceShip.setUpdateRequire(false);
                 String data = String.valueOf(spaceShip.getId());
                 if (spaceShip.isUpdateAcceleration()) {
+                    spaceShip.setUpdateAcceleration(false);
                     data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0");
                 }
                 if (spaceShip.isUpdateTurn()) {
+                    spaceShip.setUpdateTurn(false);
                     data += "|t:" + spaceShip.getTurn();
                 }
                 if (spaceShip.isUpdateFire()) {
+                    spaceShip.setUpdateFire(false);
                     data += "|f:" + (spaceShip.isFireStarted() ? "1" : "0");
+                }
+                if (spaceShip.isUpdateInvincible()) {
+                    spaceShip.setUpdateInvincible(false);
+                    data += "|i:" + (spaceShip.isInvincible() ? "1" : "0");
                 }
                 if (ships == null) {
                     ships = new ArrayList<>();

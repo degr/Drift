@@ -89,7 +89,11 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
     };
 
     Bullet.prototype.getPoints = function(){
-        return [this.oldPoint, this.points[1]];
+        if(!this.oldPoint || !this.points[1]) {
+            return [];
+        } else {
+            return [this.oldPoint, this.points[1]];
+        }
     };
 
     return Bullet;
