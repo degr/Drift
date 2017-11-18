@@ -27,8 +27,10 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
         }
     }
 
-    Space.prototype.start = function () {
-
+    /**
+     * init method prepare Space object for correct work
+     */
+    Space.prototype.init = function () {
         var screen = ScreenUtils.window();
         var me = this;
         this.canvas = new LayeredCanvas(2, screen.width, screen.height);
@@ -37,6 +39,13 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
         this.appContext.space = this;
         this.appContext.screen = screen;
         document.body.appendChild(this.canvas.container);
+    };
+    /**
+     * start method run Space as background process
+     */
+    Space.prototype.start = function () {
+        this.init();
+        var me = this;
 
         this.timer = new Timer(function () {
             me.run()

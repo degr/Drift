@@ -19,7 +19,7 @@ public class PlayersToUpdate {
                 String data = String.valueOf(spaceShip.getId());
                 if (spaceShip.isUpdateAcceleration()) {
                     spaceShip.setUpdateAcceleration(false);
-                    data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0")+":"+spaceShip.getX() + ":" + spaceShip.getY() + ":" + spaceShip.getVector().x + ":" + spaceShip.getVector().y ;
+                    data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0") + ":" + spaceShip.getVector().x + ":" + spaceShip.getVector().y ;
                 }
                 if (spaceShip.isUpdateTurn()) {
                     spaceShip.setUpdateTurn(false);
@@ -27,7 +27,7 @@ public class PlayersToUpdate {
                 }
                 if (spaceShip.isUpdateFire()) {
                     spaceShip.setUpdateFire(false);
-                    data += "|f:" + (spaceShip.isFireStarted() ? "1" : "0");
+                    data += "|f:" + (spaceShip.isFireStarted() ? "1" : "0") + ":" + spaceShip.getVector().x + ":" + spaceShip.getVector().y ;
                 }
                 if (spaceShip.isUpdateInvincible()) {
                     spaceShip.setUpdateInvincible(false);

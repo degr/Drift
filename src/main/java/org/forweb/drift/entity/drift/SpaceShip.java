@@ -79,6 +79,8 @@ public class SpaceShip extends BaseObject{
                     bullet[0].correct(this);
                     Angle bulletAngle = angle.sum(Math.PI);
                     vector.append(new Vector(bulletAngle.cos() * 0.2, bulletAngle.sin() * 0.2));
+                    setUpdateFire(true);
+                    setUpdateRequire(true);
                 }
             }
         }

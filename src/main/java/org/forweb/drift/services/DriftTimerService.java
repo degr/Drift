@@ -9,9 +9,11 @@ import org.forweb.drift.utils.ArrayUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class DriftTimerService extends TimerTask {
 
@@ -79,11 +81,11 @@ public class DriftTimerService extends TimerTask {
             }
 
             String allObjects = null;
-            String message;
             try {
+                //List<SpaceShip> ghosts = me.getPlayers().stream().map(v -> v.getSpaceShip()).collect(Collectors.toList());
                 PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
-                String playersUpdate = newObjects != null || playersToUpdate.hasPlayers() ?
-                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects))
+                String playersUpdate = newObjects != null || playersToUpdate.hasPlayers() /*|| ghosts.size() > 0*/ ?
+                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects/*, ghosts*/))
                         : null;
 
                 for (Player player : me.getPlayers()) {
@@ -93,15 +95,12 @@ public class DriftTimerService extends TimerTask {
                         if (allObjects == null) {
                             allObjects = me.getMapper().writeValueAsString(new RoomDto(me, player));
                         }
-                        message = allObjects;
-
-                        if (message != null) {
-                            player.getSession().getBasicRemote().sendText(message);
-                        }
+                        player.getSession().getBasicRemote().sendText(allObjects);
                     } else {
-                        message = playersUpdate;
-                        if (message != null) {
-                            player.getSession().getBasicRemote().sendText(message);
+                        if (playersUpdate != null) {
+                            player.getSession().getBasicRemote().sendText(playersUpdate);
+                        } else {
+                            player.getSession().getBasicRemote().sendText("1");
                         }
                     }
                 }

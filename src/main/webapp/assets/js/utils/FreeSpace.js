@@ -36,10 +36,10 @@ Engine.define('FreeSpace', ['Bridge', 'Space', 'WebSocketUtils', 'Profile'], fun
             );
 
             context.bridge = bridge;
-            this.space.start();
+            this.space.init();
         },
         stop: function() {
-            this.space.stop();
+            //this.space.stop();
             this.started = false;
             if(this.clb) {
                 this.clb();

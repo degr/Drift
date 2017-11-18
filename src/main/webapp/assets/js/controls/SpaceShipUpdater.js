@@ -9,6 +9,16 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
         this.context = context;
     }
 
+    SpaceShipUpdater.prototype.updatePosition = function (spaceShip, vSX, vSY) {
+        var vX = parseFloat(vSX);
+        var vY = parseFloat(vSY);
+        var dX = vX - spaceShip.vector.x;
+        var dY = vY - spaceShip.vector.y;
+        spaceShip.vector.x = vX;
+        spaceShip.vector.y = vY;
+        spaceShip.x += dX;
+        spaceShip.y += dY;
+    };
     SpaceShipUpdater.prototype.simpleUpdate = function(string) {
         var data = string.split('|');
         var id = parseInt(data[0]);
@@ -20,10 +30,7 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                 switch (pair[0]) {
                     case 'a':
                         spaceShip.hasAcceleration = value === '1';
-                        spaceShip.x = parseFloat(pair[2]);
-                        spaceShip.y = parseFloat(pair[3]);
-                        spaceShip.vector.x = parseFloat(pair[4]);
-                        spaceShip.vector.y = parseFloat(pair[5]);
+                        this.updatePosition(spaceShip, pair[2], pair[3]);
                         break;
                     case 't':
                         if(value === '1') {
@@ -41,6 +48,7 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                         break;
                     case 'f':
                         spaceShip.fireStarted = value === '1';
+                        this.updatePosition(spaceShip, pair[2], pair[3]);
                         break;
                     case 'i':
                         spaceShip.invincible = value === '1';
@@ -144,6 +152,20 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
         });
         return spaceShip;
     };
+
+    /*SpaceShipUpdater.prototype.createGhost = function(data) {
+        var s = new SpaceShip(data.x, data.y, this.context);
+        s.isGhost = true;
+        s.alive = data.alive;
+        s.angle = data.angle;
+        s.fireStarted = data.fireStarted;
+        s.hasAcceleration = data.hasAcceleration;
+        s.invincible = true;
+        s.turn = data.turn;
+        s.vector = new Vector(data.vector.x, data.vector.y);
+
+        return s;
+    };*/
 
     return SpaceShipUpdater;
 });

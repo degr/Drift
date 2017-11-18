@@ -26,28 +26,48 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
     Bridge.prototype.onMessage = function (r) {
         var data = r.data;
         try {
+
+
             var object = JSON.parse(data);
-            switch (object.type) {
-                case "fullUpdate":
-                    this.fullUpdater.update(object);
-                    break;
-                case 'ships':
-                    var ships = object.ships;
-                    if(ships) {
-                        for (var i = 0; i < ships.length; i++) {
-                            this.spaceShipUpdater.simpleUpdate(ships[i]);
+            if(object === '1') {
+
+            } else {
+                switch (object.type) {
+                    case "fullUpdate":
+                        this.fullUpdater.update(object);
+                        break;
+                    case 'ships':
+                        var ships = object.ships;
+                        if (ships) {
+                            for (var i = 0; i < ships.length; i++) {
+                                this.spaceShipUpdater.simpleUpdate(ships[i]);
+                            }
                         }
-                    }
-                    if(object.newObjects) {
-                        this.fullUpdater.append(object.newObjects);
-                    }
-                    break;
-                default:
-                    throw "Unknown update object. Type: " + object.type;
+                        if (object.newObjects) {
+                            this.fullUpdater.append(object.newObjects);
+                        }
+                        /*var obj = this.context.space.objects;
+                        var l = obj.length;
+                        while(l--) {
+                            if(obj[l].isGhost) {
+                                obj.splice(l, 1);
+                            }
+                        }
+                        if(object.ghosts) {
+                            for(var i = 0; i < object.ghosts.length; i++) {
+                                obj.push(this.spaceShipUpdater.createGhost(object.ghosts[i]));
+                            }
+                        }*/
+                        break;
+                    default:
+                        throw "Unknown update object. Type: " + object.type;
+                }
             }
         } catch (e) {
             console.log(e);
         }
+
+        this.context.space.run();
     };
 
 

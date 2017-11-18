@@ -10,7 +10,6 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
     var Gun = Engine.require("Gun");
 
     function SpaceShip(x,y, context){
-        window.appContext = context;
         RelativePointsObject.apply(this, [x, y]);
         this.points = [
             new Point(-12, 12),
