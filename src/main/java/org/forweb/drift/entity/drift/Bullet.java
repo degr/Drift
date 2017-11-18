@@ -71,13 +71,14 @@ public class Bullet extends BaseObject {
         this.ship = spaceShip.getId();
     }
 
-    public void update() {
+    public BaseObject[] update() {
         this.oldPoint = this.points[0];
         Vector vector = getVector();
         this.setX(getX() + vector.x);
         this.setY(getY() + vector.y);
         this.points[0] = new Point(this.points[0].getX() + vector.x, this.points[0].getY() + vector.y);
         this.points[1] = new Point(this.points[1].getX() + vector.x, this.points[1].getY() + vector.y);
+        return null;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class Bullet extends BaseObject {
         }
     }
 
-    public int getShipId() {
+    public int getShip() {
         return ship;
     }
 }

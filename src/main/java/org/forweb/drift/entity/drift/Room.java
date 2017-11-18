@@ -26,6 +26,8 @@ public class Room {
     private ObjectMapper mapper;
     private IncrementalId ids;
 
+    private long lastFullUpdate = 0;
+
     public Player newPlayer(Session session) {
         int id = ids.get();
         boolean nobody = players.isEmpty();
@@ -57,8 +59,10 @@ public class Room {
         this.x = x;
         this.y = y;
         players = new HashSet<>();
+
         objects = new HashSet<>(initialObjects);
     }
+
 
     public BaseObject[] calculateImpacts(BaseObject obj) {
         Iterator<BaseObject> iterator = this.objects.iterator();
@@ -113,7 +117,7 @@ public class Room {
             return;
         }
         players.remove(player);
-        objects.remove(player.getSpaceShip());
+        player.getSpaceShip().setAlive(false);
         if (players.isEmpty()) {
             timer.cancel();
         }
@@ -137,5 +141,14 @@ public class Room {
 
     public ObjectMapper getMapper() {
         return mapper;
+    }
+
+    public void resetFullUpdate() {
+        lastFullUpdate = System.currentTimeMillis();
+    }
+
+    public boolean isFullUpdate() {
+        return false;
+        //return System.currentTimeMillis() > lastFullUpdate + 1000;
     }
 }

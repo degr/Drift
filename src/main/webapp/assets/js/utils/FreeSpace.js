@@ -15,7 +15,8 @@ Engine.define('FreeSpace', ['Bridge', 'Space', 'WebSocketUtils', 'Profile'], fun
             this.started = true;
             this.space = new Space(5000, 5000);
             var context = {
-                space: this.space
+                space: this.space,
+                freeSpace: true
             };
             var bridge = new Bridge(context);
             context.socket = WebSocketUtils.getSocket(

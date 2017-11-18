@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.function.Consumer;
 
 public class DriftTimerService extends TimerTask {
 
@@ -35,17 +36,24 @@ public class DriftTimerService extends TimerTask {
                 }*/
                 if (obj.isAlive()) {
                     //if(GAME_IN_PLAY) {
-                        obj.update();
+                    BaseObject[] generated = obj.update();
+                    if(generated != null) {
+                        if(newObjects == null) {
+                            newObjects = generated;
+                        } else {
+                            newObjects = ArrayUtils.concat(newObjects, generated);
+                        }
+                    }
                     //}
                     if (obj.getX() > me.getX()) {
-                        obj.setX(0);
+                        obj.setX(obj.getX() - me.getX());
                     } else if (obj.getX() < 0) {
-                        obj.setX(me.getX());
+                        obj.setX(me.getX() + obj.getX());
                     }
                     if (obj.getY() > me.getY()) {
-                        obj.setY(0);
+                        obj.setY(obj.getY() - me.getY());
                     } else if (obj.getY() < 0) {
-                        obj.setY(me.getY());
+                        obj.setY(me.getY() + obj.getY());
                     }
                     BaseObject[] nObjects = me.calculateImpacts(obj);
                     if (nObjects != null) {
@@ -80,7 +88,7 @@ public class DriftTimerService extends TimerTask {
 
                 for (Player player : me.getPlayers()) {
 
-                    if (player.isFullUpdate()) {
+                    if (player.isFullUpdate() || me.isFullUpdate()) {
                         player.setFullUpdate(false);
                         if (allObjects == null) {
                             allObjects = me.getMapper().writeValueAsString(new RoomDto(me, player));
@@ -97,8 +105,9 @@ public class DriftTimerService extends TimerTask {
                         }
                     }
                 }
-
-
+                if(me.isFullUpdate()) {
+                    me.resetFullUpdate();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

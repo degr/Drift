@@ -65,14 +65,14 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
             if (obj.isAlive()) {
                 obj.update();
                 if (obj.x > me.width) {
-                    obj.x = 0;
+                    obj.x = obj.x - me.width;
                 } else if (obj.x < 0) {
-                    obj.x = me.width;
+                    obj.x = me.width + obj.x;
                 }
                 if (obj.y > me.height) {
-                    obj.y = 0;
+                    obj.y = obj.y - me.height;
                 } else if (obj.y < 0) {
-                    obj.y = me.height;
+                    obj.y = me.height + obj.y;
                 }
                 obj.draw(context, this.appContext);
                 me.calculateImpacts(obj);

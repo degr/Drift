@@ -64,12 +64,12 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
                 mapped = new Bullet(source.x, source.y, source.angle);
                 mapped.vector = new Vector(source.vector.x, source.vector.y);
                 mapped.id = source.id;
-                if (source.spaceShip) {
-                    var spaceShip = ObjectsSearch.findSpaceShip(oldObjects, source.ship);
-                    if (spaceShip) {
-                        mapped.ship = spaceShip;
-                    }
-                }
+                mapped.ship = source.ship;
+                mapped.points = [
+                    new Point(source.points[0].x, source.points[0].y),
+                    new Point(source.points[1].x, source.points[1].y)
+                ];
+                mapped.oldPoint = mapped.points[0];
                 break;
             case 'ship':
                 mapped = this.spaceSheepUpdater.update(source, playerId);

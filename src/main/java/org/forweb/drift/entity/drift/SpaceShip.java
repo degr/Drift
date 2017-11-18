@@ -51,7 +51,7 @@ public class SpaceShip extends BaseObject{
         return isAlive;
     }
 
-    public void update() {
+    public BaseObject[] update() {
         updateCount++;
         Angle angle = getAngle();
         Vector vector = getVector();
@@ -69,18 +69,20 @@ public class SpaceShip extends BaseObject{
 
         setX(getX() + vector.x);
         setY(getY() + vector.y);
+        Bullet[] bullet = null;
         if(this.fireStarted) {
             for(int i = 0; i < this.guns.length; i++) {
                 Gun gun = this.guns[i];
                 if(gun.canFire()) {
-                    Bullet bullet = gun.fire(ids);
-                    bullet.correct(this);
+                    bullet = new Bullet[1];
+                    bullet[0] = gun.fire(ids);
+                    bullet[0].correct(this);
                     Angle bulletAngle = angle.sum(Math.PI);
                     vector.append(new Vector(bulletAngle.cos() * 0.2, bulletAngle.sin() * 0.2));
-                    room.addObject(bullet);
                 }
             }
         }
+        return bullet;
     }
 
 
@@ -98,7 +100,7 @@ public class SpaceShip extends BaseObject{
     @JsonIgnore
     public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
         if(object instanceof Bullet) {
-            if(((Bullet) object).getShipId() == this.getId()) {
+            if(((Bullet) object).getShip() == this.getId()) {
                 return null;
             }
         } else if(object instanceof Gun) {
@@ -146,7 +148,7 @@ public class SpaceShip extends BaseObject{
     public boolean hasImpact(BaseObject baseObject) {
         if(baseObject instanceof Explosion) {
             return false;
-        } else if(baseObject instanceof Bullet && ((Bullet) baseObject).getShipId() == this.getId()) {
+        } else if(baseObject instanceof Bullet && ((Bullet) baseObject).getShip() == this.getId()) {
             return false;
         } else {
             return super.hasImpact(baseObject);

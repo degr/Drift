@@ -38,7 +38,6 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         return this.alive;
     };
     Asteroid.prototype.update = function(){
-        if(true)return;
         this.x += this.vector.x;
         this.y += this.vector.y;
         this.angle += this.rotationSpeed;

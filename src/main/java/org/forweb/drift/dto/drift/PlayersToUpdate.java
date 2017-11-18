@@ -19,11 +19,11 @@ public class PlayersToUpdate {
                 String data = String.valueOf(spaceShip.getId());
                 if (spaceShip.isUpdateAcceleration()) {
                     spaceShip.setUpdateAcceleration(false);
-                    data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0");
+                    data += "|a:" + (spaceShip.isHasAcceleration() ? "1" : "0")+":"+spaceShip.getX() + ":" + spaceShip.getY() + ":" + spaceShip.getVector().x + ":" + spaceShip.getVector().y ;
                 }
                 if (spaceShip.isUpdateTurn()) {
                     spaceShip.setUpdateTurn(false);
-                    data += "|t:" + spaceShip.getTurn();
+                    data += "|t:" + spaceShip.getTurn()+":" + spaceShip.getAngle().doubleValue();
                 }
                 if (spaceShip.isUpdateFire()) {
                     spaceShip.setUpdateFire(false);

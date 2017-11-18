@@ -11,6 +11,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Date;
 
 @ServerEndpoint(value = "/drift", configurator = SpringConfigurator.class)
 public class Endpoint {
@@ -63,15 +64,17 @@ public class Endpoint {
                 }
                 break;
             case "position":
-                /*System.out.println("-------------");
-                System.out.println(parts[1]);
-                long time = ((new Date()).getTime());
-                System.out.println(time + "|" + spaceShip.getX()+ "|" + spaceShip.getY() +  "|" + spaceShip.updateCount);
-                String[] p = parts[1].split("\\|");
-                System.out.println((time - Long.parseLong(p[0])) + "|" +
-                        (spaceShip.getX() - Double.parseDouble(p[1])) + "|" +
-                        (spaceShip.getY() - Double.parseDouble(p[2]))
-                );*/
+
+               // System.out.println("-------------");
+               // System.out.println(parts[1]);
+               // long time = ((new Date()).getTime());
+               // System.out.println(time + "|" + spaceShip.getX()+ "|" + spaceShip.getY() +  "|" + spaceShip.getTurn());
+               // String[] p = parts[1].split("\\|");
+               // System.out.println(
+               //         (spaceShip.getX() - Double.parseDouble(p[0])) + "|" +
+               //         (spaceShip.getY() - Double.parseDouble(p[1]) + "|" +
+               //         p[2] + "|" + spaceShip.getTurn())
+               // );
                 break;
             case "fire":
                 if(spaceShip.isInvincible()) {

@@ -49,16 +49,22 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
 
         this.x+=this.vector.x;
         this.y+=this.vector.y;
-        this.context.socket.send("position:" + (new Date()).getTime() +"|"+ this.x + "|" + this.y + "|" + this.updateCount);
+
+        //this.context.socket.send("position:" + this.x+"|" + this.y + "|" + (((this.turnToLeft && this.turnToRight) || (!this.turnToLeft && !this.turnToRight)) ? '0' : (this.turnToRight ? '1' : '-1')));
+
         if(this.fireStarted) {
             for(var i = 0; i< this.guns.length; i++) {
                 var gun = this.guns[i];
                 if(gun.canFire()) {
-                    var bullet = gun.fire();
-                    bullet.correct(this);
-                    var angle = Geometry.truncate(this.angle + Math.PI);
-                    this.vector.append(new Vector(Math.cos(angle) * 0.2, Math.sin(angle)* 0.2));
-                    this.context.space.objects.push(bullet);
+                    if(this.context.freeSpace) {
+                        gun.fire();
+                    } else {
+                        var bullet = gun.fire();
+                        bullet.correct(this);
+                        var angle = Geometry.truncate(this.angle + Math.PI);
+                        this.vector.append(new Vector(Math.cos(angle) * 0.2, Math.sin(angle) * 0.2));
+                        this.context.space.objects.push(bullet);
+                    }
                 }
             }
         }
@@ -123,8 +129,11 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
     };
 
     SpaceShip.prototype.onImpact = function(object, appContext) {
+        if(object.isGhost === true) {
+            return [];
+        }
         if(object instanceof Bullet) {
-            if(object.ship === this) {
+            if(object.ship === this.id) {
                 return [];
             }
         } else if(object instanceof Gun) {

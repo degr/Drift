@@ -128,8 +128,8 @@ abstract public class BaseObject {
         return null;
     }
 
-    public void update() {
-
+    public BaseObject[] update() {
+        return null;
     }
 
     public boolean isAlive() {

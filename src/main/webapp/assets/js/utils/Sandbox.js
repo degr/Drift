@@ -19,6 +19,7 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
             this.clb = clb;
             this.space = new Space(maxX, maxY);
             var spaceShip = new SpaceShip(maxX / 2, maxY / 2, {
+                freeSpace: false,
                 space: this.space
             });
             var keyDownListener = function(event) {
@@ -26,33 +27,33 @@ Engine.define('Sandbox', ['Space', 'SpaceShip', 'AsteroidFactory'], function(){
                     spaceShip.invincible = false;
                 }
                 var keyCode = event.keyCode;
-                if(keyCode == 39){
+                if(keyCode === 39){
                     event.preventDefault();
                     spaceShip.turnToRight = true;
-                } else if(keyCode == 37){
+                } else if(keyCode === 37){
                     event.preventDefault();
                     spaceShip.turnToLeft = true;
-                } else if(keyCode == 38){
+                } else if(keyCode === 38){
                     event.preventDefault();
                     spaceShip.hasAcceleration = true;
-                } else if(keyCode == 40){
+                } else if(keyCode === 40){
                     event.preventDefault();
-                } else if(keyCode == 32) {
+                } else if(keyCode === 32) {
                     spaceShip.fireStarted = true;
                 }
             };
             var keyUpLitener = function(event){
                 var keyCode = event.keyCode;
-                if(keyCode == 39){
+                if(keyCode === 39){
                     event.preventDefault();
                     spaceShip.turnToRight = false;
-                } else if(keyCode == 37){
+                } else if(keyCode === 37){
                     event.preventDefault();
                     spaceShip.turnToLeft = false;
-                } else if(keyCode == 38){
+                } else if(keyCode === 38){
                     event.preventDefault();
                     spaceShip.hasAcceleration = false;
-                } else if(keyCode == 32) {
+                } else if(keyCode === 32) {
                     spaceShip.fireStarted = false;
                 }
             };

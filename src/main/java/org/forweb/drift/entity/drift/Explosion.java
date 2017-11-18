@@ -29,11 +29,12 @@ public class Explosion extends BaseObject {
         return false;
     }
 
-    public void update() {
+    public BaseObject[] update() {
         this.life--;
         Vector vector = getVector();
         setX(getX() + vector.x);
         setY(getY() + vector.y);
+        return null;
     }
 
     @Override

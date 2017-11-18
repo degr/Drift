@@ -39,7 +39,7 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
             Bullet.speed * Math.sin(this.angle)
         );
         this.vector.append(spaceShip.vector);
-        this.ship = spaceShip;
+        this.ship = spaceShip.id;
     };
 
     Bullet.speed = 5;
@@ -81,7 +81,7 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
     };
 
     Bullet.prototype.onImpact = function(object) {
-        if(object !== this.ship) {
+        if(object.id !== this.ship) {
             this.alive = false;
             return [new Explosion(this.x, this.y, this.vector, 8, 60)];
         }

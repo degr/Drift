@@ -40,12 +40,12 @@ public class Asteroid extends BaseObject{
         return this.alive;
     }
 
-    public void update(){
-        if(true)return;
+    public BaseObject[] update(){
         Vector v = getVector();
         setX(getX() + v.x);
         setY(getY() + v.y);
         getAngle().append(this.rotationSpeed);
+        return null;
     }
 
     @Override
