@@ -9,6 +9,7 @@ public class Player {
 
     private boolean fullUpdate;
     private Session session;
+    private boolean needInfo;
 
     public Player(int id, Session session, SpaceShip spaceShip) {
         this.spaceShip = spaceShip;
@@ -56,5 +57,13 @@ public class Player {
 
     public int getId() {
         return id;
+    }
+
+    public void setNeedInfo(boolean needInfo) {
+        this.needInfo = needInfo;
+    }
+
+    public boolean isNeedInfo() {
+        return needInfo;
     }
 }

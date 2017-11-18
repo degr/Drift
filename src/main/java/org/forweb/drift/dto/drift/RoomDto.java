@@ -11,17 +11,11 @@ public class RoomDto implements UpdateDto {
     private Set<BaseObject> objects;
     private double x;
     private double y;
-    private int id;
 
-    public RoomDto(Room room, Player player) {
+    public RoomDto(Room room) {
         objects = room.getObjects();
         x = room.getX();
         y = room.getY();
-        id = player.getId();
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Set<BaseObject> getObjects() {

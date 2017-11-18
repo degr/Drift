@@ -13,7 +13,7 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
     }
 
     Bridge.prototype.onOpen = function (r) {
-        console.log('on open', r)
+        this.context.socket.send('info')
     };
     Bridge.prototype.onClose = function (r) {
         console.log('on close', r)
@@ -26,13 +26,11 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
     Bridge.prototype.onMessage = function (r) {
         var data = r.data;
         try {
-
-
             var object = JSON.parse(data);
             if(object !== 1) {
                 switch (object.type) {
                     case "fullUpdate":
-                        this.fullUpdater.update(object);
+                        this.fullUpdater.update(object, this.context.spaceShipId);
                         break;
                     case 'ships':
                         var ships = object.ships;
@@ -56,6 +54,10 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
                                 obj.push(this.spaceShipUpdater.createGhost(object.ghosts[i]));
                             }
                         }*/
+                        break;
+                    case 'info':
+                        this.context.spaceShipId = object.spaceShipId;
+                        this.context.playerId = object.playerId;
                         break;
                     default:
                         throw "Unknown update object. Type: " + object.type;

@@ -28,7 +28,7 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
         }
     };
 
-    FullUpdater.prototype.update = function (object) {
+    FullUpdater.prototype.update = function (object, id) {
         var startDate = new Date();
         console.log("full update starts: ", startDate.getMilliseconds());
         var objects = [];
@@ -41,14 +41,14 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
         while (length--) {
             var source = incoming[length];
             objects.push(
-                this.map(source, object.id, oldObjects)
+                this.map(source, id)
             );
         }
         var endDate = new Date();
         console.log("full update ends: ", endDate.getMilliseconds(), endDate.getMilliseconds() - startDate.getMilliseconds());
     };
 
-    FullUpdater.prototype.map = function(source, playerId, oldObjects) {
+    FullUpdater.prototype.map = function(source, playerId) {
         var mapped;
         switch (source.type) {
             case 'asteroid':

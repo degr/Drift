@@ -1,19 +1,18 @@
 package org.forweb.drift.services;
 
 
+import org.forweb.drift.dto.drift.InfoDto;
 import org.forweb.drift.dto.PlayersDto;
 import org.forweb.drift.dto.drift.PlayersToUpdate;
 import org.forweb.drift.dto.drift.RoomDto;
 import org.forweb.drift.entity.drift.*;
 import org.forweb.drift.utils.ArrayUtils;
 
+import javax.websocket.RemoteEndpoint;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class DriftTimerService extends TimerTask {
 
@@ -70,34 +69,42 @@ public class DriftTimerService extends TimerTask {
 
 
             if (newObjects != null) {
-                for (BaseObject object : newObjects) {
-                    objects.add(object);
+                int l = newObjects.length;
+                while (l-- > 0){
+                    objects.add(newObjects[l]);
                 }
             }
 
-            String allObjects = null;
             try {
                 //List<SpaceShip> ghosts = me.getPlayers().stream().map(v -> v.getSpaceShip()).collect(Collectors.toList());
-                PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
-                String playersUpdate = newObjects != null || playersToUpdate.hasPlayers() /*|| ghosts.size() > 0*/ ?
-                        me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects/*, ghosts*/))
-                        : null;
+                String feed;
+                if(me.isFullUpdate()) {
+                    feed = me.getMapper().writeValueAsString(new RoomDto(me));
+                } else {
+                    PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
+                    feed = newObjects != null || playersToUpdate.hasPlayers() /*|| ghosts.size() > 0*/ ?
+                            me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects/*, ghosts*/))
+                            : null;
 
+                }
                 for (Player player : me.getPlayers()) {
+                    RemoteEndpoint.Basic remote = player.getSession().getBasicRemote();
+                    if(player.isNeedInfo()) {
+                        remote.sendText(me.getMapper().writeValueAsString(new InfoDto(player)));
+                        player.setNeedInfo(false);
+                    }
 
                     if (player.isFullUpdate() || me.isFullUpdate()) {
                         player.setFullUpdate(false);
-                        if (allObjects == null) {
-                            allObjects = me.getMapper().writeValueAsString(new RoomDto(me, player));
-                        }
-                        player.getSession().getBasicRemote().sendText(allObjects);
+                        remote.sendText(feed);
                     } else {
-                        if (playersUpdate != null) {
-                            player.getSession().getBasicRemote().sendText(playersUpdate);
+                        if (feed != null) {
+                            remote.sendText(feed);
                         } else {
-                            player.getSession().getBasicRemote().sendText("1");
+                            remote.sendText("1");
                         }
                     }
+
                 }
                 if(me.isFullUpdate()) {
                     me.resetFullUpdate();

@@ -73,6 +73,9 @@ public class Endpoint {
                //         p[2] + "|" + spaceShip.getTurn())
                // );
                 break;
+            case "info":
+                player.setNeedInfo(true);
+                break;
             case "fire":
                 if(spaceShip.isInvincible()) {
                     spaceShip.setInvincible(false);

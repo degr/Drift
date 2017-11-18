@@ -24,7 +24,7 @@ public class GameContext {
     @PostConstruct
     public void postConstruct() {
         IncrementalId ids = new IncrementalId();
-        List<Asteroid> asteroidList = asteroidService.createMulty(5, 5000, 5000, ids);
+        List<Asteroid> asteroidList = asteroidService.createMulty(100, 5000, 5000, ids);
         List<BaseObject> baseObjects = new ArrayList<>(asteroidList);
         room = new Room(5000, 5000, baseObjects, ids);
     }

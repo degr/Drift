@@ -60,7 +60,7 @@ public class Asteroid extends BaseObject{
     }
 
     public boolean hasImpact(BaseObject baseObject) {
-        if(baseObject instanceof Asteroid || baseObject instanceof Explosion) {
+        if(/*baseObject instanceof Asteroid ||*/ baseObject instanceof Explosion) {
             return false;
         } else {
             return super.hasImpact(baseObject);
