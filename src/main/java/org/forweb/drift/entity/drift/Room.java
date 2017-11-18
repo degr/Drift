@@ -28,6 +28,12 @@ public class Room {
 
     private long lastFullUpdate = 0;
 
+    public void setForceFullUpdate(boolean forceFullUpdate) {
+        this.forceFullUpdate = forceFullUpdate;
+    }
+
+    private boolean forceFullUpdate = false;
+
     public Player newPlayer(Session session) {
         int id = ids.get();
         boolean nobody = players.isEmpty();
@@ -42,6 +48,7 @@ public class Room {
         if(nobody) {
             startTimer();
         }
+        setForceFullUpdate(true);
         return player;
     }
 
@@ -121,6 +128,7 @@ public class Room {
         if (players.isEmpty()) {
             timer.cancel();
         }
+        setForceFullUpdate(true);
     }
 
     public double getX() {
@@ -145,10 +153,11 @@ public class Room {
 
     public void resetFullUpdate() {
         lastFullUpdate = System.currentTimeMillis();
+        setForceFullUpdate(false);
     }
 
     public boolean isFullUpdate() {
-        return false;
-        //return System.currentTimeMillis() > lastFullUpdate + 1000;
+        //force full update each 10 seconds
+        return (System.currentTimeMillis() > lastFullUpdate + 10000) || forceFullUpdate;
     }
 }

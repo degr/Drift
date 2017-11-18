@@ -29,9 +29,7 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
 
 
             var object = JSON.parse(data);
-            if(object === '1') {
-
-            } else {
+            if(object !== 1) {
                 switch (object.type) {
                     case "fullUpdate":
                         this.fullUpdater.update(object);

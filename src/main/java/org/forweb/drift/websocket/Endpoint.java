@@ -37,9 +37,6 @@ public class Endpoint {
         String[] parts = message.split(":");
         SpaceShip spaceShip = player.getSpaceShip();
         switch (parts[0]) {
-            case "stopGame":
-                //GAME_IN_PLAY = false;
-                break;
             case "turn":
                 if(spaceShip.isInvincible()) {
                     spaceShip.setInvincible(false);

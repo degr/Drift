@@ -106,8 +106,8 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
                 if (distance < 300) {
                     var impact = obj.hasImpact(this.objects[length]);
                     if (impact) {
-                        var imp1 = obj.onImpact(this.objects[length], this.appContext);
-                        var imp2 = this.objects[length].onImpact(obj, this.appContext);
+                        var imp1 = obj.onImpact(this.objects[length]);
+                        var imp2 = this.objects[length].onImpact(obj);
                         this.objects = this.objects.concat(imp1, imp2);
                     }
                 }

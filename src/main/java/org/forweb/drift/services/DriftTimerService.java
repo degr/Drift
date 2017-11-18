@@ -23,7 +23,6 @@ public class DriftTimerService extends TimerTask {
         this.me = room;
     }
 
-    //public static boolean GAME_IN_PLAY = true;
 
     @Override
     public void run() {
@@ -33,11 +32,8 @@ public class DriftTimerService extends TimerTask {
             BaseObject[] newObjects = null;
             while (iterator.hasNext()) {
                 BaseObject obj = iterator.next();
-                /*if(!GAME_IN_PLAY && obj instanceof Bullet) {
-                    System.out.println("bullet");
-                }*/
+
                 if (obj.isAlive()) {
-                    //if(GAME_IN_PLAY) {
                     BaseObject[] generated = obj.update();
                     if(generated != null) {
                         if(newObjects == null) {
@@ -46,7 +42,6 @@ public class DriftTimerService extends TimerTask {
                             newObjects = ArrayUtils.concat(newObjects, generated);
                         }
                     }
-                    //}
                     if (obj.getX() > me.getX()) {
                         obj.setX(obj.getX() - me.getX());
                     } else if (obj.getX() < 0) {

@@ -7,17 +7,16 @@ import org.forweb.geometry.misc.Vector;
 public class Gun extends BaseObject{
 
     private Vector vector;
-    private String color;
     private boolean reload;
+    @JsonIgnore
     private long lastFireTime;
 
     public Gun(double x, double y, int id) {
-        this(x, y, 0, "red", id);
+        this(x, y, 0, id);
     }
-    public Gun(double x, double y, double angle, String color, int id) {
+    public Gun(double x, double y, double angle, int id) {
         super(x, y, angle, id);
         vector = new Vector(0, 0);
-        this.color = color;
         this.reload = false;
         lastFireTime = 0;
     }
@@ -59,14 +58,6 @@ public class Gun extends BaseObject{
         this.vector = vector;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public boolean isReload() {
         return reload;
     }
@@ -75,6 +66,7 @@ public class Gun extends BaseObject{
         this.reload = reload;
     }
 
+    @JsonIgnore
     public long getLastFireTime() {
         return lastFireTime;
     }

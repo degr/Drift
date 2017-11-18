@@ -146,7 +146,7 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
         spaceShip.guns = source.guns.map(function (v) {
             var gun = new Gun(v.x, v.y);
             gun.angle = v.angle || 0;
-            gun.color = v.color || 'red';
+            gun.color = 'red';
             gun.reload = v.reload || false;
             return gun;
         });

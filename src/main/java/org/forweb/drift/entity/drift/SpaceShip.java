@@ -17,8 +17,6 @@ public class SpaceShip extends BaseObject{
     private boolean fireStarted;
     private boolean isAlive;
 
-    public int updateCount = 0;
-
     @JsonIgnore
     private Room room;
 
@@ -33,6 +31,7 @@ public class SpaceShip extends BaseObject{
     private boolean updateFire;
     @JsonIgnore
     private boolean updateInvincible;
+    @JsonIgnore
     private boolean updateRequire;
 
     public SpaceShip(double x, double y, int id, Room room) {
@@ -52,7 +51,6 @@ public class SpaceShip extends BaseObject{
     }
 
     public BaseObject[] update() {
-        updateCount++;
         Angle angle = getAngle();
         Vector vector = getVector();
         if(this.hasAcceleration){
@@ -210,6 +208,7 @@ public class SpaceShip extends BaseObject{
         this.updateRequire = updateRequire;
     }
 
+    @JsonIgnore
     public boolean isUpdateRequire() {
         return updateRequire;
     }

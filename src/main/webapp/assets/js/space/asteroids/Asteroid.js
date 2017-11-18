@@ -62,28 +62,32 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         context.restore();
     };
 
-    Asteroid.prototype.onImpact = function(object, appContext) {
-        if(!(object instanceof Asteroid)) {
-            this.alive = false;
-            var out = [new Explosion(this.x, this.y, this.vector, 30)];
-            if(this.active && this.points.length > 3) {
-                var start = Math.ceil(this.points.length / 2);
-                var p1 = [], i;
-                for(i = 0; i <= start; i++) {
-                    p1.push(this.points[i]);
-                }
-                out.push(new Asteroid(this.x, this.y, p1, this.active));
-                var p2 = [];
-                for(i = start; i < this.points.length; i++) {
-                    p2.push(this.points[i]);
-                }
-                p2.push(this.points[0]);
-                out.push(new Asteroid(this.x, this.y, p2, this.active));
-            }
-            return out;
+    Asteroid.prototype.hasImpact = function(object) {
+        if(object instanceof Asteroid) {
+            return false
         } else {
-            return [];
+            return RelativePointsObject.prototype.hasImpact.apply(this, arguments);
         }
+    };
+
+    Asteroid.prototype.onImpact = function(object) {
+        this.alive = false;
+        var out = [new Explosion(this.x, this.y, this.vector, 30)];
+        if(this.active && this.points.length > 3) {
+            var start = Math.ceil(this.points.length / 2);
+            var p1 = [], i;
+            for(i = 0; i <= start; i++) {
+                p1.push(this.points[i]);
+            }
+            out.push(new Asteroid(this.x, this.y, p1, this.active));
+            var p2 = [];
+            for(i = start; i < this.points.length; i++) {
+                p2.push(this.points[i]);
+            }
+            p2.push(this.points[0]);
+            out.push(new Asteroid(this.x, this.y, p2, this.active));
+        }
+        return out;
     };
 
     return Asteroid;

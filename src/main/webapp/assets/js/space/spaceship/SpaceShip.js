@@ -25,13 +25,11 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         this.fireStarted = false;
         this.alive = true;
         this.context = context;
-        this.updateCount = 0;
     }
     SpaceShip.prototype = Object.create(RelativePointsObject.prototype);
     SpaceShip.prototype.constructor = SpaceShip;
 
     SpaceShip.prototype.update = function(){
-        this.updateCount++;
         if(this.hasAcceleration){
             var acceleration = 0.1;
             var x = Math.cos(this.angle)*acceleration;
@@ -127,17 +125,17 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         context.restore();
     };
 
-    SpaceShip.prototype.onImpact = function(object, appContext) {
-        if(object.isGhost === true) {
-            return [];
-        }
-        if(object instanceof Bullet) {
-            if(object.ship === this.id) {
-                return [];
-            }
+    SpaceShip.prototype.hasImpact = function(object) {
+        if(object instanceof Bullet && object.ship === this.id) {
+            return false;
         } else if(object instanceof Gun) {
-            return [];
+            return false;
+        } else {
+            return BaseObject.prototype.hasImpact.apply(this, arguments);
         }
+    };
+
+    SpaceShip.prototype.onImpact = function(object) {
         this.alive = false;
         if(this.onDestroy) {
             this.onDestroy();

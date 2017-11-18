@@ -80,12 +80,17 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
         return this.alive;
     };
 
-    Bullet.prototype.onImpact = function(object) {
+    Bullet.prototype.hasImpact = function(object) {
         if(object.id !== this.ship) {
-            this.alive = false;
-            return [new Explosion(this.x, this.y, this.vector, 8, 60)];
+            return BaseObject.prototype.hasImpact.apply(this, arguments);
+        } else {
+            return false
         }
-        return [];
+    };
+
+    Bullet.prototype.onImpact = function(object) {
+        this.alive = false;
+        return [new Explosion(this.x, this.y, this.vector, 8, 60)];
     };
 
     Bullet.prototype.getPoints = function(){

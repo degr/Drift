@@ -91,13 +91,10 @@ public class Bullet extends BaseObject {
 
     @Override
     public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
-        if(object.getId() != this.ship) {
-            BaseObject[] out = new BaseObject[1];
-            out[0] = new Explosion(getX(), getY(), getVector(), 8, 60, ids.get());
-            this.creationTime = 0;
-            return out;
-        }
-        return null;
+        BaseObject[] out = new BaseObject[1];
+        out[0] = new Explosion(getX(), getY(), getVector(), 8, 60, ids.get());
+        this.creationTime = 0;
+        return out;
     }
 
     public boolean hasImpact(BaseObject baseObject) {
