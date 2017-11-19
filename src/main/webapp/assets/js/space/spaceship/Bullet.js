@@ -53,15 +53,21 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
         context.strokeStyle = "white";
 
         context.moveTo(-3, 0);
-        context.lineTo(2, 0);
+        context.lineTo(3, 0);
         context.stroke();
-        context.restore();
 
         context.beginPath();
+        context.moveTo(3, 0);
         context.strokeStyle = "red";
-        context.moveTo(this.points[0].x+ shift.x, this.points[0].y+ shift.y);
-        context.lineTo(this.points[1].x+ shift.x, this.points[1].y+ shift.y);
+        //context.moveTo(this.points[0].x+ shift.x, this.points[0].y+ shift.y);
+        //context.lineTo(this.points[1].x+ shift.x, this.points[1].y+ shift.y);
+        context.lineTo(6, 0);
         context.stroke();
+
+        context.translate(-7, 0);
+        var explosion = new Explosion(0, 0, this.vector, 5, 10, 'steelblue');
+        explosion.drawWithoutShift(context, appContext);
+        context.restore();
     };
     Bullet.prototype.update = function() {
         this.x += this.vector.x;

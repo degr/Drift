@@ -3,14 +3,14 @@ Engine.define("Explosion", ["BaseObject", 'ExplosionRay'], function () {
     var ExplosionRay = Engine.require('ExplosionRay');
     var BaseObject = Engine.require('BaseObject');
 
-    function Explosion(x, y, vector, radius, life) {
+    function Explosion(x, y, vector, radius, life, color) {
         BaseObject.apply(this, [x, y]);
         this.vector = vector;
         this.life = life || 100;
         this.rays = [];
         var limit = 5 + Math.ceil(Math.random() * 10);
         while(this.rays.length < limit) {
-            this.rays.push(new ExplosionRay(radius));
+            this.rays.push(new ExplosionRay(radius, color));
         }
     }
     Explosion.prototype = Object.create(BaseObject.prototype);
@@ -30,14 +30,17 @@ Engine.define("Explosion", ["BaseObject", 'ExplosionRay'], function () {
         return this.life > 0;
     };
 
-    Explosion.prototype.draw = function(context, appContext) {
-        var shift = appContext.shift;
-        context.save();
-        context.translate(this.x + shift.x, this.y + shift.y);
+    Explosion.prototype.drawWithoutShift = function(context, appContext) {
         var length = this.rays.length;
         while(length--) {
             this.rays[length].draw(context);
         }
+    };
+    Explosion.prototype.draw = function(context, appContext) {
+        var shift = appContext.shift;
+        context.save();
+        context.translate(this.x + shift.x, this.y + shift.y);
+        this.drawWithoutShift(context, appContext);
         context.restore();
     };
 

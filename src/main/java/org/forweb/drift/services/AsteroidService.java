@@ -11,7 +11,7 @@ import java.util.List;
 public class AsteroidService {
 
     public Asteroid create(double max, double min, IncrementalId ids) {
-        return new Asteroid(Math.random() * max, Math.random() * min, null, ids.get());
+        return new Asteroid(Math.random() * max, Math.random() * min, ids.get());
     }
 
     public List<Asteroid> createMulty (int limit, double max, double min, IncrementalId ids) {

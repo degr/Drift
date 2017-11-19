@@ -2,8 +2,8 @@ Engine.define("ExplosionRay", 'Point', function(){
 
     var Point = Engine.require("Point");
 
-    function ExplosionRay(radius) {
-        this.color = Math.random() > 0.5 ? 'red' : 'yellow';//'#' + Math.floor(Math.random()*16777215).toString(16);
+    function ExplosionRay(radius, color) {
+        this.color = color ? color : (Math.random() > 0.5 ? 'red' : 'yellow');//'#' + Math.floor(Math.random()*16777215).toString(16);
         this.grow = Math.random() > 0.5;
         this.radius = radius;
         this.angle = Math.random() * Math.PI * 2;

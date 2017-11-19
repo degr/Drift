@@ -10,28 +10,34 @@ import java.util.Random;
 
 public class Asteroid extends BaseObject{
 
+    private static Point[] createPoints() {
+        Random random = new Random();
+        int limit = (int)Math.ceil(random.nextDouble() * 7) + 3;
+        double sector = Math.PI * 2 / limit;
+        Point[] points = new Point[limit];
+        double angle;
+        while (limit-- > 0) {
+            angle = (Math.random() * (sector)) + sector * limit;
+            double distance = Math.random() * 90;
+            points[limit] = new Point(
+                    Math.cos(angle) * distance,
+                    Math.sin(angle) * distance
+            );
+        }
+        return points;
+    }
 
     private double rotationSpeed;
     private boolean alive;
+
+    public Asteroid(double x, double y, int id) {
+        this(x, y, Asteroid.createPoints(), id);
+    }
 
     public Asteroid(double x, double y, Point[] points, int id) {
         super(x, y, 0, null, id);
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        if(points == null || points.length == 0){
-            int limit = (int)Math.ceil(random.nextDouble() * 7) + 3;
-            double sector = Math.PI * 2 / limit;
-            points = new Point[limit];
-            double angle;
-            while (limit-- > 0) {
-                angle = (Math.random() * (sector)) + sector * limit;
-                double distance = Math.random() * 90;
-                points[limit] = new Point(
-                        Math.cos(angle) * distance,
-                        Math.sin(angle) * distance
-                );
-            }
-        }
         setPoints(points);
         double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(x, y));
         setX(centerOfMass[0]);

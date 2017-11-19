@@ -117,10 +117,14 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         context.rotate(this.angle);
         context.strokeStyle = "#59f741";
         this.placePoints(context);
-
         for(var i = 0; i < this.guns.length; i++) {
             var gun = this.guns[i];
             gun.draw(context);
+        }
+        if(this.hasAcceleration) {
+            context.translate(-20, 0);
+            var explosion = new Explosion(0, 0, this.vector, 10, 10, 'steelblue');
+            explosion.drawWithoutShift(context, appContext);
         }
         context.restore();
     };
