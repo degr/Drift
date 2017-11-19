@@ -62,9 +62,6 @@ Engine.define("Bullet", ['Vector', 'Geometry', 'BaseObject', 'Explosion', 'Point
         context.moveTo(this.points[0].x+ shift.x, this.points[0].y+ shift.y);
         context.lineTo(this.points[1].x+ shift.x, this.points[1].y+ shift.y);
         context.stroke();
-
-
-
     };
     Bullet.prototype.update = function() {
         this.x += this.vector.x;

@@ -2,6 +2,7 @@ package org.forweb.drift.entity.drift;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.utils.IncrementalId;
+import org.forweb.drift.utils.MassUtils;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
 
@@ -32,6 +33,9 @@ public class Asteroid extends BaseObject{
             }
         }
         setPoints(points);
+        double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(x, y));
+        setX(centerOfMass[0]);
+        setY(centerOfMass[1]);
         this.rotationSpeed = Math.random() * 0.2 - 0.1;
         this.alive = true;
     }
@@ -60,7 +64,7 @@ public class Asteroid extends BaseObject{
     }
 
     public boolean hasImpact(BaseObject baseObject) {
-        if(/*baseObject instanceof Asteroid ||*/ baseObject instanceof Explosion) {
+        if(baseObject instanceof Asteroid || baseObject instanceof Explosion) {
             return false;
         } else {
             return super.hasImpact(baseObject);
