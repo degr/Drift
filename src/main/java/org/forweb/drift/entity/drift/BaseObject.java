@@ -65,7 +65,7 @@ abstract public class BaseObject {
     }
 
     public boolean hasImpact(BaseObject baseObject) {
-        if (this.isInvincible() || baseObject.isInvincible()) {
+        if (!baseObject.isAlive() || !this.isAlive() || this.isInvincible() || baseObject.isInvincible()) {
             return false;
         }
         Point[] thisPoints = getPoints();

@@ -23,6 +23,8 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         this.hasAcceleration = false;
         this.guns = [new Gun(0, 0)];
         this.fireStarted = false;
+        this.positionWasUpdated = false;
+        this.angleWasUpdated = false;
         this.alive = true;
         this.context = context;
     }
@@ -30,24 +32,31 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
     SpaceShip.prototype.constructor = SpaceShip;
 
     SpaceShip.prototype.update = function(){
-        if(this.hasAcceleration){
-            var acceleration = 0.1;
-            var x = Math.cos(this.angle)*acceleration;
-            var y = Math.sin(this.angle)*acceleration;
-            var vector = new Vector(x, y);
-            this.vector.append(vector);
-        }
-        if(this.turnToLeft){
-            this.angle-=0.07;
-        }
-        if(this.turnToRight){
-            this.angle+=0.07;
+        if(this.positionWasUpdated) {
+            this.positionWasUpdated = false;
+        } else {
+            if (this.hasAcceleration) {
+                var acceleration = 0.1;
+                var x = Math.cos(this.angle) * acceleration;
+                var y = Math.sin(this.angle) * acceleration;
+                var vector = new Vector(x, y);
+                this.vector.append(vector);
+            }
         }
 
         this.x+=this.vector.x;
         this.y+=this.vector.y;
 
-        //this.context.socket.send("position:" + this.x+"|" + this.y + "|" + (((this.turnToLeft && this.turnToRight) || (!this.turnToLeft && !this.turnToRight)) ? '0' : (this.turnToRight ? '1' : '-1')));
+        if(this.angleWasUpdated) {
+            this.angleWasUpdated = false;
+        } else {
+            if (this.turnToLeft) {
+                this.angle -= 0.07;
+            }
+            if (this.turnToRight) {
+                this.angle += 0.07;
+            }
+        }
 
         if(this.fireStarted) {
             for(var i = 0; i< this.guns.length; i++) {

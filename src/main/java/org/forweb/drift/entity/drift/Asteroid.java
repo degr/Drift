@@ -1,6 +1,7 @@
 package org.forweb.drift.entity.drift;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.forweb.drift.utils.ArrayUtils;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.drift.utils.MassUtils;
 import org.forweb.geometry.misc.Vector;
@@ -15,9 +16,8 @@ public class Asteroid extends BaseObject{
         int limit = (int)Math.ceil(random.nextDouble() * 7) + 3;
         double sector = Math.PI * 2 / limit;
         Point[] points = new Point[limit];
-        double angle;
         while (limit-- > 0) {
-            angle = (Math.random() * (sector)) + sector * limit;
+            double angle = (Math.random() * (sector)) + sector * limit;
             double distance = Math.random() * 90;
             points[limit] = new Point(
                     Math.cos(angle) * distance,
@@ -38,10 +38,13 @@ public class Asteroid extends BaseObject{
         super(x, y, 0, null, id);
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        setPoints(points);
-        double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(x, y));
-        setX(centerOfMass[0]);
-        setY(centerOfMass[1]);
+        double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
+        Point[] newPoints = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            Point p = points[i];
+            newPoints[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
+        }
+        this.setPoints(newPoints);
         this.rotationSpeed = Math.random() * 0.2 - 0.1;
         this.alive = true;
     }
@@ -85,7 +88,7 @@ public class Asteroid extends BaseObject{
         Point[] points = getPoints();
         if(points.length > 3) {
             out = new BaseObject[3];
-            int start = (int) Math.ceil(points.length / 2);
+            int start = 2;//(int) Math.ceil(points.length / 2);
             Point[] p1 = new Point[start + 1];
             int i;
             for(i = 0; i <= start; i++) {

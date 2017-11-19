@@ -30,14 +30,9 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
 
     FullUpdater.prototype.update = function (object, id) {
         var startDate = new Date();
-        console.log("full update starts: ", startDate.getMilliseconds());
         var objects = [];
-        var oldObjects = this.context.space.objects;
-        this.context.space.objects = objects;
         var incoming = object.objects;
         var length = incoming.length;
-        this.context.space.width = object.x;
-        this.context.space.height = object.y;
         while (length--) {
             var source = incoming[length];
             objects.push(
@@ -45,7 +40,10 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
             );
         }
         var endDate = new Date();
-        console.log("full update ends: ", endDate.getMilliseconds(), endDate.getMilliseconds() - startDate.getMilliseconds());
+        this.context.space.height = object.y;
+        this.context.space.width = object.x;
+        this.context.space.objects = objects;
+        console.log("full update take: ", endDate.getMilliseconds() - startDate.getMilliseconds());
     };
 
     FullUpdater.prototype.map = function(source, playerId) {

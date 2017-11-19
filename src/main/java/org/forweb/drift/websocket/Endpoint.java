@@ -11,7 +11,6 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.Date;
 
 @ServerEndpoint(value = "/drift", configurator = SpringConfigurator.class)
 public class Endpoint {
@@ -24,7 +23,7 @@ public class Endpoint {
     private Player player;
     private Room room;
     @Autowired
-    GameContext gameContext;
+    private GameContext gameContext;
 
     @OnOpen
     public void onOpen(Session session) {
@@ -36,12 +35,12 @@ public class Endpoint {
     public void onTextMessage(String message) {
         String[] parts = message.split(":");
         SpaceShip spaceShip = player.getSpaceShip();
+        if(!spaceShip.isAlive()) {
+            return;
+        }
         switch (parts[0]) {
             case "turn":
-                if(spaceShip.isInvincible()) {
-                    spaceShip.setInvincible(false);
-                    spaceShip.setUpdateInvincible(true);
-                }
+                onInvincible(spaceShip);
                 int turn = "1".equals(parts[1]) ? 1 : ("0".equals(parts[1]) ? 0 : -1);
                 if(spaceShip.getTurn() != turn) {
                     spaceShip.setTurn(turn);
@@ -50,13 +49,11 @@ public class Endpoint {
                 }
                 break;
             case "accelerate":
-                if(spaceShip.isInvincible()) {
-                    spaceShip.setInvincible(false);
-                    spaceShip.setUpdateInvincible(true);
-                }
+                onInvincible(spaceShip);
                 boolean hasAcceleration = "1".equals(parts[1]);
                 if(spaceShip.isHasAcceleration() != hasAcceleration) {
                     spaceShip.setHasAcceleration(hasAcceleration);
+                    spaceShip.setUpdateAcceleration(true);
                     spaceShip.setUpdateRequire(true);
                 }
                 break;
@@ -77,10 +74,7 @@ public class Endpoint {
                 player.setNeedInfo(true);
                 break;
             case "fire":
-                if(spaceShip.isInvincible()) {
-                    spaceShip.setInvincible(false);
-                    spaceShip.setUpdateInvincible(true);
-                }
+                onInvincible(spaceShip);
                 boolean fireStarted = "1".equals(parts[1]);
                 if(spaceShip.isFireStarted() != fireStarted) {
                     spaceShip.setFireStarted(fireStarted);
@@ -114,7 +108,7 @@ public class Endpoint {
             root = root.getCause();
             count++;
         }
-        if (root instanceof IOException || root instanceof EOFException) {
+        if (root instanceof IOException) {
             System.out.println("User close browser");
         } else {
             throw t;

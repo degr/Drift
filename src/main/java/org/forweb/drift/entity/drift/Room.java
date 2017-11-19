@@ -100,7 +100,6 @@ public class Room {
                                 out = ArrayUtils.concat(out, imp2);
                             }
                         }
-
                     }
                 }
             }

@@ -10,9 +10,8 @@ import org.forweb.drift.utils.ArrayUtils;
 
 import javax.websocket.RemoteEndpoint;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DriftTimerService extends TimerTask {
 
@@ -60,9 +59,6 @@ public class DriftTimerService extends TimerTask {
                         }
                     }
                 } else {
-                    if(obj instanceof SpaceShip) {
-                        System.out.println("lol");
-                    }
                     iterator.remove();
                 }
             }
@@ -74,16 +70,17 @@ public class DriftTimerService extends TimerTask {
                     objects.add(newObjects[l]);
                 }
             }
-
+           /* long aCount = objects.stream().filter(a -> a instanceof Asteroid && a.isAlive()).count();*/
             try {
-                //List<SpaceShip> ghosts = me.getPlayers().stream().map(v -> v.getSpaceShip()).collect(Collectors.toList());
+                /*List<SpaceShip> ghosts = me.getPlayers().stream().map(v -> v.getSpaceShip()).collect(Collectors.toList());*/
                 String feed;
+                boolean hasAsteroids = false;
                 if(me.isFullUpdate()) {
                     feed = me.getMapper().writeValueAsString(new RoomDto(me));
                 } else {
                     PlayersToUpdate playersToUpdate = new PlayersToUpdate(me.getPlayers());
-                    feed = newObjects != null || playersToUpdate.hasPlayers() /*|| ghosts.size() > 0*/ ?
-                            me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects/*, ghosts*/))
+                    feed = newObjects != null || playersToUpdate.hasPlayers()/* || ghosts.size() > 0*/ ?
+                            me.getMapper().writeValueAsString(new PlayersDto(playersToUpdate.getShips(), newObjects/*, ghosts, aCount*/))
                             : null;
 
                 }
@@ -94,8 +91,7 @@ public class DriftTimerService extends TimerTask {
                         player.setNeedInfo(false);
                     }
 
-                    if (player.isFullUpdate() || me.isFullUpdate()) {
-                        player.setFullUpdate(false);
+                    if (me.isFullUpdate()) {
                         remote.sendText(feed);
                     } else {
                         if (feed != null) {
@@ -104,11 +100,12 @@ public class DriftTimerService extends TimerTask {
                             remote.sendText("1");
                         }
                     }
-
                 }
+
                 if(me.isFullUpdate()) {
                     me.resetFullUpdate();
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -116,5 +113,6 @@ public class DriftTimerService extends TimerTask {
             e.printStackTrace();
         }
     }
+
 }
 

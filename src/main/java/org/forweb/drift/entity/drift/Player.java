@@ -7,7 +7,6 @@ public class Player {
     private SpaceShip spaceShip;
 
 
-    private boolean fullUpdate;
     private Session session;
     private boolean needInfo;
 
@@ -15,7 +14,6 @@ public class Player {
         this.spaceShip = spaceShip;
         this.id = id;
         this.session = session;
-        fullUpdate = true;
 
 
         /*new Thread(() -> {
@@ -34,10 +32,6 @@ public class Player {
         return session;
     }
 
-    public boolean isFullUpdate() {
-        return fullUpdate;
-    }
-
     @Override
     public int hashCode() {
         return id;
@@ -51,9 +45,6 @@ public class Player {
         return spaceShip;
     }
 
-    public void setFullUpdate(boolean fullUpdate) {
-        this.fullUpdate = fullUpdate;
-    }
 
     public int getId() {
         return id;

@@ -1,8 +1,9 @@
-Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], function () {
+Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'Asteroid'], function () {
 
     var SpaceShipUpdater = Engine.require('SpaceShipUpdater');
     var WebSocketUtils = Engine.require('WebSocketUtils');
     var FullUpdater = Engine.require('FullUpdater');
+    var Asteroid = Engine.require('Asteroid');//todo delete
 
 
     function Bridge(context) {
@@ -27,10 +28,15 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
         var data = r.data;
         try {
             var object = JSON.parse(data);
-            if(object !== 1) {
+            var fullHouse = false;
+            if(isFinite(object)) {
+                console.log('js: ' + this.context.space.objects.filter(function(o){return o instanceof Asteroid}).length + "; java: " + object)
+            } else {
                 switch (object.type) {
                     case "fullUpdate":
+                        fullHouse = true;
                         this.fullUpdater.update(object, this.context.spaceShipId);
+                        this.context.space.draw(this.context);
                         break;
                     case 'ships':
                         var ships = object.ships;
@@ -39,7 +45,12 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
                                 this.spaceShipUpdater.simpleUpdate(ships[i]);
                             }
                         }
+                        var newAsteriods = 0;
                         if (object.newObjects) {
+                            newAsteriods = object.newObjects.filter(function(o){return o && o.type === 'asteroid'}).length;
+                            if(newAsteriods > 0) {
+                                console.log('incoming asteroids: ' + newAsteriods);
+                            }
                             this.fullUpdater.append(object.newObjects);
                         }
                         /*var obj = this.context.space.objects;
@@ -53,6 +64,11 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
                             for(var i = 0; i < object.ghosts.length; i++) {
                                 obj.push(this.spaceShipUpdater.createGhost(object.ghosts[i]));
                             }
+                        }
+                        if(newAsteriods > 0) {
+                            console.log(((new Date()).getTime()) + ' js: ' + this.context.space.objects.filter(function (o) {
+                                    return o instanceof Asteroid && o.isAlive()
+                                }).length + "; java: " + object.acount)
                         }*/
                         break;
                     case 'info':
@@ -66,8 +82,9 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater'], f
         } catch (e) {
             console.log(e);
         }
-
-        this.context.space.run();
+        if(!fullHouse) {
+            this.context.space.run();
+        }
     };
 
 

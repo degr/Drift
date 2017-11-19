@@ -1,13 +1,19 @@
-Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWindow', 'LayeredCanvas', 'Geometry'], function () {
+Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Timer', 'CanvasWindow', 'LayeredCanvas', 'Geometry'], function () {
 
     var LayeredCanvas = Engine.require('LayeredCanvas');
     var CanvasWindow = Engine.require('CanvasWindow');
     var ScreenUtils = Engine.require('ScreenUtils');
     var StringUtils = Engine.require('StringUtils');
+    var BaseObject = Engine.require('BaseObject');
     var Geometry = Engine.require('Geometry');
     var Timer = Engine.require('Timer');
     var Dom = Engine.require('Dom');
 
+    /**
+     * @param width
+     * @param height
+     * @constructor
+     */
     function Space(width, height) {
         var me = this;
         this.width = width;
@@ -54,7 +60,7 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
     };
 
     Space.prototype.run = function () {
-        //console.log((new Date()).getMilliseconds());
+        var ts = (new Date()).getTime();
         var me = this;
         var canvas = this.canvas;
         var context = canvas.getContext(0);
@@ -72,7 +78,9 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
         while (length--) {
             var obj = this.objects[length];
             if (obj.isAlive()) {
-                obj.update();
+                //if(!obj.isGhost) {
+                    obj.update();
+                //}
                 if (obj.x > me.width) {
                     obj.x = obj.x - me.width;
                 } else if (obj.x < 0) {
@@ -85,9 +93,20 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'Timer', 'CanvasWin
                 }
                 obj.draw(context, this.appContext);
                 me.calculateImpacts(obj);
+
             } else {
                 this.objects.splice(length, 1);
             }
+
+            console.log("draw finished: " + ((new Date()).getTime()) - ts);
+        }
+    };
+
+    Space.prototype.draw = function(context) {
+        var length = this.objects.length;
+        while (length--) {
+            var obj = this.objects[length];
+            obj.draw(context, this.appContext);
         }
     };
 

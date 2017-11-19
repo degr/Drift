@@ -9,18 +9,24 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
         this.context = context;
     }
 
+    /**
+     *
+     * @param {SpaceShip} spaceShip
+     * @param {int} vSX
+     * @param {int} vSY
+     */
     SpaceShipUpdater.prototype.updatePosition = function (spaceShip, vSX, vSY) {
         var vX = parseFloat(vSX);
         var vY = parseFloat(vSY);
-        var dX = vX - spaceShip.vector.x;
-        var dY = vY - spaceShip.vector.y;
         spaceShip.vector.x = vX;
         spaceShip.vector.y = vY;
-        spaceShip.x += dX;
-        spaceShip.y += dY;
+        spaceShip.positionWasUpdated = true;
     };
-    SpaceShipUpdater.prototype.simpleUpdate = function(string) {
-        var data = string.split('|');
+    /**
+     * @param {string} str
+     */
+    SpaceShipUpdater.prototype.simpleUpdate = function(str) {
+        var data = str.split('|');
         var id = parseInt(data[0]);
         var spaceShip = ObjectsSearch.findSpaceShip(this.context.space.objects, id);
         if(spaceShip !== null) {
@@ -44,6 +50,7 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                             spaceShip.turnToRight = false;
                         }
                         spaceShip.angle = parseFloat(pair[2]);
+                        spaceShip.angleWasUpdated = true;
                         break;
                         break;
                     case 'f':
@@ -56,92 +63,35 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
                 }
             }
         }
-
     };
+
     SpaceShipUpdater.prototype.update = function(source, id) {
         var context = this.context;
-        var spaceShip = new SpaceShip(source.x, source.y, context);
-        spaceShip.angle = source.angle;
-        spaceShip.vector = new Vector(source.vector.x, source.vector.y);
-        spaceShip.id = source.id;
-        spaceShip.invincible = source.invincible;
-        var old = null;
-        if (id === spaceShip.id) {
-            old = context.space.spaceShip;
-            if (old) {
-                old.unListen();
-            }
-            context.space.spaceShip = spaceShip;
-            var keyDownListener = function(event) {
-                var keyCode = event.keyCode;
-                if(keyCode === 39){
-                    //right button
-                    event.preventDefault();
-                    if(spaceShip.turnToLeft) {
-                        if(!spaceShip.turnToRight) {
-                            context.socket.send("turn:0");
-                        }
-                    } else {
-                        if(!spaceShip.turnToRight) {
-                            context.socket.send("turn:1");
-                        }
-                    }
-                } else if(keyCode === 37){
-                    //left button
-                    event.preventDefault();
-                    if(spaceShip.turnToRight) {
-                        if(!spaceShip.turnToLeft) {
-                            context.socket.send("turn:0");
-                        }
-                    } else {
-                        if(!spaceShip.turnToLeft) {
-                            context.socket.send("turn:-1");
-                        }
-                    }
-                } else if(keyCode === 38){
-                    event.preventDefault();
-                    if(!spaceShip.hasAcceleration) {
-                        context.socket.send("accelerate:1");
-                    }
-                } else if(keyCode === 40){
-                    event.preventDefault();
-                } else if(keyCode === 32) {
-                    if(!spaceShip.fireStarted) {
-                        spaceShip.fireStarted = true;
-                        context.socket.send("fire:1")
-                    }
-                }
-            };
-            var keyUpListener = function(event) {
-                var keyCode = event.keyCode;
-                if(keyCode === 39) {
-                    //right button
-                    event.preventDefault();
-                    if(spaceShip.turnToLeft) {
-                        context.socket.send("turn:-1")
-                    } else {
-                        context.socket.send("turn:0")
-                    }
-                } else if(keyCode === 37){
-                    event.preventDefault();
-                    if(spaceShip.turnToRight) {
-                        context.socket.send("turn:1")
-                    } else {
-                        context.socket.send("turn:0")
-                    }
-                } else if(keyCode === 38){
-                    event.preventDefault();
-                    context.socket.send("accelerate:0");
-                } else if(keyCode === 32) {
-                    spaceShip.fireStarted = false;
-                    context.socket.send("fire:0");
-                }
-            };
-            spaceShip.listen(keyDownListener, keyUpListener);
+        var oldSpaceShip = ObjectsSearch.findSpaceShip(this.context.space.objects, source.id);
+        var spaceShip;
+        if(oldSpaceShip === null) {
+            spaceShip = new SpaceShip(source.x, source.y, context);
+            spaceShip.id = source.id;
+        } else {
+            spaceShip = oldSpaceShip;
         }
-
+        spaceShip.angle = source.angle;
+        spaceShip.x = source.x;
+        spaceShip.y = source.y;
+        spaceShip.vector = new Vector(source.vector.x, source.vector.y);
+        spaceShip.invincible = source.invincible;
+        spaceShip.hasAcceleration = source.hasAcceleration;
         spaceShip.turnToLeft = source.turn === -1;
         spaceShip.turnToRight = source.turn === 1;
+
+        if (id === spaceShip.id && oldSpaceShip === null) {
+            if (context.space.spaceShip) {
+                context.space.spaceShip.unListen();
+            }
+            context.space.spaceShip = spaceShip;
+            var listeners = this.prepareListeners(context, spaceShip);
+            spaceShip.listen(listeners.keyDown, listeners.keyUp);
+        }
 
         spaceShip.guns = source.guns.map(function (v) {
             var gun = new Gun(v.x, v.y);
@@ -166,6 +116,78 @@ Engine.define("SpaceShipUpdater", ['SpaceShip', 'ObjectsSearch', 'Gun', 'Vector'
 
         return s;
     };*/
+
+    SpaceShipUpdater.prototype.prepareListeners = function(context, spaceShip) {
+        function keyDownListener(event) {
+            var keyCode = event.keyCode;
+            if(keyCode === 39){
+                //right button
+                event.preventDefault();
+                if(spaceShip.turnToLeft) {
+                    if(!spaceShip.turnToRight) {
+                        context.socket.send("turn:0");
+                    }
+                } else {
+                    if(!spaceShip.turnToRight) {
+                        context.socket.send("turn:1");
+                    }
+                }
+            } else if(keyCode === 37){
+                //left button
+                event.preventDefault();
+                if(spaceShip.turnToRight) {
+                    if(!spaceShip.turnToLeft) {
+                        context.socket.send("turn:0");
+                    }
+                } else {
+                    if(!spaceShip.turnToLeft) {
+                        context.socket.send("turn:-1");
+                    }
+                }
+            } else if(keyCode === 38){
+                event.preventDefault();
+                if(!spaceShip.hasAcceleration) {
+                    context.socket.send("accelerate:1");
+                }
+            } else if(keyCode === 40){
+                event.preventDefault();
+            } else if(keyCode === 32) {
+                if(!spaceShip.fireStarted) {
+                    spaceShip.fireStarted = true;
+                    context.socket.send("fire:1")
+                }
+            }
+        }
+        function keyUpListener(event) {
+            var keyCode = event.keyCode;
+            if(keyCode === 39) {
+                //right button
+                event.preventDefault();
+                if(spaceShip.turnToLeft) {
+                    context.socket.send("turn:-1")
+                } else {
+                    context.socket.send("turn:0")
+                }
+            } else if(keyCode === 37){
+                event.preventDefault();
+                if(spaceShip.turnToRight) {
+                    context.socket.send("turn:1")
+                } else {
+                    context.socket.send("turn:0")
+                }
+            } else if(keyCode === 38){
+                event.preventDefault();
+                context.socket.send("accelerate:0");
+            } else if(keyCode === 32) {
+                spaceShip.fireStarted = false;
+                context.socket.send("fire:0");
+            }
+        }
+        return {
+            keyUp: keyUpListener,
+            keyDown: keyDownListener
+        }
+    };
 
     return SpaceShipUpdater;
 });

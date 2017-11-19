@@ -59,6 +59,12 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         context.fillStyle = "#9e9e9e";
         this.placePoints(context);
         context.fill();
+
+
+        context.rotate(-this.angle);
+        context.fillStyle = "red";
+        context.fillRect(-2, -2, 4, 4);
+        context.strokeText(this.id, 0, -15);
         context.restore();
     };
 
