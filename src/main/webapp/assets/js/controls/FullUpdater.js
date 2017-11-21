@@ -33,12 +33,19 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
         var objects = [];
         var incoming = object.objects;
         var length = incoming.length;
+        //var count = this.context.space.objects.filter(function(v){return v instanceof Asteroid}).length;
+        //var nCount = 0;
         while (length--) {
             var source = incoming[length];
+            //if(source.type === 'asteroid') {
+           //     nCount++;
+           // }
+
             objects.push(
                 this.map(source, id)
             );
         }
+        //console.log('new: ' + nCount +"; old: " + count);
         var endDate = new Date();
         this.context.space.height = object.y;
         this.context.space.width = object.x;

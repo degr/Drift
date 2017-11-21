@@ -29,14 +29,12 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'A
         try {
             var object = JSON.parse(data);
             var fullHouse = false;
-            if(isFinite(object)) {
-                console.log('js: ' + this.context.space.objects.filter(function(o){return o instanceof Asteroid}).length + "; java: " + object)
-            } else {
+            if(!isFinite(object)) {
                 switch (object.type) {
                     case "fullUpdate":
                         fullHouse = true;
                         this.fullUpdater.update(object, this.context.spaceShipId);
-                        this.context.space.draw(this.context);
+                        this.context.space.draw();
                         break;
                     case 'ships':
                         var ships = object.ships;
@@ -45,12 +43,12 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'A
                                 this.spaceShipUpdater.simpleUpdate(ships[i]);
                             }
                         }
-                        var newAsteriods = 0;
+                       // var newAsteriods = 0;
                         if (object.newObjects) {
-                            newAsteriods = object.newObjects.filter(function(o){return o && o.type === 'asteroid'}).length;
-                            if(newAsteriods > 0) {
-                                console.log('incoming asteroids: ' + newAsteriods);
-                            }
+                            //newAsteriods = object.newObjects.filter(function(o){return o && o.type === 'asteroid'}).length;
+                            //if(newAsteriods > 0) {
+                           //     console.log('incoming asteroids: ' + newAsteriods);
+                           // }
                             this.fullUpdater.append(object.newObjects);
                         }
                         /*var obj = this.context.space.objects;

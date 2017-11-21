@@ -39,12 +39,11 @@ public class Asteroid extends BaseObject{
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
         double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
-        Point[] newPoints = new Point[points.length];
         for (int i = 0; i < points.length; i++) {
             Point p = points[i];
-            newPoints[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
+            points[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
         }
-        this.setPoints(newPoints);
+        this.setPoints(points);
         this.rotationSpeed = Math.random() * 0.2 - 0.1;
         this.alive = true;
     }
@@ -54,6 +53,7 @@ public class Asteroid extends BaseObject{
     }
 
     public BaseObject[] update(){
+        if(true)return null;
         Vector v = getVector();
         setX(getX() + v.x);
         setY(getY() + v.y);

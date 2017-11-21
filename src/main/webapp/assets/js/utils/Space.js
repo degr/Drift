@@ -60,7 +60,6 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
     };
 
     Space.prototype.run = function () {
-        var ts = (new Date()).getTime();
         var me = this;
         var canvas = this.canvas;
         var context = canvas.getContext(0);
@@ -97,16 +96,16 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
             } else {
                 this.objects.splice(length, 1);
             }
-
-            console.log("draw finished: " + ((new Date()).getTime()) - ts);
         }
     };
 
-    Space.prototype.draw = function(context) {
+    Space.prototype.draw = function() {
         var length = this.objects.length;
+        var shift = this.spaceShip ? this.canvasWindow.getShift(this.spaceShip) : {x: 0, y: 0};
+        this.appContext.shift = shift;
         while (length--) {
             var obj = this.objects[length];
-            obj.draw(context, this.appContext);
+            obj.draw(this.canvas.getContext(0), this.appContext);
         }
     };
 
