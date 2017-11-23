@@ -28,6 +28,7 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'A
         var data = r.data;
         try {
             var object = JSON.parse(data);
+            var newObjects = null;
             var fullHouse = false;
             if(!isFinite(object)) {
                 switch (object.type) {
@@ -49,7 +50,7 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'A
                             //if(newAsteriods > 0) {
                            //     console.log('incoming asteroids: ' + newAsteriods);
                            // }
-                            this.fullUpdater.append(object.newObjects);
+                            newObjects = this.fullUpdater.prepareObjects(object.newObjects);
                         }
                         /*var obj = this.context.space.objects;
                         var l = obj.length;
@@ -82,6 +83,9 @@ Engine.define("Bridge", ['WebSocketUtils', 'SpaceShipUpdater', 'FullUpdater', 'A
         }
         if(!fullHouse) {
             this.context.space.run();
+        }
+        if(newObjects !== null) {
+            this.context.space.objects = this.context.space.objects.concat(newObjects);
         }
     };
 

@@ -35,13 +35,18 @@ public class Asteroid extends BaseObject{
     }
 
     public Asteroid(double x, double y, Point[] points, int id) {
+        this(x, y, points, id, true);
+    }
+    public Asteroid(double x, double y, Point[] points, int id, boolean notCentered) {
         super(x, y, 0, null, id);
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
-            points[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
+        if(notCentered) {
+            double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
+            for (int i = 0; i < points.length; i++) {
+                Point p = points[i];
+                points[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
+            }
         }
         this.setPoints(points);
         this.rotationSpeed = Math.random() * 0.2 - 0.1;
@@ -53,7 +58,6 @@ public class Asteroid extends BaseObject{
     }
 
     public BaseObject[] update(){
-        if(true)return null;
         Vector v = getVector();
         setX(getX() + v.x);
         setY(getY() + v.y);

@@ -38,7 +38,6 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         return this.alive;
     };
     Asteroid.prototype.update = function(){
-        if(true)return null;
         this.x += this.vector.x;
         this.y += this.vector.y;
         this.angle += this.rotationSpeed;
@@ -70,7 +69,7 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
     };
 
     Asteroid.prototype.hasImpact = function(object) {
-        if(object instanceof Asteroid) {
+        if(object instanceof Explosion || object instanceof Asteroid) {
             return false
         } else {
             return RelativePointsObject.prototype.hasImpact.apply(this, arguments);
@@ -81,7 +80,7 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         this.alive = false;
         var out = [new Explosion(this.x, this.y, this.vector, 30)];
         if(this.active && this.points.length > 3) {
-            var start = Math.ceil(this.points.length / 2);
+            var start = 2;
             var p1 = [], i;
             for(i = 0; i <= start; i++) {
                 p1.push(this.points[i]);

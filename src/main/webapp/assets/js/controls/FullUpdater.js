@@ -14,9 +14,9 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
         this.spaceSheepUpdater = spaceSheepUpdater;
     }
 
-    FullUpdater.prototype.append = function (incoming) {
+    FullUpdater.prototype.prepareObjects = function (incoming) {
         var length = incoming.length;
-        var objects = this.context.space.objects;
+        var objects = [];
         while (length--) {
             objects.push(
                 this.map(
@@ -26,6 +26,7 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
                 )
             );
         }
+        return objects;
     };
 
     FullUpdater.prototype.update = function (object, id) {
@@ -87,7 +88,7 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
                 throw "unknown class";
         }
         return mapped;
-    }
+    };
 
     return FullUpdater;
 });

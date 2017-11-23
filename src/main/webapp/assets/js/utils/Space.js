@@ -92,7 +92,6 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
                 }
                 obj.draw(context, this.appContext);
                 me.calculateImpacts(obj);
-
             } else {
                 this.objects.splice(length, 1);
             }
@@ -118,6 +117,7 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
 
     Space.prototype.calculateImpacts = function (obj) {
         var length = this.objects.length;
+        var newObjects = [];
         while (length--) {
             if (this.objects[length] !== obj) {
                 var distance = Geometry.getDistance(obj, this.objects[length]);
@@ -126,11 +126,12 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
                     if (impact) {
                         var imp1 = obj.onImpact(this.objects[length]);
                         var imp2 = this.objects[length].onImpact(obj);
-                        this.objects = this.objects.concat(imp1, imp2);
+                        newObjects = newObjects.concat(imp1, imp2);
                     }
                 }
             }
         }
+        this.objects = this.objects.concat(newObjects);
     };
 
 

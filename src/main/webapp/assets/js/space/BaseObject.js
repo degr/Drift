@@ -36,7 +36,7 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
         if(!(baseObject instanceof  BaseObject)) {
             throw "Invalid arguments exception";
         }
-        if(baseObject.invincible || this.invincible){
+        if(baseObject.invincible || this.invincible || !baseObject.isAlive()){
             return false;
         }
         var thisPoints = BaseObject.appendLastPoint(this.getPoints());
