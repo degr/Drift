@@ -27,6 +27,7 @@ Engine.define("PathBuilder", function(){
             case 'Space':
             case 'Sandbox':
             case 'FreeSpace':
+            case 'MassUtils':
             case 'CanvasWindow':
                 path = "utils/" + module;
                 break;
