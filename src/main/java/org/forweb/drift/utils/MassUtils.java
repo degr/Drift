@@ -23,12 +23,7 @@ public class MassUtils {
             Point p3 = l == 0 ? points[points.length - 1] : points[l - 1];
             double[] center = getCenterOfMass(shift, p2, p3);
             //square = x1y2 + x2y3 + x3y1 – x1y3 – x2y1 – x3y2.
-            double mass = Math.abs(shiftX * p2.getY()
-                    + p2.getX() * p3.getY()
-                    + p3.getX() * shiftY
-                    - shiftX * p3.getY()
-                    - p2.getX() * shiftY
-                    - p3.getX() * p2.getY()) * 1/2;
+            double mass = getSquare(shiftX, shiftY, p2.getX(), p2.getY(), p3.getX(), p3.getY());
             totalMass += mass;
             x += (center[0]) * mass;
             y += (center[1]) * mass;
@@ -40,12 +35,20 @@ public class MassUtils {
         return out;
     }
 
-    public static void main(String[] args) {
-        Point[] p = new Point[3];
-        p[0] = new Point(0,0);
-        p[1] = new Point(10,0);
-        p[2] = new Point(0,10);
-        double[] o = getCenterOfMass(p, new Point(3, 3));
-        System.out.println(o[0] + "|" + o[1]);
+
+    public static double getSquare(Point[] p) {
+        double area = 0;
+        int N = p.length;
+        for(int i = 1; i+1<N; i++){
+            area += _getSquare(p[0].getX(), p[0].getY(), p[i].getX(), p[i].getY(), p[i + 1].getX(), p[i + 1].getY());
+        }
+        return Math.abs(area/2.0);
+    }
+
+    public static double getSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return Math.abs(x1 * y2 + x2 * y3 + x3 * y1 - x1 * y3 - x2 * y1 - x3 * y2);
+    }
+    private static double _getSquare(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return x1 * y2 + x2 * y3 + x3 * y1 - x1 * y3 - x2 * y1 - x3 * y2;
     }
 }
