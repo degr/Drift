@@ -36,6 +36,7 @@ Engine.define("PathBuilder", function(){
                 path = "space/" + module;
                 break;
             case "RefinaryBase":
+            case "LandingLight":
                 path = "space/base/" + module;
                 break;
             case "Gun":
