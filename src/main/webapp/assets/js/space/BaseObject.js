@@ -59,7 +59,7 @@ Engine.define('BaseObject', ['Geometry', 'Line'], function(){
         return this.points;
     };
     BaseObject.prototype.onImpact = function(object){
-
+        return [];
     };
     return BaseObject;
 });

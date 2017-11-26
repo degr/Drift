@@ -20,7 +20,7 @@ public class Explosion extends BaseObject {
 
     @Override
     public String getType() {
-        return "explosion";
+        return Types.explosion.toString();
     }
 
     @JsonIgnore

@@ -76,6 +76,9 @@ Engine.define('Space', ['ScreenUtils', 'Dom', 'StringUtils', 'BaseObject', 'Time
 
         while (length--) {
             var obj = this.objects[length];
+            if(!obj) {
+                continue;
+            }
             if (obj.isAlive()) {
                 //if(!obj.isGhost) {
                     obj.update();

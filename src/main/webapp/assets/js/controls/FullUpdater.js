@@ -1,9 +1,10 @@
-Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Point', 'ObjectsSearch', 'SpaceShip', 'Gun'], function () {
+Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Point', 'ObjectsSearch', 'SpaceShip', 'Gun', 'RefinaryBase'], function () {
 
     var ObjectsSearch = Engine.require('ObjectsSearch');
     var SpaceShip = Engine.require('SpaceShip');
     var Explosion = Engine.require('Explosion');
     var Asteroid = Engine.require('Asteroid');
+    var RefinaryBase = Engine.require('RefinaryBase');
     var Vector = Engine.require('Vector');
     var Bullet = Engine.require('Bullet');
     var Point = Engine.require('Point');
@@ -82,7 +83,9 @@ Engine.define("FullUpdater", ['Asteroid', 'Vector', 'Bullet', 'Explosion', 'Poin
                 break;
             case 'explosion':
                 mapped = new Explosion(source.x, source.y, new Vector(source.vector.x, source.vector.y), source.radius);
-
+                break;
+            case 'refinary':
+                mapped = new RefinaryBase(source.x, source.y, source.angle);
                 break;
             default:
                 throw "unknown class";

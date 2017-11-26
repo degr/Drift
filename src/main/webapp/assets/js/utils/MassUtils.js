@@ -1,4 +1,7 @@
-Engine.define('MassUtils', [], function() {
+Engine.define('MassUtils', ['Point'], function() {
+
+    var Point = Engine.require('Point');
+
     var MassUtils = {
 
         getTriangleCenter: function(p, q, r) {
@@ -43,6 +46,16 @@ Engine.define('MassUtils', [], function() {
         },
         _getSquare(x1, y1, x2, y2, x3, y3) {
             return x1 * y2 + x2 * y3 + x3 * y1 - x1 * y3 - x2 * y1 - x3 * y2;
+        },
+        setToCenter(points, centerOfMass) {
+            if(centerOfMass === undefined) {
+                centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
+            }
+            for (var i = 0; i < points.length; i++) {
+                var p = points[i];
+                points[i] = new Point(p.x - centerOfMass[0], p.y - centerOfMass[1]);
+            }
+            return points;
         }
     };
     return MassUtils;

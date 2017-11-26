@@ -121,22 +121,14 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
         }
     };
 
-    Asteroid.prototype.setToCenter = function(points, centerOfMass) {
-        for (var i = 0; i < points.length; i++) {
-            var p = points[i];
-            points[i] = new Point(p.x - centerOfMass[0], p.y - centerOfMass[1]);
-        }
-        return points;
-    };
-
     Asteroid.prototype.processByTwoPoints = function(p1, p2) {
         var out = [];
         var aCenter = MassUtils.getTriangleCenter(p1[0], p1[1], p1[2]);
-        p1 = this.setToCenter(p1, aCenter);
+        p1 = MassUtils.setToCenter(p1, aCenter);
         out[0] = new Asteroid(this.x + aCenter[0], this.y + aCenter[1], p1, this.active, this.angle);
 
         aCenter = MassUtils.getCenterOfMass(p2, new Point(0, 0));
-        p2 = this.setToCenter(p2, aCenter);
+        p2 = MassUtils.setToCenter(p2, aCenter);
         out[1] = new Asteroid(this.x + aCenter[0], this.y + aCenter[1], p2, this.active, this.angle);
         return out;
     };
@@ -154,7 +146,7 @@ Engine.define("Asteroid", ["Vector", 'Point', 'Explosion', 'RelativePointsObject
             );
         }
         var centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
-        return this.setToCenter(points, centerOfMass);
+        return MassUtils.setToCenter(points, centerOfMass);
     };
 
     return Asteroid;

@@ -35,6 +35,9 @@ Engine.define("PathBuilder", function(){
             case "RelativePointsObject":
                 path = "space/" + module;
                 break;
+            case "RefinaryBase":
+                path = "space/base/" + module;
+                break;
             case "Gun":
             case "Bullet":
             case "SpaceShip":

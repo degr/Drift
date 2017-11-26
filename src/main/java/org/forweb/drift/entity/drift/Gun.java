@@ -41,7 +41,7 @@ public class Gun extends BaseObject{
 
     @Override
     public String getType() {
-        return "gun";
+        return Types.gun.toString();
     }
 
     @JsonIgnore

@@ -90,7 +90,7 @@ public class SpaceShip extends BaseObject{
 
     @Override
     public String getType() {
-        return "ship";
+        return Types.ship.toString();
     }
 
     @JsonIgnore

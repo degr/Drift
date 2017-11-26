@@ -22,15 +22,7 @@ public class Asteroid extends BaseObject {
                     Math.sin(angle) * distance
             );
         }
-        double[] centerOfMass = MassUtils.getCenterOfMass(points, new Point(0, 0));
-        return setToCenter(points, centerOfMass);
-    }
-    private static Point[] setToCenter(Point[] points, double[] centerOfMass) {
-        for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
-            points[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
-        }
-        return points;
+        return MassUtils.setToCenter(points);
     }
 
     private double rotationSpeed;
@@ -84,7 +76,7 @@ public class Asteroid extends BaseObject {
 
     @Override
     public String getType() {
-        return "asteroid";
+        return Types.asteroid.toString();
     }
 
     @JsonIgnore
@@ -161,11 +153,11 @@ public class Asteroid extends BaseObject {
     private static BaseObject[] processByTwoPoints(Point[] p1, Point[] p2, double x, double y, double angle, IncrementalId ids) {
         BaseObject[] out = new BaseObject[3];
         double[] aCenter = MassUtils.getCenterOfMass(p1[0], p1[1], p1[2]);
-        p1 = Asteroid.setToCenter(p1, aCenter);
+        p1 = MassUtils.setToCenter(p1, aCenter);
         out[0] = new Asteroid(x + aCenter[0], y + aCenter[1], p1, ids.get(), angle);
 
-        aCenter = MassUtils.getCenterOfMass(p2, new Point(0, 0));
-        p2 = Asteroid.setToCenter(p2, aCenter);
+        aCenter = MassUtils.getCenterOfMass(p2);
+        p2 = MassUtils.setToCenter(p2, aCenter);
         out[1] = new Asteroid(x + aCenter[0], y + aCenter[1], p2, ids.get(), angle);
         return out;
     }

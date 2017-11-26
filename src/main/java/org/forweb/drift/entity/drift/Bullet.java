@@ -28,7 +28,7 @@ public class Bullet extends BaseObject {
 
     @Override
     public String getType() {
-        return "bullet";
+        return Types.bullet.toString();
     }
 
     @JsonIgnore
