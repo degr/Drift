@@ -19,6 +19,7 @@ Engine.define('RefinaryBase', ['RelativePointsObject', 'Point', 'MassUtils', 'La
             new LandingLight(this.points[4].x, this.points[4].y, 7 * k, Math.PI / 4, 'red', false),
             new LandingLight(this.points[5].x, this.points[5].y, 7 * k, Math.PI / 4, 'red', false),
         ];
+        this.landingRadius = 80;
     }
     RefinaryBase.prototype = Object.create(RelativePointsObject.prototype);
     RefinaryBase.prototype.constructor = RefinaryBase;
@@ -61,6 +62,10 @@ Engine.define('RefinaryBase', ['RelativePointsObject', 'Point', 'MassUtils', 'La
         context.strokeStyle = "#59f741";
         this.placePoints(context);
         this.drawLandingZone(context);
+
+        //context.arc(this.points[2].x,this.points[2].y + 5 * k,this.landingRadius,0,2*Math.PI);
+        //context.stroke();
+
         context.restore();
     };
 

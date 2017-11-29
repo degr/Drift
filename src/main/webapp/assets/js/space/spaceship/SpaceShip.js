@@ -108,7 +108,8 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
         }
         context.save();
         context.translate(positionX, positionY);
-
+        context.textAlign = 'center';
+        context.strokeText(parseInt(this.x) + '/' + parseInt(this.y), 0, 20);
         context.beginPath();
         if(this.invincible) {
             context.strokeStyle = "yellow";
