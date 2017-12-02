@@ -3,13 +3,12 @@ package org.forweb.drift.websocket;
 import org.forweb.drift.context.GameContext;
 import org.forweb.drift.entity.drift.Player;
 import org.forweb.drift.entity.drift.Room;
-import org.forweb.drift.entity.drift.SpaceShip;
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.EOFException;
 import java.io.IOException;
 
 @ServerEndpoint(value = "/drift", configurator = SpringConfigurator.class)
@@ -18,7 +17,7 @@ public class Endpoint {
 
     public static final long TICK_DELAY = 20;
 
-    public static final int CLUSTER_SIZE = 300;
+    public static final int CLUSTER_SIZE = 500;
 
     private Player player;
     private Room room;

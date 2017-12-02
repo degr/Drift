@@ -2,7 +2,6 @@ package org.forweb.drift.dto;
 
 import org.forweb.drift.dto.drift.UpdateDto;
 import org.forweb.drift.entity.drift.BaseObject;
-import org.forweb.drift.entity.drift.SpaceShip;
 
 import java.util.List;
 

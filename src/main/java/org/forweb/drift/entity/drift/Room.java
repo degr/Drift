@@ -2,6 +2,7 @@ package org.forweb.drift.entity.drift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
 import org.forweb.drift.utils.AngleSerializer;
 import org.forweb.drift.utils.ArrayUtils;
 import org.forweb.drift.services.DriftTimerService;
@@ -35,13 +36,13 @@ public class Room {
     private boolean forceFullUpdate = false;
 
     public Player newPlayer(Session session) {
-        int id = ids.get();
         boolean nobody = players.isEmpty();
         Random random = new Random();
+        SpaceShip spaceShip = new SpaceShip(random.nextInt((int)x), random.nextInt((int)y), getIds());
         Player player = new Player(
-                id,
+                spaceShip.getId(),
                 session,
-                new SpaceShip(random.nextInt((int)x), random.nextInt((int)y),id, this)
+                spaceShip
         );
         players.add(player);
         objects.add(player.getSpaceShip());
@@ -78,8 +79,8 @@ public class Room {
             BaseObject obj1 = iterator.next();
             if(obj1 != obj && obj1.isAlive()) {
                 double distance = LineService.getDistance(
-                        new Point(obj.getX(), obj.getY()),
-                        new Point(obj1.getX(), obj1.getY())
+                        obj.getX(), obj.getY(),
+                        obj1.getX(), obj1.getY()
                 );
                 if (distance < CLUSTER_SIZE) {
                     boolean impact = obj.hasImpact(obj1);

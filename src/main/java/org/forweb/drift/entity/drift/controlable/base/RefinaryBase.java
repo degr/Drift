@@ -1,16 +1,17 @@
-package org.forweb.drift.entity.drift.base;
+package org.forweb.drift.entity.drift.controlable.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.entity.drift.BaseObject;
-import org.forweb.drift.entity.drift.SpaceShip;
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
 import org.forweb.drift.entity.drift.Types;
 import org.forweb.drift.utils.MassUtils;
-import org.forweb.geometry.services.LineService;
-import org.forweb.geometry.services.PointService;
+import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
 
 
 public class RefinaryBase extends AbstractBase {
 
+    private Point detectionLandingPoint;
     private Point landingPoint;
     private static int k = 20;
 
@@ -29,8 +30,10 @@ public class RefinaryBase extends AbstractBase {
     }
 
     public RefinaryBase(double x, double y, double angle, int id) {
-        super(x, y, angle, RefinaryBase.generatePoints(), id);
-        landingPoint = new Point(this.points[2].getX(), this.points[2].getY() + 5 * k);
+        super(x, y, id, angle, RefinaryBase.generatePoints());
+        detectionLandingPoint = new Point(this.points[2].getX(), this.points[2].getY() + 5 * k);
+        landingPoint = new Point(this.points[2].getX() + 5 * k, this.points[2].getY());
+        this.setVector(new Vector(0, 0));
     }
 
     @Override
@@ -38,25 +41,31 @@ public class RefinaryBase extends AbstractBase {
         return Types.refinary.toString();
     }
 
+    @JsonIgnore
+    @Override
+    protected Point getLandingPoint() {
+        return landingPoint;
+    }
+    @JsonIgnore
+    @Override
+    protected Point getDetectionLandingPoint() {
+        return detectionLandingPoint;
+    }
+
     @Override
     public boolean hasImpact(BaseObject baseObject) {
         boolean out = super.hasImpact(baseObject);
         if(baseObject instanceof SpaceShip) {
-            System.out.println();
-        }
-        if(!out && baseObject instanceof SpaceShip) {
             SpaceShip spaceShip = (SpaceShip)baseObject;
-            Point p = PointService.translate(
-                    new Point(0, 0),
-                    landingPoint,
-                    this.getAngle()
-            );
-            double distance = LineService.getDistance(
-                    new Point(spaceShip.getX(), spaceShip.getY()),
-                    new Point(p.getX() + this.getX(), p.getY() + this.getY())
-            );
-            if(distance < 80) {
-                System.out.println("landing started");
+            boolean land = onLand(spaceShip);
+            if(land) {
+                spaceShip.setOnDock(this);
+                if(out) {
+
+                }
+                return false;
+            } else {
+                spaceShip.setOnDock(null);
             }
         }
         return out;

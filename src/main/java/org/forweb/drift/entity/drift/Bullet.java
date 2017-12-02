@@ -2,14 +2,12 @@ package org.forweb.drift.entity.drift;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
-
-import javax.persistence.OneToMany;
-import javax.validation.OverridesAttribute;
 
 public class Bullet extends BaseObject {
 

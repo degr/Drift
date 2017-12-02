@@ -1,10 +1,9 @@
 package org.forweb.drift.dto.drift;
 
 import org.forweb.drift.entity.drift.Player;
-import org.forweb.drift.entity.drift.SpaceShip;
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 

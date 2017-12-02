@@ -60,11 +60,11 @@ Engine.define('RefinaryBase', ['RelativePointsObject', 'Point', 'MassUtils', 'La
 
         context.rotate(this.angle);
         context.strokeStyle = "#59f741";
+        //context.arc(this.points[2].x, this.points[2].y  + 5 * k, 80, 0, Math.PI*2);
+        //context.stroke();
+
         this.placePoints(context);
         this.drawLandingZone(context);
-
-        //context.arc(this.points[2].x,this.points[2].y + 5 * k,this.landingRadius,0,2*Math.PI);
-        //context.stroke();
 
         context.restore();
     };
@@ -73,7 +73,7 @@ Engine.define('RefinaryBase', ['RelativePointsObject', 'Point', 'MassUtils', 'La
         for (var i = 0; i < this.landingLight.length; i++) {
             this.landingLight[i].draw(context);
         }
-    }
+    };
     RefinaryBase.prototype.update = function() {
         return null;
     };

@@ -1,28 +1,20 @@
-package org.forweb.drift.entity.drift;
+package org.forweb.drift.entity.drift.controlable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.forweb.drift.utils.IncrementalId;
+import org.forweb.drift.entity.drift.BaseObject;
+import org.forweb.drift.entity.drift.Gun;
+import org.forweb.drift.utils.ArrayUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
 
-public class SpaceShip extends BaseObject{
-
-    @JsonIgnore
-    static Point[] points = new Point[]{new Point(-12, 12), new Point(15, 0), new Point(-12, -12)};
+public abstract class Controlable extends BaseObject{
 
     private int turn;
     private boolean hasAcceleration;
+    private boolean isAlive;
     private Gun[] guns;
     private boolean fireStarted;
-    private boolean isAlive;
-
-    @JsonIgnore
-    private Room room;
-
-    @JsonIgnore
-    private IncrementalId ids;
-
     @JsonIgnore
     private boolean updateAcceleration;
     @JsonIgnore
@@ -34,15 +26,10 @@ public class SpaceShip extends BaseObject{
     @JsonIgnore
     private boolean updateRequire;
 
-    public SpaceShip(double x, double y, int id, Room room) {
-        super(x, y, 0, SpaceShip.points, id);
-        this.setVector(new Vector(0, 0));
-        this.room = room;
-        this.ids = room.getIds();
-        setInvincible(true);
+    public Controlable(double x, double y, double angle, Point[] points, int id) {
+        super(x, y, angle, points, id);
+
         isAlive = true;
-        guns = new Gun[1];
-        guns[0] = new Gun(0, 0, ids.get());
         turn = 0;
     }
 
@@ -67,30 +54,7 @@ public class SpaceShip extends BaseObject{
 
         setX(getX() + vector.x);
         setY(getY() + vector.y);
-        BaseObject[] bullet = null;
-        if(this.fireStarted) {
-            for(int i = 0; i < this.guns.length; i++) {
-                Gun gun = this.guns[i];
-                if(gun.canFire()) {
-                    bullet = new BaseObject[1];
-                    Bullet b = gun.fire(ids);
-                    b.correct(this);
-                    bullet[0] = b;
-
-                    Angle bulletAngle = angle.sum(Math.PI);
-                    vector.append(new Vector(bulletAngle.cos() * 0.2, bulletAngle.sin() * 0.2));
-                    setUpdateFire(true);
-                    setUpdateRequire(true);
-                }
-            }
-        }
-        return bullet;
-    }
-
-
-    @Override
-    public String getType() {
-        return Types.ship.toString();
+        return null;
     }
 
     @JsonIgnore
@@ -98,16 +62,6 @@ public class SpaceShip extends BaseObject{
     public boolean isRelativePoints() {
         return true;
     }
-
-    @JsonIgnore
-    public BaseObject[] onImpact(BaseObject object, IncrementalId ids) {
-        this.setAlive(false);
-        BaseObject[] out = new BaseObject[1];
-        out[0] = new Explosion(getX(), getY(), getVector(), 30, ids.get());
-        return out;
-    };
-
-
 
     public boolean isHasAcceleration() {
         return hasAcceleration;
@@ -117,6 +71,7 @@ public class SpaceShip extends BaseObject{
         updateAcceleration = true;
         this.hasAcceleration = hasAcceleration;
     }
+
 
     public Gun[] getGuns() {
         return guns;
@@ -139,31 +94,12 @@ public class SpaceShip extends BaseObject{
         isAlive = alive;
     }
 
-    @Override
-    public boolean hasImpact(BaseObject baseObject) {
-        if(baseObject instanceof Explosion ||
-                baseObject instanceof Gun ||
-                (baseObject instanceof Bullet && ((Bullet) baseObject).getShip() == this.getId())
-        ) {
-            return false;
-        } else {
-            return super.hasImpact(baseObject);
-        }
-    }
-
-    @JsonIgnore
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
 
     public void setTurn(int turn) {
         updateTurn = true;
         this.turn = turn;
     }
+
     @JsonIgnore
     public boolean isUpdateAcceleration() {
         return updateAcceleration;
@@ -178,6 +114,8 @@ public class SpaceShip extends BaseObject{
     public void setUpdateTurn(boolean updateTurn) {
         this.updateTurn = updateTurn;
     }
+
+
     @JsonIgnore
     public boolean isUpdateFire() {
         return updateFire;
@@ -207,5 +145,25 @@ public class SpaceShip extends BaseObject{
     @JsonIgnore
     public boolean isUpdateRequire() {
         return updateRequire;
+    }
+
+    public void addGun(Gun gun) {
+        int gunPosition = -1;
+        if(this.guns == null) {
+            this.guns = new Gun[1];
+            gunPosition = 0;
+        } else {
+            for (int i = 0; i < guns.length; i++) {
+                if(guns[i] == null) {
+                    gunPosition = i;
+                    break;
+                }
+            }
+        }
+        if(gunPosition == -1) {
+            this.guns = ArrayUtils.concat(this.guns, new Gun[1]);
+            gunPosition = this.guns.length - 1;
+        }
+        this.guns[gunPosition] = gun;
     }
 }

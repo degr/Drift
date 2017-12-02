@@ -1,5 +1,7 @@
 package org.forweb.drift.entity.drift;
 
+import org.forweb.drift.entity.drift.controlable.SpaceShip;
+
 import javax.websocket.Session;
 
 public class Player {

@@ -140,6 +140,7 @@ Engine.define("SpaceShip", ['Vector', 'BaseObject', 'Gun', 'RelativePointsObject
     };
 
     SpaceShip.prototype.hasImpact = function(object) {
+        return false;
         if(object instanceof Bullet && object.ship === this.id) {
             return false;
         } else if(object instanceof Gun) {
