@@ -31,9 +31,9 @@ public abstract class EngineSlot extends InventorySlot {
             Angle vectorAngle = spaceShip.getAngle().sum(getAngle().doubleValue());
             Vector vector = new Vector(power * vectorAngle.cos(), power * vectorAngle.sin());
             Point translatedPoint = PointService.translate(
-                    new Point(spaceShip.getX(), spaceShip.getY()),
+                    new Point(0, 0),
                     new Point(this.getX(), this.getY()),
-                    vectorAngle
+                    spaceShip.getAngle()
             );
             spaceShip.applyForceToPoint(
                     vector,

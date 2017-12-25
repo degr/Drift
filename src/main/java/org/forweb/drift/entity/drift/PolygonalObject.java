@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PolygonalObject {
 
-    private static final Point zero = new Point(0, 0);
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
     private double y;

@@ -5,10 +5,12 @@ import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.Cargo;
 import org.forweb.drift.entity.drift.inventory.Inventory;
 import org.forweb.drift.entity.drift.inventory.InventorySlot;
-import org.forweb.drift.tests.Listener;
-import org.forweb.drift.tests.TestsKeyListener;
 import org.forweb.drift.utils.InventoryUtils;
+import org.forweb.geometry.misc.Angle;
+import org.forweb.geometry.services.PointService;
+import org.forweb.geometry.shapes.Point;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +46,29 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     public void update() {
         super.update();
         for (InventorySlot slot : slots) {
-            if(slot.isActive()) {
+            if (slot.isActive()) {
                 slot.affect(this);
+            }
+        }
+    }
+
+
+    public void draw(Graphics g) {
+        super.draw(g);
+        for (InventorySlot slot : slots) {
+            Inventory inventory = slot.getInventory();
+            if (inventory != null) {
+                double x = inventory.getX();
+                double y = inventory.getY();
+                Angle angle = inventory.getAngle();
+                Point result = PointService.translate(new Point(0, 0), new Point(x, y), getAngle());
+                inventory.setX(result.getX() + getX());
+                inventory.setY(result.getY() + getY());
+                inventory.setAngle(angle.sum(getAngle().doubleValue()));
+                inventory.draw(g);
+                inventory.setX(x);
+                inventory.setY(y);
+                inventory.setAngle(angle);
             }
         }
     }

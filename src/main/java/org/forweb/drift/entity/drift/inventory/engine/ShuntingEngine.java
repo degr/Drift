@@ -14,6 +14,6 @@ public class ShuntingEngine extends Engine{
 
     @Override
     public double getPower() {
-        return 10;
+        return 5;
     }
 }

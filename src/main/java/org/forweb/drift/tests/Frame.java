@@ -21,6 +21,9 @@ import javax.swing.border.LineBorder;
 
 public class Frame extends JFrame {
 
+    private final int width = 1200;
+    private final int height = 800;
+
     private JPanel drawingPanel;
     private Timer gameTimer;
 
@@ -31,7 +34,7 @@ public class Frame extends JFrame {
         gameTimer = new Timer(1000/60, new GameUpdater());
         drawingPanel = new JPanel();
         drawingPanel.setBorder(new LineBorder(Color.black));
-        drawingPanel.setPreferredSize(new Dimension(1000, 800));
+        drawingPanel.setPreferredSize(new Dimension(width, height));
         JPanel centerPanel = new JPanel();
         centerPanel.add(drawingPanel);
 
@@ -40,7 +43,7 @@ public class Frame extends JFrame {
 
         setTitle("Frame Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1010, 910);
+        setBounds(100, 100, width + 10, height + 10);
         setVisible(true);
         gameTimer.start();
         Falcon spaceShip = new Falcon(100, 100);
@@ -50,6 +53,7 @@ public class Frame extends JFrame {
         spaceShip.setGun(new Laser());
         Listener executor = new Executor(spaceShip);
         TestsKeyListener keyListener = new TestsKeyListener();
+        spaceShip.setAngle(new Angle(Math.PI / 5));
         objectList.add(spaceShip);
         keyListener.addListener(executor);
         addKeyListener(keyListener);
@@ -66,6 +70,19 @@ public class Frame extends JFrame {
 
         for (PolygonalObject object : objectList) {
             object.update();
+            if(object.getX() > width) {
+                object.setX(0);
+            }
+            if(object.getY() > height) {
+                object.setY(0);
+            }
+            if(object.getX() < 0) {
+                object.setX(width);
+            }
+            if(object.getY() < 0) {
+                object.setY(height);
+            }
+
             object.draw(g);
         }
     }

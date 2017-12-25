@@ -21,7 +21,7 @@ public class Falcon extends PolygonalSpaceShip {
         Point[] points = this.getRelativePoints();
         mainEngineSlot = new MainEngineSlot(new PolygonalObjectEntity(points[0].getX(), 0, 0));
         shuntingLeftSlot = new ShuntingEngineSlot(new PolygonalObjectEntity(points[2].getX() - 5, -5, Math.PI / 4));
-        shuntingRightSlot = new ShuntingEngineSlot(new PolygonalObjectEntity(points[2].getX() - 5, 5, Math.PI * 7 / 8));
+        shuntingRightSlot = new ShuntingEngineSlot(new PolygonalObjectEntity(points[2].getX() - 5, 5, (Math.PI * 3 / 4) + Math.PI));
         gunSlot = new MinorEnergySlot(new PolygonalObjectEntity(points[2].getX(), 0, 0));
 
         addInventory(mainEngineSlot);
