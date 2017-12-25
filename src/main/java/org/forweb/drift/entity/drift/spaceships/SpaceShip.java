@@ -1,9 +1,8 @@
-package org.forweb.drift.entity.drift.controlable;
+package org.forweb.drift.entity.drift.spaceships;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.entity.drift.*;
-import org.forweb.drift.entity.drift.controlable.base.AbstractBase;
-import org.forweb.drift.entity.drift.controlable.base.RefinaryBase;
+import org.forweb.drift.entity.drift.spaceships.base.AbstractBase;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;

@@ -2,14 +2,13 @@ package org.forweb.drift.entity.drift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.drift.utils.AngleSerializer;
 import org.forweb.drift.utils.ArrayUtils;
 import org.forweb.drift.services.DriftTimerService;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.services.LineService;
-import org.forweb.geometry.shapes.Point;
 
 import javax.websocket.Session;
 import java.util.*;

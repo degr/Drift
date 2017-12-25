@@ -1,18 +1,16 @@
-package org.forweb.drift.entity.drift.controlable.base;
+package org.forweb.drift.entity.drift.spaceships.base;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.entity.drift.BaseObject;
-import org.forweb.drift.entity.drift.controlable.Controlable;
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.Controlable;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.LineService;
 import org.forweb.geometry.services.PointService;
-import org.forweb.geometry.shapes.Line;
 import org.forweb.geometry.shapes.Point;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public abstract class AbstractBase extends Controlable {
 

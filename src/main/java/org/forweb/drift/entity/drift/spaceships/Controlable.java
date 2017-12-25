@@ -1,4 +1,4 @@
-package org.forweb.drift.entity.drift.controlable;
+package org.forweb.drift.entity.drift.spaceships;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.entity.drift.BaseObject;

@@ -2,7 +2,7 @@ package org.forweb.drift.entity.drift;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;

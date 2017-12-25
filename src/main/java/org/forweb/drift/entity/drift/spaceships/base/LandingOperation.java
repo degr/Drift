@@ -1,4 +1,4 @@
-package org.forweb.drift.entity.drift.controlable.base;
+package org.forweb.drift.entity.drift.spaceships.base;
 
 import org.forweb.geometry.misc.Vector;
 

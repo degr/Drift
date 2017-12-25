@@ -1,6 +1,6 @@
 package org.forweb.drift.entity.drift;
 
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 
 import javax.websocket.Session;
 

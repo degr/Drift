@@ -3,7 +3,7 @@ package org.forweb.drift.websocket;
 import org.forweb.drift.context.GameContext;
 import org.forweb.drift.entity.drift.Player;
 import org.forweb.drift.entity.drift.Room;
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 

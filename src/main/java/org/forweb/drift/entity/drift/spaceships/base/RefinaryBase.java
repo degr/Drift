@@ -1,8 +1,8 @@
-package org.forweb.drift.entity.drift.controlable.base;
+package org.forweb.drift.entity.drift.spaceships.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.entity.drift.BaseObject;
-import org.forweb.drift.entity.drift.controlable.SpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.drift.entity.drift.Types;
 import org.forweb.drift.utils.MassUtils;
 import org.forweb.geometry.misc.Vector;
