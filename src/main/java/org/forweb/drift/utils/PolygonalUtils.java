@@ -85,27 +85,20 @@ public class PolygonalUtils {
         double y = object.getY();
         double radius = object.getRadius();
         if(PointService.pointBelongToCircle(point, new Circle(x, y, radius)) >= 0) {
-
-            double a = force.y,
-                   b = -force.x,
-                   c = force.x * point.getY() - force.y * point.getX();
-            double distance = Math.abs(a*object.getX() + b*object.getY() + c)/Math.sqrt(a * a + b * b);
-
-            //let's think that if power applied to max radius, half will be used for rotation, half for movement
-            double rotationScale = distance / radius;
-            double movementScale = 1 - rotationScale;
-            applyForceToCenter(object, new Vector(force.x * movementScale, force.y * movementScale));
-
-            Point pointOfApplication = new Point(point.getX() - x, point.getY() - y);
-            double torque = pointOfApplication.getX() * force.y - pointOfApplication.getY() * force.x;
-            double angle;
-            angle = (Math.PI * rotationScale / object.getMass());
-            if(torque < 0) {
-                angle = -angle;
-            }
-            object.getRotation().append(angle);
+            applyForceToCenter(object, calculateVector(object, force, point));
+            object.getRotation().append(calculateAngle(object, force, point));
         }
+    }
 
+    public static double calculateAngle(PolygonalObject object, Vector force, Point point) {
+        double rotationScale = calculateRotationScale(object, force, point);
+        double angle = (Math.PI * rotationScale / object.getMass());
+        Point pointOfApplication = new Point(point.getX() - object.getX(), point.getY() - object.getY());
+        double torque = pointOfApplication.getX() * force.y - pointOfApplication.getY() * force.x;
+        if(torque < 0) {
+            angle = -angle;
+        }
+        return angle;
     }
 
     public static void applyForceToCenter(PolygonalObject object, Vector force) {
@@ -125,5 +118,21 @@ public class PolygonalUtils {
             out[i] = new Point(p.getX() + x, p.getY() + y);
         }
         return out;
+    }
+
+
+    public static Vector calculateVector(PolygonalObject object, Vector force, Point point) {
+        double rotationScale = calculateRotationScale(object, force, point);
+        double movementScale = 1 - rotationScale;
+        return new Vector(force.x * movementScale, force.y * movementScale);
+    }
+
+    private static double calculateRotationScale(PolygonalObject object, Vector force, Point point) {
+        double a = force.y,
+                b = -force.x,
+                c = force.x * point.getY() - force.y * point.getX();
+        double distance = Math.abs(a*object.getX() + b*object.getY() + c)/Math.sqrt(a * a + b * b);
+        //let's think that if power applied to max radius, half will be used for rotation, half for movement
+        return distance / object.getRadius();
     }
 }

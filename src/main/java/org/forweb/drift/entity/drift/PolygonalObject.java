@@ -135,10 +135,11 @@ public class PolygonalObject {
 
     public void draw(Graphics g) {
         Point[] points = getPoints();
+        int scale = 1;
         for (int i = 0; i < points.length; i++) {
             Point a = points[i];
             Point b = i == points.length - 1 ? points[0] : points[i + 1];
-            g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY());
+            g.drawLine((int) a.getX() * scale, (int) a.getY() * scale, (int) b.getX() * scale, (int) b.getY() * scale);
         }
     }
 

@@ -4,6 +4,7 @@ package org.forweb.drift.entity.drift.inventory;
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 import org.forweb.geometry.misc.Angle;
+import org.springframework.security.access.method.P;
 
 import javax.persistence.criteria.CriteriaBuilder;
 
@@ -29,23 +30,23 @@ public abstract class InventorySlot {
     public abstract void affect(PolygonalSpaceShip spaceShip);
 
     public Inventory mount(Inventory inventory) {
-        if(this.inventory == null) {
-            this.inventory = inventory;
-            applyConfiguration();
-            return null;
-        } else {
-            if(this.canMount(inventory)) {
+        if(this.canMount(inventory)) {
+            if(this.inventory == null) {
+                this.inventory = inventory;
+                applyConfiguration();
+                return null;
+            } else {
                 Inventory out = this.inventory;
                 this.inventory = inventory;
                 applyConfiguration();
                 return out;
-            } else {
-                return inventory;
             }
+        } else {
+            return inventory;
         }
     }
 
-    private void applyConfiguration() {
+    protected void applyConfiguration() {
         this.inventory.setX(getX());
         this.inventory.setY(getY());
         this.inventory.setAngle(getAngle());
