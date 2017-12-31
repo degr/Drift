@@ -5,13 +5,15 @@ import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 
 import java.awt.*;
 
-public class Inventory extends PolygonalObject{
+public abstract class Inventory extends PolygonalObject{
     private double bulk;
 
     public Inventory(PolygonalObjectEntity configuration, double bulk) {
         super(configuration);
         this.bulk = bulk;
     }
+
+    public abstract int getEnergyConsumption();
 
     public double getBulk() {
         return bulk;

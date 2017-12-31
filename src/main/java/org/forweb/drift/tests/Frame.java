@@ -1,15 +1,13 @@
 package org.forweb.drift.tests;
 
 import org.forweb.drift.entity.drift.PolygonalObject;
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.engine.BasicEngine;
 import org.forweb.drift.entity.drift.inventory.engine.ShuntingEngine;
+import org.forweb.drift.entity.drift.inventory.generator.BasicGenerator;
 import org.forweb.drift.entity.drift.inventory.gun.Laser;
+import org.forweb.drift.entity.drift.inventory.system.BasicRepairSystem;
+import org.forweb.drift.entity.drift.inventory.system.radar.MinorRadar;
 import org.forweb.drift.entity.drift.spaceships.Falcon;
-import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
-import org.forweb.geometry.misc.Angle;
-import org.forweb.geometry.misc.Vector;
-import org.forweb.geometry.shapes.Point;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,13 +45,17 @@ public class Frame extends JFrame {
         setVisible(true);
         gameTimer.start();
         Falcon spaceShip = new Falcon(100, 100);
-        spaceShip.setMainEngine(new BasicEngine());
-        spaceShip.setShuntingLeftEngine(new ShuntingEngine());
-        spaceShip.setShuntingRightEngine(new ShuntingEngine());
-        spaceShip.setGun(new Laser());
+        spaceShip.getSlot(0).mount(new BasicEngine());
+        spaceShip.getSlot(1).mount(new ShuntingEngine());
+        spaceShip.getSlot(2).mount(new ShuntingEngine());
+        spaceShip.getSlot(3).mount(new BasicGenerator());
+        spaceShip.getSlot(4).mount(new MinorRadar());
+        spaceShip.getSlot(5).mount(new BasicRepairSystem());
+        spaceShip.getSlot(6).mount(new Laser());
+        spaceShip.getSlot(7).mount(new Laser());
         Listener executor = new Executor(spaceShip);
         TestsKeyListener keyListener = new TestsKeyListener();
-        spaceShip.setAngle(new Angle(Math.PI / 5));
+        //spaceShip.setAngle(new Angle(Math.PI / 5));
         objectList.add(spaceShip);
         keyListener.addListener(executor);
         addKeyListener(keyListener);
@@ -66,7 +68,6 @@ public class Frame extends JFrame {
         int height = drawingPanel.getHeight() - 1;
 
         g.clearRect(0, 0, width, height);
-        g.drawRect(0, 0, width, height);
 
         for (PolygonalObject object : objectList) {
             object.update();

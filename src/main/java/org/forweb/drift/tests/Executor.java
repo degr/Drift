@@ -20,17 +20,25 @@ public class Executor implements Listener{
         }
         switch (keyCode) {
             case 87:
-                spaceShip.command("e", PRESSED == type ? "1" : "0");
+                spaceShip.command(0, PRESSED == type ? "1" : "0");
                 break;
             case 83:
-                spaceShip.command("sl", PRESSED == type ? "1" : "0");
-                spaceShip.command("sr", PRESSED == type ? "1" : "0");
+                spaceShip.command(1, PRESSED == type ? "1:s" : "0");
+                spaceShip.command(2, PRESSED == type ? "1:s" : "0");
                 break;
             case 65:
-                spaceShip.command("sr", PRESSED == type ? "1" : "0");
+                spaceShip.command(2, PRESSED == type ? "1" : "0");
                 break;
             case 68:
-                spaceShip.command("sl", PRESSED == type ? "1" : "0");
+                spaceShip.command(1, PRESSED == type ? "1" : "0");
+                break;
+            case 88:
+                spaceShip.command(1, PRESSED == type ? "1" : "0");
+                spaceShip.command(2, PRESSED == type ? "1" : "0");
+                break;
+            case 67:
+                spaceShip.command(1, PRESSED == type ? "1" : "0");
+                spaceShip.command(2, PRESSED == type ? "1" : "0");
                 break;
         }
     }

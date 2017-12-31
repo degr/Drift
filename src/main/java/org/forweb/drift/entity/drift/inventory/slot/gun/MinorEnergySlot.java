@@ -6,8 +6,8 @@ import org.forweb.drift.entity.drift.inventory.gun.energy.MinorEnergyGun;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 
 public class MinorEnergySlot extends GunSlot {
-    public MinorEnergySlot(PolygonalObjectEntity configuration) {
-        super(configuration);
+    public MinorEnergySlot(PolygonalObjectEntity configuration, PolygonalSpaceShip spaceShip) {
+        super(configuration, spaceShip);
     }
 
     @Override

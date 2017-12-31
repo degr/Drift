@@ -5,6 +5,7 @@ import org.forweb.drift.entity.drift.inventory.Inventory;
 import org.forweb.drift.entity.drift.inventory.InventorySlot;
 import org.forweb.drift.entity.drift.inventory.engine.Engine;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.drift.utils.PolygonalUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
@@ -13,12 +14,12 @@ import org.forweb.geometry.shapes.Point;
 
 public abstract class EngineSlot extends InventorySlot {
 
-    private double cachedMass;
-    private double rotationAngle;
-    private double vectorLength;
+    protected double cachedMass;
+    protected double rotationAngle;
+    protected double vectorLength;
 
-    public EngineSlot(PolygonalObjectEntity configuration) {
-        super(configuration);
+    public EngineSlot(PolygonalObjectEntity configuration, PolygonalSpaceShip spaceShip) {
+        super(configuration, spaceShip);
         cachedMass = 0;
     }
 
@@ -29,7 +30,10 @@ public abstract class EngineSlot extends InventorySlot {
 
     @Override
     protected void applyConfiguration() {
-
+        Inventory inventory = getInventory();
+        inventory.setX(getX());
+        inventory.setY(getY());
+        inventory.setAngle(getAngle());
     }
 
     @Override
@@ -56,10 +60,16 @@ public abstract class EngineSlot extends InventorySlot {
                 vectorLength = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
                 cachedMass = spaceShip.getMass();
             }
-            Angle angle = inventory.getAngle().sum(spaceShip.getAngle().doubleValue());
-            spaceShip.applyForceToCenter(new Vector(vectorLength * angle.cos(), vectorLength * angle.sin()));
-            spaceShip.getRotation().append(this.rotationAngle);
+            postAffect(spaceShip);
         }
     }
+
+    protected void postAffect(PolygonalSpaceShip spaceShip) {
+        Inventory inventory = getInventory();
+        Angle angle = inventory.getAngle().sum(spaceShip.getAngle().doubleValue());
+        spaceShip.applyForceToCenter(new Vector(vectorLength * angle.cos(), vectorLength * angle.sin()));
+        spaceShip.getRotation().append(this.rotationAngle);
+    }
+
 
 }

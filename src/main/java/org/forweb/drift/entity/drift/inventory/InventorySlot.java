@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 
 public abstract class InventorySlot {
 
+    private final PolygonalSpaceShip spaceShip;
     private boolean active;
     private Angle angle;
     private double x;
@@ -18,10 +19,11 @@ public abstract class InventorySlot {
 
     private Inventory inventory;
 
-    public InventorySlot(PolygonalObjectEntity configuration) {
+    public InventorySlot(PolygonalObjectEntity configuration, PolygonalSpaceShip spaceShip) {
         this.x = configuration.getX();
         this.y = configuration.getY();
         this.angle = new Angle(configuration.getAngle());
+        this.spaceShip = spaceShip;
     }
 
 
@@ -73,5 +75,9 @@ public abstract class InventorySlot {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public PolygonalSpaceShip getSpaceShip() {
+        return spaceShip;
     }
 }

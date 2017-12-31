@@ -16,4 +16,9 @@ public class HeavyEngine extends Engine{
     public double getPower() {
         return 25;
     }
+
+    @Override
+    public int getEnergyConsumption() {
+        return 10;
+    }
 }

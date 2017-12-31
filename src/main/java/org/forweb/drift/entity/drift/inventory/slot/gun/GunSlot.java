@@ -6,8 +6,8 @@ import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 
 public abstract class GunSlot extends InventorySlot {
 
-    public GunSlot(PolygonalObjectEntity configuration) {
-        super(configuration);
+    public GunSlot(PolygonalObjectEntity configuration, PolygonalSpaceShip spaceShip) {
+        super(configuration, spaceShip);
     }
 
     @Override

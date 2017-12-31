@@ -18,4 +18,8 @@ public class Laser extends MinorEnergyGun {
         return null;
     }
 
+    @Override
+    public int getEnergyConsumption() {
+        return 3;
+    }
 }

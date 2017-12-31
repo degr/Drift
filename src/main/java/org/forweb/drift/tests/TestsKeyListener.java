@@ -27,6 +27,7 @@ public class TestsKeyListener implements KeyListener{
     }
 
     private void trigger(int keyCode, KEY_TYPED type) {
+        System.out.println("key event " + keyCode);
         for (Listener listener : keyListners) {
             listener.listen(keyCode, type);
         }

@@ -5,6 +5,7 @@ import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.Cargo;
 import org.forweb.drift.entity.drift.inventory.Inventory;
 import org.forweb.drift.entity.drift.inventory.InventorySlot;
+import org.forweb.drift.entity.drift.inventory.slot.system.GeneratorSlot;
 import org.forweb.drift.utils.InventoryUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.services.PointService;
@@ -19,19 +20,37 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
 
     private Cargo cargo;
     private List<InventorySlot> slots;
+    private int energy;
+    private int maxEnergy;
 
-    public PolygonalSpaceShip(PolygonalObjectEntity configuration) {
+    public PolygonalSpaceShip(PolygonalObjectEntity configuration, int maxEnergy) {
         super(configuration);
         cargo = new Cargo(configuration.getCapacity());
         slots = new ArrayList<>();
+        setMaxEnergy(maxEnergy);
+        setEnergy(maxEnergy);
     }
 
     protected void mountInventory(InventorySlot slot, Inventory inventory) {
         InventoryUtils.mount(this, slot, inventory);
     }
 
-    protected void addInventory(InventorySlot inventory) {
-        slots.add(inventory);
+    protected void addInventorySlot(InventorySlot inventorySlot) {
+        slots.add(inventorySlot);
+    }
+    public InventorySlot getSlot(int position) {
+        if(slots.size() >= position) {
+            return slots.get(position);
+        } else {
+            return null;
+        }
+    }
+
+    public void command(int slotPosition, String command) {
+        InventorySlot slot = getSlot(slotPosition);
+        if(slot != null) {
+            slot.command(command);
+        }
     }
 
     public Inventory addCargo(Inventory inventory) {
@@ -73,6 +92,31 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         }
     }
 
-    public abstract void command(String slot, String command);
+    public void addEnergy(int energy) {
+        int current = getEnergy();
+        int max = getMaxEnergy();
+        int amount;
+        if (current + energy > max) {
+            amount = max - current;
+        } else {
+            amount = energy;
+        }
+        setEnergy(current + amount);
+    }
 
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
 }
