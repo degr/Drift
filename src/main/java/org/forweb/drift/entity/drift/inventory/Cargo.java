@@ -1,6 +1,6 @@
 package org.forweb.drift.entity.drift.inventory;
 
-import org.forweb.drift.entity.drift.inventory.Inventory;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +33,13 @@ public class Cargo {
             }
         }
         return null;
+    }
+
+    public void setAllowedBulk(double allowedBulk) {
+        this.allowedBulk = allowedBulk;
+    }
+
+    public double getAllowedBulk() {
+        return allowedBulk;
     }
 }

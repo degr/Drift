@@ -135,7 +135,7 @@ public class PolygonalObject {
 
     public void draw(Graphics g) {
         Point[] points = getPoints();
-        int scale = 1;
+        int scale = 3;
         for (int i = 0; i < points.length; i++) {
             Point a = points[i];
             Point b = i == points.length - 1 ? points[0] : points[i + 1];

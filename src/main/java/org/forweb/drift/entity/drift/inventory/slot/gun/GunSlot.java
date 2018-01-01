@@ -1,7 +1,7 @@
 package org.forweb.drift.entity.drift.inventory.slot.gun;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.inventory.InventorySlot;
+import org.forweb.drift.entity.drift.inventory.slot.InventorySlot;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 
 public abstract class GunSlot extends InventorySlot {

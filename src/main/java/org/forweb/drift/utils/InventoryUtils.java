@@ -1,8 +1,8 @@
 package org.forweb.drift.utils;
 
-import org.forweb.drift.entity.drift.inventory.InventorySlot;
+import org.forweb.drift.entity.drift.inventory.slot.InventorySlot;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
-import org.forweb.drift.entity.drift.inventory.Inventory;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
 
 public class InventoryUtils {
     public static void mount(PolygonalSpaceShip polygonalSpaceShip, InventorySlot slot, Inventory inventory) {

@@ -1,11 +1,10 @@
 package org.forweb.drift.entity.drift.inventory.slot.engine;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.inventory.Inventory;
-import org.forweb.drift.entity.drift.inventory.InventorySlot;
-import org.forweb.drift.entity.drift.inventory.engine.Engine;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
+import org.forweb.drift.entity.drift.inventory.slot.InventorySlot;
+import org.forweb.drift.entity.drift.inventory.item.engine.Engine;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
-import org.forweb.drift.entity.drift.spaceships.SpaceShip;
 import org.forweb.drift.utils.PolygonalUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
@@ -29,7 +28,7 @@ public abstract class EngineSlot extends InventorySlot {
     }
 
     @Override
-    protected void applyConfiguration() {
+    protected void applySlotConfiguration() {
         Inventory inventory = getInventory();
         inventory.setX(getX());
         inventory.setY(getY());
@@ -40,6 +39,9 @@ public abstract class EngineSlot extends InventorySlot {
     public void affect(PolygonalSpaceShip spaceShip) {
         Inventory inventory = getInventory();
         if(inventory != null) {
+            if(!spaceShip.useEnergy(inventory.getEnergyConsumption())) {
+                return;
+            }
             if(cachedMass == 0 || cachedMass != spaceShip.getMass()) {
                 Engine engine = (Engine)inventory;
                 double power = engine.getPower();

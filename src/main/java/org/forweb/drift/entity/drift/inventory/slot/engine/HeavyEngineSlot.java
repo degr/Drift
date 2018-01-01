@@ -1,9 +1,9 @@
 package org.forweb.drift.entity.drift.inventory.slot.engine;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.inventory.Inventory;
-import org.forweb.drift.entity.drift.inventory.engine.BasicEngine;
-import org.forweb.drift.entity.drift.inventory.engine.HeavyEngine;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
+import org.forweb.drift.entity.drift.inventory.item.engine.BasicEngine;
+import org.forweb.drift.entity.drift.inventory.item.engine.HeavyEngine;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 
 public class HeavyEngineSlot extends EngineSlot {

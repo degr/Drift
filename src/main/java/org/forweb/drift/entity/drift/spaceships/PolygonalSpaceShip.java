@@ -3,13 +3,13 @@ package org.forweb.drift.entity.drift.spaceships;
 import org.forweb.drift.entity.drift.PolygonalObject;
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.Cargo;
-import org.forweb.drift.entity.drift.inventory.Inventory;
-import org.forweb.drift.entity.drift.inventory.InventorySlot;
-import org.forweb.drift.entity.drift.inventory.slot.system.GeneratorSlot;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
+import org.forweb.drift.entity.drift.inventory.slot.InventorySlot;
 import org.forweb.drift.utils.InventoryUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
+import org.springframework.security.access.method.P;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,13 +22,15 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     private List<InventorySlot> slots;
     private int energy;
     private int maxEnergy;
+    private int energyRegeneration;
 
-    public PolygonalSpaceShip(PolygonalObjectEntity configuration, int maxEnergy) {
+    public PolygonalSpaceShip(PolygonalObjectEntity configuration, int maxEnergy, int energyRegeneration) {
         super(configuration);
         cargo = new Cargo(configuration.getCapacity());
         slots = new ArrayList<>();
         setMaxEnergy(maxEnergy);
         setEnergy(maxEnergy);
+        setEnergyRegeneration(energyRegeneration);
     }
 
     protected void mountInventory(InventorySlot slot, Inventory inventory) {
@@ -61,9 +63,20 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         }
     }
 
+    public boolean useEnergy(int amount) {
+        int current = getEnergy();
+        if(current > amount) {
+            this.setEnergy(current - amount);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void update() {
         super.update();
+        this.addEnergy(getEnergyRegeneration());
         for (InventorySlot slot : slots) {
             if (slot.isActive()) {
                 slot.affect(this);
@@ -118,5 +131,17 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
 
     public void setMaxEnergy(int maxEnergy) {
         this.maxEnergy = maxEnergy;
+    }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setEnergyRegeneration(int energyRegeneration) {
+        this.energyRegeneration = energyRegeneration;
+    }
+
+    public int getEnergyRegeneration() {
+        return energyRegeneration;
     }
 }

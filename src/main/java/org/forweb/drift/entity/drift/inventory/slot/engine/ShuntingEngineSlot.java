@@ -1,8 +1,8 @@
 package org.forweb.drift.entity.drift.inventory.slot.engine;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.inventory.Inventory;
-import org.forweb.drift.entity.drift.inventory.engine.ShuntingEngine;
+import org.forweb.drift.entity.drift.inventory.item.Inventory;
+import org.forweb.drift.entity.drift.inventory.item.engine.ShuntingEngine;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
