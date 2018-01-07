@@ -21,4 +21,14 @@ public abstract class Inventory extends PolygonalObject{
     }
     public abstract void mount(PolygonalSpaceShip spaceShip);
     public abstract void unMount(PolygonalSpaceShip spaceShip);
+
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
+    public boolean isInvincible() {
+        return false;
+    }
 }

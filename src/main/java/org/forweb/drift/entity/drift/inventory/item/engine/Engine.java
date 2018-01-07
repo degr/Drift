@@ -1,8 +1,10 @@
 package org.forweb.drift.entity.drift.inventory.item.engine;
 
+import org.forweb.drift.entity.drift.PolygonalObject;
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.item.Inventory;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.forweb.geometry.shapes.Point;
 
 public abstract class Engine extends Inventory{
     public Engine(PolygonalObjectEntity configuration, double bulk) {
@@ -20,5 +22,15 @@ public abstract class Engine extends Inventory{
     @Override
     public void unMount(PolygonalSpaceShip spaceShip) {
 
+    }
+
+    @Override
+    public PolygonalObject[] generate() {
+        return null;
+    }
+
+    @Override
+    public PolygonalObject[] onImpact(PolygonalObject that, Point impact) {
+        return null;
     }
 }

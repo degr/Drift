@@ -57,8 +57,9 @@ public abstract class EngineSlot extends InventorySlot {
                         translatedPoint.getX() + spaceShip.getX(),
                         translatedPoint.getY() + spaceShip.getY()
                 );
-                rotationAngle = PolygonalUtils.calculateAngle(spaceShip, vector, engineForcePoint);
-                vector = PolygonalUtils.calculateVector(spaceShip, vector, engineForcePoint);
+                double rotationScale = PolygonalUtils.calculateRotationScale(spaceShip, vector, engineForcePoint);
+                rotationAngle = PolygonalUtils.calculateAngle(spaceShip, vector, engineForcePoint, rotationScale);
+                vector = PolygonalUtils.calculateVector(spaceShip, vector, rotationScale);
                 vectorLength = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
                 cachedMass = spaceShip.getMass();
             }

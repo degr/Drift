@@ -1,23 +1,26 @@
 package org.forweb.drift.entity.drift;
 
 
-import org.forweb.drift.utils.IncrementalId;
 import org.forweb.drift.utils.MassUtils;
 import org.forweb.drift.utils.PolygonalUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
-import org.forweb.geometry.services.PointService;
+import org.forweb.geometry.services.LineService;
+import org.forweb.geometry.shapes.Circle;
 import org.forweb.geometry.shapes.Point;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PolygonalObject {
+public abstract class PolygonalObject {
 
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
     private double y;
     private double x;
+
+    private double pY = -1;
+    private double pX = -1;
     private Point[] points;
     private Angle angle;
     private Angle rotation;
@@ -32,6 +35,8 @@ public class PolygonalObject {
         setPoints(configuration.getPoints());
         setX(configuration.getX());
         setY(configuration.getY());
+        pX = getX();
+        pY = getY();
         setVector(new Vector(0, 0));
         setRotation(new Angle(0));
         id = idGenerator.incrementAndGet();
@@ -46,6 +51,18 @@ public class PolygonalObject {
             }
         }
     }
+
+
+    public abstract boolean isAlive();
+    public abstract boolean isInvincible();
+    public abstract PolygonalObject[] generate();
+    public PolygonalObject[] onImpact(PolygonalObject that, Point impact) {
+
+        return null;
+    }
+
+
+
 
     public Point[] getPoints() {
         return translatePoints(points, getX(), getY(), getAngle());
@@ -94,8 +111,8 @@ public class PolygonalObject {
         return mass;
     }
 
-    public boolean hasImpacts(PolygonalObject object) {
-        return PolygonalUtils.hasIntersections(this, object);
+    Point hasImpact(PolygonalObject baseObject) {
+        return PolygonalUtils.hasImpact(baseObject, this);
     }
 
     public void applyForceToPoint(Vector force, Point point) {
@@ -127,6 +144,8 @@ public class PolygonalObject {
 
     public void update() {
         Vector v = getVector();
+        pX = getX();
+        pY = getY();
         setX(getX() + v.x);
         setY(getY() + v.y);
         getAngle().append(getRotation());

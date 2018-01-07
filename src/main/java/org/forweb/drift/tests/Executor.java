@@ -1,6 +1,8 @@
 package org.forweb.drift.tests;
 
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.forweb.geometry.misc.Vector;
+
 
 import static org.forweb.drift.tests.TestsKeyListener.KEY_TYPED.PRESSED;
 
@@ -39,6 +41,8 @@ public class Executor implements Listener{
             case 67:
                 spaceShip.command(1, PRESSED == type ? "1" : "0");
                 spaceShip.command(2, PRESSED == type ? "1" : "0");
+                break;
+            case 70:
                 break;
         }
     }

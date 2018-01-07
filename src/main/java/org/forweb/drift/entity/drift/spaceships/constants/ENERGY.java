@@ -1,7 +1,7 @@
 package org.forweb.drift.entity.drift.spaceships.constants;
 
 public enum ENERGY {
-    FALCON(300, 8);
+    FALCON(400, 8);
 
     public final int amount;
     public final int regeneration;

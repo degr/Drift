@@ -9,7 +9,6 @@ import org.forweb.drift.utils.InventoryUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
-import org.springframework.security.access.method.P;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -24,10 +23,15 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     private int maxEnergy;
     private int energyRegeneration;
 
+
+    private boolean alive;
+    private boolean invincible;
+
     public PolygonalSpaceShip(PolygonalObjectEntity configuration, int maxEnergy, int energyRegeneration) {
         super(configuration);
         cargo = new Cargo(configuration.getCapacity());
         slots = new ArrayList<>();
+        setAlive(true);
         setMaxEnergy(maxEnergy);
         setEnergy(maxEnergy);
         setEnergyRegeneration(energyRegeneration);
@@ -84,6 +88,16 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         }
     }
 
+    @Override
+    public boolean isAlive() {
+        return alive;
+    }
+
+    @Override
+    public boolean isInvincible() {
+        return invincible;
+    }
+
 
     public void draw(Graphics g) {
         super.draw(g);
@@ -103,6 +117,19 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
                 inventory.setAngle(angle);
             }
         }
+    }
+
+
+    @Override
+    public PolygonalObject[] generate() {
+        return null;
+    }
+
+    @Override
+    public PolygonalObject[] onImpact(PolygonalObject that, Point impact) {
+        super.onImpact(that, impact);
+        System.out.println("Impact");
+        return null;
     }
 
     public void addEnergy(int energy) {
@@ -144,4 +171,15 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     public int getEnergyRegeneration() {
         return energyRegeneration;
     }
+
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public void setInvincible(boolean invincible) {
+        this.invincible = invincible;
+    }
+
+
 }
