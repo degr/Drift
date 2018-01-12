@@ -4,6 +4,9 @@ import org.forweb.drift.utils.AsteroidUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.World;
 
 import java.util.Random;
 
@@ -17,15 +20,16 @@ public class PolygonalAsteroid extends PolygonalObject {
      * @param x position
      * @param y position
      */
-    public PolygonalAsteroid(double x, double y) {
-        this(new PolygonalObjectEntity(AsteroidUtils.createPoints(), x, y, 0));
+    public PolygonalAsteroid(World world, double x, double y) {
+        this(world, new PolygonalObjectEntity(AsteroidUtils.createPoints(), x, y, 0));
     }
 
-    public PolygonalAsteroid(PolygonalObjectEntity configuration) {
-        super(configuration);
+    public PolygonalAsteroid(World world, PolygonalObjectEntity configuration) {
+        super(world, configuration);
         Random random = new Random();
-        setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        this.setRotation(new Angle(Math.random() * 0.2 - 0.1));
+        /*Body body = getBody();
+        body.setLinearVelocity(new Vec2(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
+        body.setAngularVelocity(Math.random() * 0.2 - 0.1);*/
         this.alive = true;
     }
 
@@ -49,16 +53,9 @@ public class PolygonalAsteroid extends PolygonalObject {
         return false;
     }
 
-    public Point hasImpact(PolygonalObject baseObject) {
-        if (baseObject instanceof PolygonalAsteroid) {
-            return null;
-        } else {
-            return super.hasImpact(baseObject);
-        }
-    }
 
-    public PolygonalObject[] onImpact(BaseObject object) {
-        return AsteroidUtils.onImpact(this, object);
+    public PolygonalObject[] onImpact(World world, BaseObject object) {
+        return AsteroidUtils.onImpact(world, this, object);
     }
 
 

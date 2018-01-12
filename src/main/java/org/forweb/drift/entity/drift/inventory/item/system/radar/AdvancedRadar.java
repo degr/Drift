@@ -1,10 +1,11 @@
 package org.forweb.drift.entity.drift.inventory.item.system.radar;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
+import org.jbox2d.common.Vec2;
 
 public class AdvancedRadar extends AbstractRadar {
 
-    public AdvancedRadar(PolygonalObjectEntity configuration) {
+    public AdvancedRadar(Vec2[] configuration) {
         super(configuration, 25);
     }
 

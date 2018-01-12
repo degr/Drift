@@ -4,13 +4,14 @@ import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.item.ammo.Ammo;
 import org.forweb.drift.entity.drift.inventory.item.gun.energy.MinorEnergyGun;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class Laser extends MinorEnergyGun {
     public Laser() {
-        super(new PolygonalObjectEntity(new Point[]{
-                new Point(-1, 0.5), new Point(1, 0.5),
-                new Point(1, -0.5), new Point(-1, -0.5)
-        }, 0, 0, 0));
+        super(new Vec2[]{
+                new Vec2(-1, 0.5), new Vec2(1, 0.5),
+                new Vec2(1, -0.5), new Vec2(-1, -0.5)
+        });
     }
 
     @Override

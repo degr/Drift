@@ -7,6 +7,7 @@ import org.forweb.drift.utils.ArrayUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public abstract class Controlable extends BaseObject{
 
@@ -26,7 +27,7 @@ public abstract class Controlable extends BaseObject{
     @JsonIgnore
     private boolean updateRequire;
 
-    public Controlable(double x, double y, double angle, Point[] points, int id) {
+    public Controlable(double x, double y, double angle, Vec2[] points, int id) {
         super(x, y, angle, points, id);
 
         isAlive = true;

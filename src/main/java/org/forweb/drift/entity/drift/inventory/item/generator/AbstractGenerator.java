@@ -1,11 +1,11 @@
 package org.forweb.drift.entity.drift.inventory.item.generator;
 
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.item.system.InternalSystem;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.jbox2d.common.Vec2;
 
 public abstract class AbstractGenerator extends InternalSystem {
-    public AbstractGenerator(PolygonalObjectEntity configuration, double bulk) {
+    public AbstractGenerator(Vec2[] configuration, double bulk) {
         super(configuration, bulk);
     }
 

@@ -1,43 +1,34 @@
 package org.forweb.drift.entity.drift.inventory.item.gun;
 
-import org.forweb.drift.entity.drift.PolygonalObject;
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.inventory.item.Inventory;
 import org.forweb.drift.entity.drift.inventory.item.ammo.Ammo;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
-import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
-public abstract class Gun extends Inventory{
+public abstract class Gun extends Inventory {
 
     private int ammoLimit;
     private int ammoCount;
 
-    @Override
-    public PolygonalObject[] generate() {
-        return null;
-    }
-
-    @Override
-    public PolygonalObject[] onImpact(PolygonalObject that, Point impact) {
-        return null;
-    }
-
-    public Gun(PolygonalObjectEntity configuration) {
+    public Gun(Vec2[] configuration, int ammoLimit) {
         super(configuration, 1);
-        ammoLimit = (int)configuration.getCapacity();
+        this.ammoLimit = (int) ammoLimit;
         ammoCount = 0;
     }
 
     public abstract boolean isTurret();
+
     public abstract Ammo fire();
+
     public abstract boolean isEnergy();
+
     public int ammoCount() {
         return ammoCount;
     }
 
     public int charge(int ammoCount) {
         this.ammoCount += ammoCount;
-        if(this.ammoCount > ammoLimit) {
+        if (this.ammoCount > ammoLimit) {
             int delta = this.ammoCount - ammoLimit;
             this.ammoCount = ammoLimit;
             return delta;

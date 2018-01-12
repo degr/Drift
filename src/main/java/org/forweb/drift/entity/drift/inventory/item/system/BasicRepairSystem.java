@@ -1,16 +1,15 @@
 package org.forweb.drift.entity.drift.inventory.item.system;
 
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class BasicRepairSystem extends InternalSystem {
     public BasicRepairSystem() {
-        super(new PolygonalObjectEntity(
-                new Point[]{
-                        new Point(-0.5, 0.5),new Point(0.5, 0.5),new Point(0.5, -0.5),new Point(-0.5, -0.5)
-                }, 0, 0, 0),
-                10
+        super(new Vec2[]{
+                        new Vec2(-0.5, 0.5), new Vec2(0.5, 0.5), new Vec2(0.5, -0.5), new Vec2(-0.5, -0.5)
+
+                }, 10
         );
     }
 

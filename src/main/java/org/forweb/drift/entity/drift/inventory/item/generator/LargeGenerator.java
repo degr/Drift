@@ -1,10 +1,9 @@
 package org.forweb.drift.entity.drift.inventory.item.generator;
 
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.jbox2d.common.Vec2;
 
 public class LargeGenerator extends AbstractGenerator {
-    public LargeGenerator(PolygonalObjectEntity configuration) {
+    public LargeGenerator(Vec2[] configuration) {
         super(configuration, 20);
     }
 

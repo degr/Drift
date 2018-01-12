@@ -1,6 +1,7 @@
 package org.forweb.drift.utils;
 
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -8,10 +9,10 @@ import java.util.TreeSet;
 
 public class MassUtils {
 
-    public static double[] getCenterOfMass(Point p, Point q, Point r) {
+    public static double[] getCenterOfMass(Vec2 p, Vec2 q, Vec2 r) {
         double[] out = new double[2];
-        out[0] = (p.getX() + q.getX() + r.getX()) / 3;
-        out[1] = (p.getY() + q.getY() + r.getY()) / 3;
+        out[0] = (p.x + q.x + r.x) / 3;
+        out[1] = (p.y + q.y + r.y) / 3;
         return out;
     }
 
@@ -20,11 +21,11 @@ public class MassUtils {
      * @param points for calculation
      * @return double[0] = x, double[1] = y
      */
-    public static double[] getCenterOfMass(Point[] points) {
+    public static double[] getCenterOfMass(Vec2[] points) {
         if(points.length == 1) {
-            return new double[]{points[0].getX(), points[0].getY()};
+            return new double[]{points[0].x, points[0].y};
         } else if(points.length == 2) {
-            return new double[]{(points[0].getX() + points[1].getX()) / 2, (points[0].getY() + points[1].getY()) / 2};
+            return new double[]{(points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2};
         } else {
 
             double sum = 0.0D;
@@ -33,12 +34,12 @@ public class MassUtils {
             out[1] = 0;
 
             for (int i = 0; i<points.length; i++){
-                Point v1 = points[i];
-                Point v2 = points[(i + 1) % points.length];
-                double cross = v1.getX()*v2.getY() - v1.getY()*v2.getX();
+                Vec2 v1 = points[i];
+                Vec2 v2 = points[(i + 1) % points.length];
+                double cross = v1.x*v2.y - v1.y*v2.x;
                 sum += cross;
-                out[0] = ((v1.getX() + v2.getX()) * cross) + out[0];
-                out[1] = ((v1.getY() + v2.getY()) * cross) + out[1];
+                out[0] = ((v1.x + v2.x) * cross) + out[0];
+                out[1] = ((v1.y + v2.y) * cross) + out[1];
             }
             if(sum == 0) {
                 return getCenterOfMass(removeDuplicatedPoints(points));
@@ -72,23 +73,23 @@ public class MassUtils {
         }
     }
 
-    private static Point[] removeDuplicatedPoints(Point[] points) {
-        Point[] container = new Point[points.length];
+    private static Vec2[] removeDuplicatedPoints(Vec2[] points) {
+        Vec2[] container = new Vec2[points.length];
         int max = 0;
-        for (Point point : points) {
+        for (Vec2 point : points) {
             for(int i = 0; i < container.length; i++) {
                 if(container[i] == null) {
                     max++;
                     container[i] = point;
                     break;
                 } else {
-                    if(container[i].getX() == point.getX() && container[i].getY() == point.getY()) {
+                    if(container[i].x == point.x && container[i].y == point.y) {
                         break;
                     }
                 }
             }
         }
-        Point[] out = new Point[max];
+        Vec2[] out = new Vec2[max];
         for(;max > 0; max--) {
             out[max - 1] = container[max - 1];
         }
@@ -96,11 +97,11 @@ public class MassUtils {
     }
 
 
-    public static double getSquare(Point[] p) {
+    public static double getSquare(Vec2[] p) {
         double area = 0;
         int N = p.length;
         for(int i = 1; i+1<N; i++){
-            area += _getSquare(p[0].getX(), p[0].getY(), p[i].getX(), p[i].getY(), p[i + 1].getX(), p[i + 1].getY());
+            area += _getSquare(p[0].x, p[0].y, p[i].x, p[i].y, p[i + 1].x, p[i + 1].y);
         }
         return Math.abs(area/2.0);
     }
@@ -113,14 +114,14 @@ public class MassUtils {
     }
 
 
-    public static Point[] setToCenter(Point[] points) {
+    public static Vec2[] setToCenter(Vec2[] points) {
         double[] centerOfMass = MassUtils.getCenterOfMass(points);
         return setToCenter(points, centerOfMass);
     }
-    public static Point[] setToCenter(Point[] points, double[] centerOfMass) {
+    public static Vec2[] setToCenter(Vec2[] points, double[] centerOfMass) {
         for (int i = 0; i < points.length; i++) {
-            Point p = points[i];
-            points[i] = new Point(p.getX() - centerOfMass[0], p.getY() - centerOfMass[1]);
+            Vec2 p = points[i];
+            points[i] = new Vec2(p.x - centerOfMass[0], p.y - centerOfMass[1]);
         }
         return points;
     }

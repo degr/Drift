@@ -2,11 +2,12 @@ package org.forweb.drift.entity.drift.inventory.item.system;
 
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.jbox2d.common.Vec2;
 
 public class SolarBattery extends InternalSystem {
     private int i;
 
-    public SolarBattery(PolygonalObjectEntity configuration) {
+    public SolarBattery(Vec2[] configuration) {
         super(configuration, 5);
         this.i = 0;
     }

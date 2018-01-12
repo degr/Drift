@@ -3,18 +3,20 @@ package org.forweb.drift.entity.drift;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.forweb.drift.utils.IncrementalId;
+import org.forweb.drift.utils.PolygonalUtils;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.LineService;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Line;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 abstract public class BaseObject {
     private double x;
     private double y;
     private Angle angle;
-    protected Point[] points;
+    protected Vec2[] points;
     private Vector vector;
     private boolean invincible;
 
@@ -25,7 +27,7 @@ abstract public class BaseObject {
     }
 
 
-    public BaseObject(double x, double y, double angle, Point[] points, int id) {
+    public BaseObject(double x, double y, double angle, Vec2[] points, int id) {
         this.id = id;
         this.setX(x);
         this.setY(y);
@@ -38,22 +40,22 @@ abstract public class BaseObject {
     @JsonIgnore
     abstract public boolean isRelativePoints();
 
-    private static Point zero = new Point(0, 0);
+    private static Vec2 zero = new Vec2(0, 0);
 
-    private static Point[] translatePoints(Point[] points, double x, double y, Angle angle) {
-        Point[] out = new Point[points.length];
+    private static Vec2[] translatePoints(Vec2[] points, double x, double y, Angle angle) {
+        Vec2[] out = new Vec2[points.length];
         for(int i = 0; i < points.length; i++) {
-            Point p = PointService.translate(zero, points[i], angle);
-            out[i] = new Point(p.getX() + x, p.getY() + y);
+            Vec2 p = PolygonalUtils.translate(zero, points[i], angle);
+            out[i] = new Vec2(p.x + x, p.y + y);
         }
         return out;
     }
 
-    private static Point[] appendLastPoint(Point[] input) {
+    private static Vec2[] appendLastPoint(Vec2[] input) {
         if(input.length == 2) {
             return input;
         } else {
-            Point[] out = new Point[input.length + 1];
+            Vec2[] out = new Vec2[input.length + 1];
             System.arraycopy(input, 0, out, 0, input.length);
             out[input.length] = input[0];
             return out;
@@ -68,7 +70,7 @@ abstract public class BaseObject {
         if (!baseObject.isAlive() || !this.isAlive() || this.isInvincible() || baseObject.isInvincible()) {
             return false;
         }
-        Point[] thisPoints = getPoints();
+        Vec2[] thisPoints = getPoints();
         if (thisPoints == null) {
             return false;
         }
@@ -89,7 +91,7 @@ abstract public class BaseObject {
                 }
             }*/
 
-            Point[] thatPoints = baseObject.getPoints();
+            Vec2[] thatPoints = baseObject.getPoints();
             if (thatPoints == null) {
                 return false;
             }
@@ -109,10 +111,14 @@ abstract public class BaseObject {
 
 
             while (--thisLength > 0) {
-                Line line1 = new Line(thisPoints[thisLength], thisPoints[thisLength - 1]);
+                Point p = new Point(thisPoints[thisLength].x, thisPoints[thisLength].y);
+                Point p1 = new Point(thisPoints[thisLength - 1].x, thisPoints[thisLength - 1].y);
+                Line line1 = new Line(p, p1);
                 thatLength = thatPoints.length;
                 while (--thatLength > 0) {
-                    Line line2 = new Line(thatPoints[thatLength], thatPoints[thatLength - 1]);
+                    Point p2 = new Point(thatPoints[thatLength].x, thatPoints[thatLength].y);
+                    Point p3 = new Point(thatPoints[thatLength - 1].x, thatPoints[thatLength - 1].y);
+                    Line line2 = new Line(p2, p3);
                     if (LineService.lineHasIntersections(line1, line2)) {
                         return true;
                     }
@@ -169,11 +175,11 @@ abstract public class BaseObject {
         this.angle = angle;
     }
 
-    public Point[] getPoints() {
+    public Vec2[] getPoints() {
         return points;
     }
 
-    public void setPoints(Point[] points) {
+    public void setPoints(Vec2[] points) {
         this.points = points;
     }
 

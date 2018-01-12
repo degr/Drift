@@ -21,18 +21,32 @@ public class Executor implements Listener{
             return;
         }
         switch (keyCode) {
-            case 87:
-                spaceShip.command(0, PRESSED == type ? "1" : "0");
+            case 84://T
+                spaceShip.command(0, PRESSED == type ? "1:0:1:-1:0" : "0");
                 break;
-            case 83:
-                spaceShip.command(1, PRESSED == type ? "1:s" : "0");
-                spaceShip.command(2, PRESSED == type ? "1:s" : "0");
+            case 89://Y
+                spaceShip.command(1, PRESSED == type ? "1:0:1:-1:0" : "0");
+                break;
+            case 85://U
+                spaceShip.command(2, PRESSED == type ? "1:0:1:-1:0" : "0");
+                break;
+            case 90://Z
+                spaceShip.command(0, PRESSED == type ? "1:0:0:0:0" : "0");
+                spaceShip.command(1, PRESSED == type ? "1:0:0:0:0" : "0");
+                spaceShip.command(2, PRESSED == type ? "1:0:0:0:0" : "0");
+                break;
+            case 87://W
+                spaceShip.command(0, PRESSED == type ? "1:0:0:0.6:0" : "0");
+                break;
+            case 83://S
+                spaceShip.command(1, PRESSED == type ? "1:1" : "0");
+                spaceShip.command(2, PRESSED == type ? "1:1" : "0");
                 break;
             case 65:
-                spaceShip.command(2, PRESSED == type ? "1" : "0");
+                spaceShip.command(2, PRESSED == type ? "1:0:0:-1:-0.005" : "0");
                 break;
             case 68:
-                spaceShip.command(1, PRESSED == type ? "1" : "0");
+                spaceShip.command(1, PRESSED == type ? "1:0:0:-1:0.005" : "0");
                 break;
             case 88:
                 spaceShip.command(1, PRESSED == type ? "1" : "0");

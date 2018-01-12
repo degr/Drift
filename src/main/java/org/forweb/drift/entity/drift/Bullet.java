@@ -8,6 +8,7 @@ import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class Bullet extends BaseObject {
 
@@ -16,7 +17,7 @@ public class Bullet extends BaseObject {
     }
 
     private int ship;
-    private Point oldPoint;
+    private Vec2 oldPoint;
     private double creationTime;
 
     public Bullet(double x, double y, double angle, int id) {
@@ -52,10 +53,10 @@ public class Bullet extends BaseObject {
         Angle angle = getAngle();
         angle.append(spaceShip.getAngle());
 
-        Point[] points = new Point[2];
-        points[0] =new Point(this.getX(), this.getY());
+        Vec2[] points = new Vec2[2];
+        points[0] =new Vec2(this.getX(), this.getY());
         oldPoint = points[0];
-        points[1] = new Point(this.getX() + 5 * angle.cos(), this.getY() + 5 * angle.sin());
+        points[1] = new Vec2(this.getX() + 5 * angle.cos(), this.getY() + 5 * angle.sin());
         this.setPoints(points);
 
         setVector(
@@ -74,14 +75,14 @@ public class Bullet extends BaseObject {
         Vector vector = getVector();
         this.setX(getX() + vector.x);
         this.setY(getY() + vector.y);
-        this.points[0] = new Point(this.points[0].getX() + vector.x, this.points[0].getY() + vector.y);
-        this.points[1] = new Point(this.points[1].getX() + vector.x, this.points[1].getY() + vector.y);
+        this.points[0] = new Vec2(this.points[0].x + vector.x, this.points[0].y + vector.y);
+        this.points[1] = new Vec2(this.points[1].x + vector.x, this.points[1].y + vector.y);
         return null;
     }
 
     @Override
-    public Point[] getPoints() {
-        Point[] out = new Point[2];
+    public Vec2[] getPoints() {
+        Vec2[] out = new Vec2[2];
         out[0] = oldPoint;
         out[1] = this.points[1];
         return out;

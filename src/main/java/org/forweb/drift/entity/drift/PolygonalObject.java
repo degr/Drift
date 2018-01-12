@@ -1,13 +1,10 @@
 package org.forweb.drift.entity.drift;
 
 
-import org.forweb.drift.utils.MassUtils;
-import org.forweb.drift.utils.PolygonalUtils;
-import org.forweb.geometry.misc.Angle;
-import org.forweb.geometry.misc.Vector;
-import org.forweb.geometry.services.LineService;
-import org.forweb.geometry.shapes.Circle;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.*;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,41 +13,46 @@ public abstract class PolygonalObject {
 
     private static final AtomicInteger idGenerator = new AtomicInteger(0);
 
-    private double y;
-    private double x;
 
-    private double pY = -1;
-    private double pX = -1;
-    private Point[] points;
-    private Angle angle;
-    private Angle rotation;
-    private double radius;
-    private Vector vector;
-
-    private double mass;
     private int id;
+    private Body body;
 
-    public PolygonalObject(PolygonalObjectEntity configuration) {
-        setAngle(new Angle(configuration.getAngle()));
-        setPoints(configuration.getPoints());
-        setX(configuration.getX());
-        setY(configuration.getY());
-        pX = getX();
-        pY = getY();
-        setVector(new Vector(0, 0));
-        setRotation(new Angle(0));
+    public PolygonalObject(World world, PolygonalObjectEntity configuration) {
+        BodyDef def = new BodyDef();
+
+
+        PolygonShape shape = new PolygonShape();
+        shape.set(configuration.getPoints(), configuration.getPoints().length);
+
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = 4.0f;
+        fixture.friction = 0.2f;
+        fixture.restitution = 0f;
+        fixture.isSensor = false;
+
+
+        def.type = BodyType.DYNAMIC;
+        def.position = new Vec2(configuration.getX(), configuration.getY());
+        def.angle = configuration.getAngle();
+        def.linearVelocity = new Vec2(0, 0);
+        def.angularVelocity = 0;
+        def.linearDamping = 0;
+        def.angularDamping = 0;
+        def.allowSleep = false;
+        def.awake = true;
+        def.fixedRotation = false;
+        def.bullet = false;
+        def.active = true;
+        def.gravityScale = 1;
+
+        body = world.createBody(def);
+        body.createFixture(fixture);
+        body.setUserData(this);
         id = idGenerator.incrementAndGet();
+
     }
 
-    private void initRadius() {
-        radius = 0;
-        for (Point p : getPoints()) {
-            double d = Math.sqrt(p.getX() * p.getX() + p.getY() * p.getY());
-            if (d > radius) {
-                radius = d;
-            }
-        }
-    }
 
 
     public abstract boolean isAlive();
@@ -62,103 +64,28 @@ public abstract class PolygonalObject {
     }
 
 
-
-
-    public Point[] getPoints() {
-        return translatePoints(points, getX(), getY(), getAngle());
-    }
-
-    public Point[] getRelativePoints() {
-        return points;
-    }
-
-
-    private static Point[] translatePoints(Point[] points, double x, double y, Angle angle) {
-        return PolygonalUtils.translatePoints(points, x, y, angle);
-    }
-
-    public Angle getAngle() {
-        return angle;
-    }
-
-    public void setPoints(Point[] points) {
-        this.points = MassUtils.setToCenter(points);
-        mass = MassUtils.getSquare(this.points);
-        this.initRadius();
-    }
-
-    public void setAngle(Angle angle) {
-        this.angle = angle;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getMass() {
-        return mass;
-    }
-
-    Point hasImpact(PolygonalObject baseObject) {
-        return PolygonalUtils.hasImpact(baseObject, this);
-    }
-
-    public void applyForceToPoint(Vector force, Point point) {
-        PolygonalUtils.applyForceToPoint(this, force, point);
-    }
-
-    public void applyForceToCenter(Vector force) {
-        PolygonalUtils.applyForceToCenter(this, force);
-    }
-
-    public Vector getVector() {
-        return vector;
-    }
-
-    public void setVector(Vector vector) {
-        this.vector = vector;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-    public Angle getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(Angle rotation) {
-        this.rotation = rotation;
+    public Vec2[] getRelativePoints() {
+        Body body = getBody();
+        Fixture fixture = body.getFixtureList();
+        org.jbox2d.collision.shapes.Shape shape = fixture.getShape();
+        PolygonShape polygon = (PolygonShape) shape;
+        Vec2[] points = polygon.getVertices();
+        int count = polygon.getVertexCount();
+        Vec2[] out = new Vec2[count];
+        System.arraycopy(points, 0, out, 0, count);
+        return out;
     }
 
     public void update() {
-        Vector v = getVector();
-        pX = getX();
-        pY = getY();
-        setX(getX() + v.x);
-        setY(getY() + v.y);
-        getAngle().append(getRotation());
     }
 
-
     public void draw(Graphics g) {
-        Point[] points = getPoints();
+        Vec2[] points = getRelativePoints();
         int scale = 3;
         for (int i = 0; i < points.length; i++) {
-            Point a = points[i];
-            Point b = i == points.length - 1 ? points[0] : points[i + 1];
-            g.drawLine((int) a.getX() * scale, (int) a.getY() * scale, (int) b.getX() * scale, (int) b.getY() * scale);
+            Vec2 a = points[i];
+            Vec2 b = i == points.length - 1 ? points[0] : points[i + 1];
+            g.drawLine((int) a.x * scale, (int) a.y * scale, (int) b.x * scale, (int) b.y * scale);
         }
     }
 
@@ -166,4 +93,7 @@ public abstract class PolygonalObject {
         return id;
     }
 
+    public Body getBody() {
+        return body;
+    }
 }

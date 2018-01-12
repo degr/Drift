@@ -7,11 +7,12 @@ import org.forweb.drift.utils.IncrementalId;
 import org.forweb.geometry.misc.Angle;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class SpaceShip extends Controlable {
 
     @JsonIgnore
-    private static Point[] spaceShipPoints = new Point[]{new Point(-12, 12), new Point(15, 0), new Point(-12, -12)};
+    private static Vec2[] spaceShipPoints = new Vec2[]{new Vec2(-12, 12), new Vec2(15, 0), new Vec2(-12, -12)};
 
     @JsonIgnore
     private IncrementalId ids;

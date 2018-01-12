@@ -3,7 +3,6 @@ package org.forweb.drift.tests;
 import org.forweb.drift.entity.drift.PolygonalAsteroid;
 import org.forweb.drift.entity.drift.PolygonalObject;
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.drift.entity.drift.World;
 import org.forweb.drift.entity.drift.inventory.item.engine.BasicEngine;
 import org.forweb.drift.entity.drift.inventory.item.engine.ShuntingEngine;
 import org.forweb.drift.entity.drift.inventory.item.generator.BasicGenerator;
@@ -12,20 +11,17 @@ import org.forweb.drift.entity.drift.inventory.item.system.BasicRepairSystem;
 import org.forweb.drift.entity.drift.inventory.item.system.radar.MinorRadar;
 import org.forweb.drift.entity.drift.spaceships.Falcon;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
-import org.forweb.drift.utils.MassUtils;
-import org.forweb.drift.utils.PolygonalUtils;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.*;
 import org.forweb.geometry.misc.Angle;
-import org.forweb.geometry.misc.Vector;
-import org.forweb.geometry.shapes.*;
-import org.forweb.geometry.shapes.Point;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.Timer;
 import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Frame extends JFrame {
 
@@ -35,23 +31,66 @@ public class Frame extends JFrame {
     private final int worldWidth = width / scale;
     private final int worldHeight = height / scale;
     private Falcon spaceShip;
+    private World world;
 
     private JPanel drawingPanel;
     private Timer gameTimer;
-    private final int fps = 1000/60;
-    private World world;
-
+    private final int fps = 1000 / 60;
 
 
     private Frame() {
-
         gameTimer = new Timer(fps, new GameUpdater());
 
+        world = new World(new Vec2(0f, 0f));
+        world.setAutoClearForces(true);
+/*
+        BodyDef def = new BodyDef();
+
+
+        PolygonShape shape = new PolygonShape();
+        shape.set(new Vec2[]{
+                new Vec2(-10d, -10d), new Vec2(-10d, 10d), new Vec2(20, 0)
+        }, new Vec2[]{
+                new Vec2(-10d, -10d), new Vec2(-10d, 10d), new Vec2(20, 0)
+        }.length);
+
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = 4.0f;
+        fixture.friction = 0.2f;
+        fixture.restitution = 0f;
+        fixture.isSensor = false;
+
+
+        def.type = BodyType.DYNAMIC;
+        def.position = new Vec2(0, 0);
+        def.angle = 0;
+        def.linearVelocity = new Vec2(0, 0);
+        def.angularVelocity = 0;
+        def.linearDamping = 3;
+        def.angularDamping = 0;
+        def.allowSleep = false;
+        def.awake = true;
+        def.fixedRotation = false;
+        def.bullet = false;
+        def.active = true;
+        def.gravityScale = 1;
+
+        Body body = world.createBody(def);
+        body.createFixture(fixture);
+        for(int i = 0; i < 1000; i++) {
+            world.step(16, 8, 4);
+            body = world.getBodyList();
+            while(body != null) {
+                body.applyForce(body.getLinearVelocity().add(new Vec2(1, 0)), body.getWorldPoint(new Vec2(0, 0)));
+                //System.out.println(body.getLinearVelocity().length());
+                body = body.getNext();
+            }
+        }*/
 
 
 
-        world = new World(worldWidth, worldHeight);
-        Falcon spaceShip = new Falcon(140, 150);
+        Falcon spaceShip = new Falcon(world, 140, 150);
         spaceShip.getSlot(0).mount(new BasicEngine());
         spaceShip.getSlot(1).mount(new ShuntingEngine());
         spaceShip.getSlot(2).mount(new ShuntingEngine());
@@ -61,6 +100,7 @@ public class Frame extends JFrame {
         spaceShip.getSlot(6).mount(new Laser());
         spaceShip.getSlot(7).mount(new Laser());
         this.spaceShip = spaceShip;
+
         drawingPanel = new DrawPanel(spaceShip, world, fps);
         drawingPanel.setBorder(new LineBorder(Color.black));
         drawingPanel.setPreferredSize(new Dimension(width, height));
@@ -76,25 +116,19 @@ public class Frame extends JFrame {
         Listener executor = new Executor(spaceShip);
         TestsKeyListener keyListener = new TestsKeyListener();
         //spaceShip.setAngle(new Angle(Math.PI / 5));
-        world.add(spaceShip);
         PolygonalObjectEntity entity = new PolygonalObjectEntity(
-              new Point[]{
-                      new Point(10, 10),
-                      new Point(10, -10),
-                      new Point(-10, -10),
-                      new Point(-10, 10)
-                     /* new Point(50, 15),
-                      new Point(4, 62),
-                      new Point(-40, -2),
-                      new Point(-58, -86),
-                      new Point(-10, -49),
-                      new Point(60, -23)*/
+              new Vec2[]{
+                      new Vec2(10, 10),
+                      new Vec2(10, -10),
+                      new Vec2(-10, -10),
+                      new Vec2(-10, 10)
               }, 200D, 150d, 0d, 0d
         );
-        PolygonalAsteroid asteroid = new PolygonalAsteroid(entity);
-        asteroid.setVector(new Vector(0, 0));
-        asteroid.setRotation(new Angle(0));
-        world.add(asteroid);
+        PolygonalAsteroid asteroid = new PolygonalAsteroid(world, entity);
+        Body asteroidBody = asteroid.getBody();
+        asteroidBody.setLinearVelocity(new Vec2(0, 0));
+        asteroidBody.setAngularVelocity(0);
+        asteroidBody.getPosition().set(150, 100);
 
         keyListener.addListener(executor);
         addKeyListener(keyListener);
@@ -104,7 +138,7 @@ public class Frame extends JFrame {
 
     //  This method redraws the GUI display.
     private void updateDisplay() {
-        world.update();
+        world.step(fps, 8, 3);
         drawingPanel.repaint();
     }
 
@@ -138,25 +172,71 @@ class DrawPanel extends JPanel {
         super.paintComponent(g);
         int width = getWidth() - 1;
         int height = getHeight() - 1;
+
         g.clearRect(0, 0, width, height);
+        Body body = spaceShip.getBody();
         g.drawString("Energy: " + spaceShip.getEnergy(), 10, 10);
         g.drawString("Energy Regeneration: " + spaceShip.getEnergyRegeneration(), 10, 25);
-        g.drawString("Rotation: " + angle(Math.PI - spaceShip.getRotation().doubleValue()), 10, 40);
-        g.drawString("Angle: " + angle(spaceShip.getAngle()), 10, 55);
-        g.drawString("Vector: " + ((int)((spaceShip.getVector().x) * fps)) + "/" + ((int)(spaceShip.getVector().y * fps)), 10, 70);
-        double speed = Math.sqrt(spaceShip.getVector().x * spaceShip.getVector().x + spaceShip.getVector().y * spaceShip.getVector().y);
-        g.drawString("Speed: " + (speed * fps) * 3600 / 1000, 10, 85);
+        g.drawString("Rotation: " + angle(Math.PI - body.getAngularVelocity()), 10, 40);
+        g.drawString("Angle: " + angle(body.getAngle()), 10, 55);
+        g.drawString("Angular speed: " + angle(body.getAngularVelocity()), 10, 70);
+        g.drawString("Vector: " + ((int)((body.getLinearVelocity().x) * fps)) + "/" + ((int)(body.getLinearVelocity().y * fps)), 10, 85);
+        double speed = Math.sqrt(body.getLinearVelocity().x * body.getLinearVelocity().x + body.getLinearVelocity().y * body.getLinearVelocity().y);
+        g.drawString("Speed: " + (speed * fps) * 3600 / 1000, 10, 100);
 
 
-        for (PolygonalObject object : world.getObjects()) {
-            object.draw(g);
-        }
+       body = world.getBodyList();
+       int scale = 1;
+       while(body != null) {
+           Fixture fixture = body.getFixtureList();
+           PolygonalObject object = (PolygonalObject) body.getUserData();
+           if (object != null) {
+               object.update();
+           }
+           while(fixture != null) {
+               org.jbox2d.collision.shapes.Shape shape = fixture.getShape();
+               PolygonShape polygon = (PolygonShape)shape;
+               Vec2[] points = polygon.getVertices();
+               int count = polygon.getVertexCount();
+               for (int i = 0; i < count; i++) {
+                   Vec2 a = points[i];
+                   Vec2 b = i == count - 1 ? points[0] : points[i + 1];
+                   a = body.getWorldPoint(a);
+                   b = body.getWorldPoint(b);
+                   g.drawLine((int) a.x * scale, (int) a.y * scale, (int) b.x * scale, (int) b.y * scale);
+               }
+
+               fixture = fixture.getNext();
+           }
+           Vec2 position = body.getPosition();
+           boolean needTransform = false;
+           if(position.x > width) {
+               needTransform = true;
+               position.x = 0;
+           } else if(position.x < 0){
+               needTransform = true;
+               position.x = width;
+           }
+           if(position.y > height) {
+               needTransform = true;
+               position.y = 0;
+           } else if(position.y < 0){
+               needTransform = true;
+               position.y = height;
+           }
+           if(needTransform) {
+               body.setTransform(position, body.getAngle());
+           }
+           body = body.getNext();
+       }
+
     }
 
-    private int angle(Angle angle) {
+    private float angle(Angle angle) {
         return angle(angle.doubleValue());
     }
-    private int angle(double value) {
-        return (int)(value / Math.PI * 180);
+
+    private float angle(double value) {
+        return ((int) (value * 10 / Math.PI * 180)) / 10f;
     }
 }

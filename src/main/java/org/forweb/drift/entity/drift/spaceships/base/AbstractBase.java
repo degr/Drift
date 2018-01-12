@@ -9,6 +9,7 @@ import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.services.LineService;
 import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 import java.util.HashMap;
 
@@ -19,7 +20,7 @@ public abstract class AbstractBase extends Controlable {
     protected abstract Point getDetectionLandingPoint();
     protected abstract Point getLandingPoint();
 
-    public AbstractBase(double x, double y, int id, double angle, Point[] points) {
+    public AbstractBase(double x, double y, int id, double angle, Vec2[] points) {
         super(x, y, angle, points, id);
         landingOperations = new HashMap<>();
     }

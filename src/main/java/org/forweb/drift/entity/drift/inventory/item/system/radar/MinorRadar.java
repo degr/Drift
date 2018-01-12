@@ -1,13 +1,10 @@
 package org.forweb.drift.entity.drift.inventory.item.system.radar;
 
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
-import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class MinorRadar extends AbstractRadar {
     public MinorRadar() {
-        super(new PolygonalObjectEntity(
-                new Point[]{new Point(0, 0), new Point(0.5, 0.7), new Point(0.5, -0.7)}, 0, 0, 0
-        ), 5);
+        super(new Vec2[]{new Vec2(0, 0), new Vec2(0.5, 0.7), new Vec2(0.5, -0.7)}, 5);
     }
 
     @Override

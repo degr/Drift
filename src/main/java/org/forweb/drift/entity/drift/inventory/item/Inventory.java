@@ -1,17 +1,24 @@
 package org.forweb.drift.entity.drift.inventory.item;
 
-import org.forweb.drift.entity.drift.PolygonalObject;
-import org.forweb.drift.entity.drift.PolygonalObjectEntity;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.jbox2d.common.Vec2;
 
-import java.awt.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class Inventory extends PolygonalObject{
+public abstract class Inventory {
+    private final Vec2[] points;
+
+
+    private final double angle;
     private double bulk;
+    private static final AtomicInteger idGenerator = new AtomicInteger(0);
+    private int id;
 
-    public Inventory(PolygonalObjectEntity configuration, double bulk) {
-        super(configuration);
+    public Inventory(Vec2[] points, double bulk) {
+        this.points = points;
         this.bulk = bulk;
+        angle = 0;
+        id = idGenerator.incrementAndGet();
     }
 
     public abstract int getEnergyConsumption();
@@ -19,16 +26,19 @@ public abstract class Inventory extends PolygonalObject{
     public double getBulk() {
         return bulk;
     }
+
     public abstract void mount(PolygonalSpaceShip spaceShip);
+
     public abstract void unMount(PolygonalSpaceShip spaceShip);
 
-    @Override
-    public boolean isAlive() {
-        return true;
+    public Vec2[] getPoints() {
+        return points;
     }
 
-    @Override
-    public boolean isInvincible() {
-        return false;
+    public int getId() {
+        return id;
+    }
+    public double getAngle() {
+        return angle;
     }
 }

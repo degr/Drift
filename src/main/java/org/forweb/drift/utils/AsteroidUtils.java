@@ -4,17 +4,26 @@ import org.forweb.drift.entity.drift.BaseObject;
 import org.forweb.drift.entity.drift.PolygonalAsteroid;
 import org.forweb.drift.entity.drift.PolygonalObject;
 import org.forweb.drift.entity.drift.PolygonalObjectEntity;
+import org.forweb.drift.entity.drift.inventory.slot.system.SystemSlot;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.World;
 
 import java.util.Random;
 
 public class AsteroidUtils {
 
-    public static PolygonalObject[] onImpact(PolygonalAsteroid asteroid, BaseObject object) {
+    public static PolygonalObject[] onImpact(World world, PolygonalAsteroid asteroid, BaseObject object) {
         asteroid.setAlive(false);
         PolygonalObject[] out;
-        if (asteroid.getPoints().length > 3) {
-            out = createNewAsteroids(asteroid);
+        Body asteroidBody = null; /*asteroid.getBody();*/
+        Shape shape = asteroidBody.getFixtureList().getShape();
+        PolygonShape polygonShape = (PolygonShape)shape;
+        if (polygonShape.getVertexCount() > 3) {
+            out = createNewAsteroids(world, asteroidBody, polygonShape);
         } else {
             out = new PolygonalObject[1];
         }
@@ -22,18 +31,18 @@ public class AsteroidUtils {
     }
 
 
-    private static PolygonalObject[] createNewAsteroids(PolygonalAsteroid parent) {
-        double y = parent.getY();
-        double x = parent.getX();
-        Point[] points = parent.getRelativePoints();
+    private static PolygonalObject[] createNewAsteroids(World world, Body asteroidBody, PolygonShape polygon) {
+        double y = asteroidBody.getPosition().y;
+        double x = asteroidBody.getPosition().x;
+        Vec2[] points = normalizePoints(polygon.getVertices(), polygon.getVertexCount());
         int firstSize = 3;
         int start = 0;
-        double angle = parent.getAngle().doubleValue();
-        double totalSquare = MassUtils.getSquare(parent.getPoints());
+        double angle = asteroidBody.getAngle();
+        double totalSquare = MassUtils.getSquare(points);
 
         while (true) {
-            Point[] p1 = new Point[firstSize];
-            Point[] p2 = new Point[points.length - firstSize + 2];
+            Vec2[] p1 = new Vec2[firstSize];
+            Vec2[] p2 = new Vec2[points.length - firstSize + 2];
             int i;
             int limit = firstSize + start;
             int j = 0;
@@ -59,7 +68,7 @@ public class AsteroidUtils {
             double square2 = MassUtils.getSquare(p2);
             double check = totalSquare - square1 - square2;
             if (Math.abs(check) < 0.00001) {
-                return processByTwoPoints(p1, p2, x, y, angle);
+                return processByTwoPoints(world, p1, p2, x, y, angle);
             } else {
                 start++;
             }
@@ -67,27 +76,37 @@ public class AsteroidUtils {
         //return new BaseObject[1];
     }
 
-    private static PolygonalAsteroid[] processByTwoPoints(Point[] p1, Point[] p2, double x, double y, double angle) {
+    private static Vec2[] normalizePoints(Vec2[] vertices, int vertexCount) {
+        if(vertices.length == vertexCount) {
+            return vertices;
+        } else {
+            Vec2[] out = new Vec2[vertexCount];
+            System.arraycopy(vertices, 0, out, 0, vertices.length);
+            return out;
+        }
+    }
+
+    private static PolygonalAsteroid[] processByTwoPoints(World world, Vec2[] p1, Vec2[] p2, double x, double y, double angle) {
         PolygonalAsteroid[] out = new PolygonalAsteroid[3];
         double[] aCenter = MassUtils.getCenterOfMass(p1[0], p1[1], p1[2]);
         p1 = MassUtils.setToCenter(p1, aCenter);
-        out[0] = new PolygonalAsteroid(new PolygonalObjectEntity(p1, x + aCenter[0], y + aCenter[1], angle));
+        out[0] = new PolygonalAsteroid(world, new PolygonalObjectEntity(p1, x + aCenter[0], y + aCenter[1], angle));
 
         aCenter = MassUtils.getCenterOfMass(p2);
         p2 = MassUtils.setToCenter(p2, aCenter);
-        out[1] = new PolygonalAsteroid(new PolygonalObjectEntity(p2, x + aCenter[0], y + aCenter[1], angle));
+        out[1] = new PolygonalAsteroid(world, new PolygonalObjectEntity(p2, x + aCenter[0], y + aCenter[1], angle));
         return out;
     }
 
-    public static Point[] createPoints() {
+    public static Vec2[] createPoints() {
         Random random = new Random();
         int limit = (int) Math.ceil(random.nextDouble() * 7) + 3;
         double sector = Math.PI * 2 / limit;
-        Point[] points = new Point[limit];
+        Vec2[] points = new Vec2[limit];
         while (limit-- > 0) {
             double angle = (Math.random() * (sector)) + sector * limit;
             double distance = Math.random() * 90;
-            points[limit] = new Point(
+            points[limit] = new Vec2(
                     Math.cos(angle) * distance,
                     Math.sin(angle) * distance
             );

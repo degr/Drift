@@ -8,6 +8,7 @@ import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Circle;
 import org.forweb.geometry.shapes.Line;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class PolygonalUtils {
 
@@ -28,30 +29,31 @@ public class PolygonalUtils {
     }
 
     public static void applyForceToPoint(PolygonalObject object, Vector force, Point point) {
-        double x = object.getX();
+        /*double x = object.getX();
         double y = object.getY();
         double radius = object.getRadius();
         if (PointService.pointBelongToCircle(point, new Circle(x, y, radius)) >= 0) {
             double rotationScale = calculateRotationScale(object, force, point);
             applyForceToCenter(object, calculateVector(object, force, rotationScale));
             object.getRotation().append(calculateAngle(object, force, point, rotationScale));
-        }
+        }*/
     }
 
     public static double calculateAngle(PolygonalObject object, Vector force, Point point, double rotationScale) {
-        double angle = (Math.PI * rotationScale / object.getMass());
+        /*double angle = (Math.PI * rotationScale / object.getMass());
         Point pointOfApplication = new Point(point.getX() - object.getX(), point.getY() - object.getY());
         double torque = pointOfApplication.getX() * force.y - pointOfApplication.getY() * force.x;
         if (torque < 0) {
             angle = -angle;
         }
-        return angle;
+        return angle;*/
+        return 0;
     }
 
 
     public static void applyForceToCenter(PolygonalObject object, Vector force) {
-        double mass = object.getMass();
-        object.getVector().append(new Vector(force.x / mass, force.y / mass));
+        /*double mass = object.getMass();
+        object.getVector().append(new Vector(force.x / mass, force.y / mass));*/
     }
 
     public static Point[] translatePoints(Point[] points, double x, double y, Angle angle) {
@@ -71,7 +73,7 @@ public class PolygonalUtils {
     }
 
     public static double calculateRotationScale(PolygonalObject object, Vector force, Point point) {
-        double a = force.y,
+       /* double a = force.y,
                 b = -force.x,
                 c = force.x * point.getY() - force.y * point.getX();
         double bottom = a * a + b * b;
@@ -81,11 +83,12 @@ public class PolygonalUtils {
             double distance = Math.abs(a * object.getX() + b * object.getY() + c) / Math.sqrt(bottom);
             //let's think that if power applied to max radius, half will be used for rotation, half for movement
             return distance / object.getRadius();
-        }
+        }*/
+       return 0;
     }
 
     public static Point hasImpact(PolygonalObject baseObject, PolygonalObject object) {
-
+/*
         if (!baseObject.isAlive() || !object.isAlive() || object.isInvincible() || baseObject.isInvincible()) {
             return null;
         }
@@ -131,7 +134,7 @@ public class PolygonalUtils {
             }
         } catch (NullPointerException e) {
             throw e;
-        }
+        }*/
         return null;
     }
 
@@ -146,8 +149,10 @@ public class PolygonalUtils {
         }
     }
 
+
+
     public static void resolveCollision(PolygonalObject obj1, PolygonalObject obj2, Point impact) {
-        double mass1 = obj1.getMass();
+        /*double mass1 = obj1.getMass();
         double mass2 = obj2.getMass();
         Vector vector1 = obj1.getVector();
         Vector vector2 = obj2.getVector();
@@ -213,11 +218,11 @@ public class PolygonalUtils {
 
 
 
-
+*/
         if(true) {
             return;
         }
-
+/*
         double force1 = obj1.getMass() * length(obj1.getVector());
         double force2 = obj2.getMass() * length(obj2.getVector());
         double force = force1 + force2;
@@ -241,7 +246,7 @@ public class PolygonalUtils {
         double torque2 = multiple(
                 new Vector(impact.getX() - obj2.getX(), impact.getY() - obj2.getY()),
                 forceOnImpact2
-        );
+        );*/
 
     }
 
@@ -250,6 +255,16 @@ public class PolygonalUtils {
             return Math.atan(vector.x / vector.y);
         } else {
             return vector.x >= 0 ? 0 : Math.PI;
+        }
+    }
+
+    public static Vec2 translate(Vec2 rotationCenter, Vec2 point, Angle angle) {
+        if(angle.doubleValue() == 0.0D) {
+            return point;
+        } else {
+            double x = angle.cos() * (point.x - rotationCenter.x) - angle.sin() * (point.y - rotationCenter.y) + rotationCenter.x;
+            double y = angle.sin() * (point.x - rotationCenter.x) + angle.cos() * (point.y - rotationCenter.y) + rotationCenter.y;
+            return new Vec2(x, y);
         }
     }
 

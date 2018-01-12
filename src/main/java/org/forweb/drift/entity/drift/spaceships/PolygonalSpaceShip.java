@@ -6,11 +6,10 @@ import org.forweb.drift.entity.drift.inventory.Cargo;
 import org.forweb.drift.entity.drift.inventory.item.Inventory;
 import org.forweb.drift.entity.drift.inventory.slot.InventorySlot;
 import org.forweb.drift.utils.InventoryUtils;
-import org.forweb.geometry.misc.Angle;
-import org.forweb.geometry.services.PointService;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.World;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,8 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     private boolean alive;
     private boolean invincible;
 
-    public PolygonalSpaceShip(PolygonalObjectEntity configuration, int maxEnergy, int energyRegeneration) {
-        super(configuration);
+    public PolygonalSpaceShip(World world, PolygonalObjectEntity configuration, int maxEnergy, int energyRegeneration) {
+        super(world, configuration);
         cargo = new Cargo(configuration.getCapacity());
         slots = new ArrayList<>();
         setAlive(true);
@@ -77,16 +76,6 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         }
     }
 
-    @Override
-    public void update() {
-        super.update();
-        this.addEnergy(getEnergyRegeneration());
-        for (InventorySlot slot : slots) {
-            if (slot.isActive()) {
-                slot.affect(this);
-            }
-        }
-    }
 
     @Override
     public boolean isAlive() {
@@ -97,28 +86,6 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     public boolean isInvincible() {
         return invincible;
     }
-
-
-    public void draw(Graphics g) {
-        super.draw(g);
-        for (InventorySlot slot : slots) {
-            Inventory inventory = slot.getInventory();
-            if (inventory != null) {
-                double x = inventory.getX();
-                double y = inventory.getY();
-                Angle angle = inventory.getAngle();
-                Point result = PointService.translate(new Point(0, 0), new Point(x, y), getAngle());
-                inventory.setX(result.getX() + getX());
-                inventory.setY(result.getY() + getY());
-                inventory.setAngle(angle.sum(getAngle().doubleValue()));
-                inventory.draw(g);
-                inventory.setX(x);
-                inventory.setY(y);
-                inventory.setAngle(angle);
-            }
-        }
-    }
-
 
     @Override
     public PolygonalObject[] generate() {
@@ -181,5 +148,15 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         this.invincible = invincible;
     }
 
+    @Override
+    public void update() {
+        super.update();
+        addEnergy(this.getEnergyRegeneration());
+        for(InventorySlot slot : slots) {
+            if(slot.isActive()) {
+                slot.affect(this);
+            }
+        }
+    }
 
 }

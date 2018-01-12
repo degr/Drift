@@ -5,19 +5,21 @@ import org.forweb.drift.utils.IncrementalId;
 import org.forweb.drift.utils.MassUtils;
 import org.forweb.geometry.misc.Vector;
 import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
+
 import java.util.Random;
 
 public class Asteroid extends BaseObject {
 
-    private static Point[] createPoints() {
+    private static Vec2[] createPoints() {
         Random random = new Random();
         int limit = (int) Math.ceil(random.nextDouble() * 7) + 3;
         double sector = Math.PI * 2 / limit;
-        Point[] points = new Point[limit];
+        Vec2[] points = new Vec2[limit];
         while (limit-- > 0) {
             double angle = (Math.random() * (sector)) + sector * limit;
             double distance = Math.random() * 90;
-            points[limit] = new Point(
+            points[limit] = new Vec2(
                     Math.cos(angle) * distance,
                     Math.sin(angle) * distance
             );
@@ -45,11 +47,11 @@ public class Asteroid extends BaseObject {
      * @param points
      * @param id
      */
-    public Asteroid(double x, double y, Point[] points, int id) {
+    public Asteroid(double x, double y, Vec2[] points, int id) {
         this(x, y, points, id, 0);
     }
 
-    protected Asteroid(double x, double y, Point[] points, int id, double angle) {
+    protected Asteroid(double x, double y, Vec2[] points, int id, double angle) {
         super(x, y, angle, null, id);
         Random random = new Random();
         setVector(new Vector(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
@@ -98,7 +100,7 @@ public class Asteroid extends BaseObject {
         BaseObject[] out;
         double x = this.getX();
         double y = this.getY();
-        Point[] points = getPoints();
+        Vec2[] points = getPoints();
         if (points.length > 3) {
             out = createNewAsteroids(x, y, ids);
         } else {
@@ -115,8 +117,8 @@ public class Asteroid extends BaseObject {
         double totalSquare = MassUtils.getSquare(this.getPoints());
 
         while (true) {
-            Point[] p1 = new Point[firstSize];
-            Point[] p2 = new Point[points.length - firstSize + 2];
+            Vec2[] p1 = new Vec2[firstSize];
+            Vec2[] p2 = new Vec2[points.length - firstSize + 2];
             int i;
             int limit = firstSize + start;
             int j = 0;
@@ -150,7 +152,7 @@ public class Asteroid extends BaseObject {
         //return new BaseObject[1];
     }
 
-    private static BaseObject[] processByTwoPoints(Point[] p1, Point[] p2, double x, double y, double angle, IncrementalId ids) {
+    private static BaseObject[] processByTwoPoints(Vec2[] p1, Vec2[] p2, double x, double y, double angle, IncrementalId ids) {
         BaseObject[] out = new BaseObject[3];
         double[] aCenter = MassUtils.getCenterOfMass(p1[0], p1[1], p1[2]);
         p1 = MassUtils.setToCenter(p1, aCenter);

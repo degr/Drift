@@ -1,6 +1,6 @@
 package org.forweb.drift.entity.drift;
 
-import org.forweb.geometry.shapes.Point;
+import org.jbox2d.common.Vec2;
 
 public class PolygonalObjectEntity {
 
@@ -8,11 +8,11 @@ public class PolygonalObjectEntity {
         this(null, x, y, angle);
     }
 
-    public PolygonalObjectEntity(Point[] points, double x, double y, double angle) {
+    public PolygonalObjectEntity(Vec2[] points, double x, double y, double angle) {
         this(points, x, y, angle, 0);
     }
 
-    public PolygonalObjectEntity(Point[] points, double x, double y, double angle, double capacity) {
+    public PolygonalObjectEntity(Vec2[] points, double x, double y, double angle, double capacity) {
         this.points = points;
         this.x = x;
         this.y = y;
@@ -20,17 +20,17 @@ public class PolygonalObjectEntity {
         this.capacity = capacity;
     }
 
-    private Point[] points;
+    private Vec2[] points;
     private double x;
     private double y;
     private double angle;
     private double capacity;
 
-    public Point[] getPoints() {
+    public Vec2[] getPoints() {
         return points;
     }
 
-    public void setPoints(Point[] points) {
+    public void setPoints(Vec2[] points) {
         this.points = points;
     }
 
