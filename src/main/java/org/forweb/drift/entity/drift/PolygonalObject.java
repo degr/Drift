@@ -15,6 +15,16 @@ public abstract class PolygonalObject {
 
 
     private int id;
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    private int health;
     private Body body;
 
     public PolygonalObject(World world, PolygonalObjectEntity configuration) {
@@ -27,7 +37,7 @@ public abstract class PolygonalObject {
         FixtureDef fixture = new FixtureDef();
         fixture.shape = shape;
         fixture.density = 4.0f;
-        fixture.friction = 0.2f;
+        fixture.friction = 1f;
         fixture.restitution = 0f;
         fixture.isSensor = false;
 
@@ -49,6 +59,8 @@ public abstract class PolygonalObject {
         body = world.createBody(def);
         body.createFixture(fixture);
         body.setUserData(this);
+        health = (int)body.getMass();
+
         id = idGenerator.incrementAndGet();
 
     }
@@ -96,4 +108,6 @@ public abstract class PolygonalObject {
     public Body getBody() {
         return body;
     }
+
+    public abstract void destroy();
 }

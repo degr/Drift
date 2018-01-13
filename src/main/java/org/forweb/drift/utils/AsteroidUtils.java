@@ -16,18 +16,17 @@ import java.util.Random;
 
 public class AsteroidUtils {
 
-    public static PolygonalObject[] onImpact(World world, PolygonalAsteroid asteroid, BaseObject object) {
+    public static void onImpact(PolygonalAsteroid asteroid) {
+        if(!asteroid.isAlive()){
+            return;}
+        World world = asteroid.getBody().getWorld();
         asteroid.setAlive(false);
-        PolygonalObject[] out;
-        Body asteroidBody = null; /*asteroid.getBody();*/
+        Body asteroidBody = asteroid.getBody();
         Shape shape = asteroidBody.getFixtureList().getShape();
         PolygonShape polygonShape = (PolygonShape)shape;
         if (polygonShape.getVertexCount() > 3) {
-            out = createNewAsteroids(world, asteroidBody, polygonShape);
-        } else {
-            out = new PolygonalObject[1];
+            createNewAsteroids(world, asteroidBody, polygonShape);
         }
-        return out;
     }
 
 
@@ -81,7 +80,7 @@ public class AsteroidUtils {
             return vertices;
         } else {
             Vec2[] out = new Vec2[vertexCount];
-            System.arraycopy(vertices, 0, out, 0, vertices.length);
+            System.arraycopy(vertices, 0, out, 0, vertexCount);
             return out;
         }
     }

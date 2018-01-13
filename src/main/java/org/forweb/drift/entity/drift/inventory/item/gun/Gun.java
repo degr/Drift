@@ -17,7 +17,8 @@ public abstract class Gun extends Inventory {
     }
 
     public abstract boolean isTurret();
-
+    public abstract double getDistance();
+    public abstract long getFireRate();
     public abstract Ammo fire();
 
     public abstract boolean isEnergy();
@@ -46,4 +47,5 @@ public abstract class Gun extends Inventory {
     public void unMount(PolygonalSpaceShip spaceShip) {
 
     }
+
 }

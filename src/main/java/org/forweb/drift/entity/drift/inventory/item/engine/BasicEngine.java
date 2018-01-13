@@ -17,7 +17,7 @@ public class BasicEngine extends Engine{
 
     @Override
     public double getPower() {
-        return 2;
+        return 1;
     }
 
     @Override

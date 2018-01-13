@@ -6,7 +6,7 @@ import org.forweb.geometry.misc.Angle;
 public abstract class Ammo {
     private double x;
     private double y;
-    private double damage;
+    private int damage;
     private Angle angle;
     private boolean isInstant;
 
@@ -14,14 +14,14 @@ public abstract class Ammo {
         x = configuration.getX();
         y = configuration.getY();
         angle = new Angle(configuration.getAngle());
-        damage = configuration.getCapacity();
+        damage = (int)configuration.getCapacity();
         this.isInstant = isInstant;
     }
 
-    public void setDamage(double damage) {
+    public void setDamage(int damage) {
         this.damage = damage;
     }
-    public double getDamage() {
+    public int getDamage() {
         return damage;
     }
 

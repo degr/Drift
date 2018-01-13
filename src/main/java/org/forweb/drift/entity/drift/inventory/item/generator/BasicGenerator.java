@@ -14,6 +14,6 @@ public class BasicGenerator extends AbstractGenerator {
 
     @Override
     public int getEnergyProduction() {
-        return 5;
+        return 1;
     }
 }

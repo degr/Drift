@@ -9,7 +9,7 @@ public class LargeGenerator extends AbstractGenerator {
 
     @Override
     public int getEnergyProduction() {
-        return 12;
+        return 4;
     }
 
 }

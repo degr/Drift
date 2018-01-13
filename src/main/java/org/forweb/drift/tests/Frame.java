@@ -11,6 +11,9 @@ import org.forweb.drift.entity.drift.inventory.item.system.BasicRepairSystem;
 import org.forweb.drift.entity.drift.inventory.item.system.radar.MinorRadar;
 import org.forweb.drift.entity.drift.spaceships.Falcon;
 import org.forweb.drift.entity.drift.spaceships.PolygonalSpaceShip;
+import org.forweb.drift.tests.impact.ContactListener;
+import org.forweb.drift.tests.impact.Impact;
+import org.forweb.drift.utils.DriftWorld;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
@@ -22,6 +25,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 
 public class Frame extends JFrame {
 
@@ -31,6 +35,7 @@ public class Frame extends JFrame {
     private final int worldWidth = width / scale;
     private final int worldHeight = height / scale;
     private Falcon spaceShip;
+    private java.util.List<Impact> contacts;
     private World world;
 
     private JPanel drawingPanel;
@@ -41,7 +46,9 @@ public class Frame extends JFrame {
     private Frame() {
         gameTimer = new Timer(fps, new GameUpdater());
 
-        world = new World(new Vec2(0f, 0f));
+        world = new DriftWorld();
+        contacts = new ArrayList<>();
+        world.setContactListener(new ContactListener(contacts));
         world.setAutoClearForces(true);
 /*
         BodyDef def = new BodyDef();
@@ -117,18 +124,23 @@ public class Frame extends JFrame {
         TestsKeyListener keyListener = new TestsKeyListener();
         //spaceShip.setAngle(new Angle(Math.PI / 5));
         PolygonalObjectEntity entity = new PolygonalObjectEntity(
-              new Vec2[]{
-                      new Vec2(10, 10),
-                      new Vec2(10, -10),
-                      new Vec2(-10, -10),
-                      new Vec2(-10, 10)
-              }, 200D, 150d, 0d, 0d
+                /*new Vec2[]{
+                        new Vec2(10, 10),
+                        new Vec2(10, -10),
+                        new Vec2(-10, -10),
+                        new Vec2(-10, 10)
+                },*/ 200D, 150d, 0d/*, 0d*/
         );
-        PolygonalAsteroid asteroid = new PolygonalAsteroid(world, entity);
-        Body asteroidBody = asteroid.getBody();
-        asteroidBody.setLinearVelocity(new Vec2(0, 0));
-        asteroidBody.setAngularVelocity(0);
-        asteroidBody.getPosition().set(150, 100);
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 3; j++) {
+                entity.setX(i * 20);
+                entity.setY(j * 20);
+                //new PolygonalAsteroid(world, i * 20, j * 20);
+               // Body asteroidBody = asteroid.getBody();
+                //asteroidBody.setLinearVelocity(new Vec2(0, 0));
+               // asteroidBody.setAngularVelocity(0);
+            }
+        }
 
         keyListener.addListener(executor);
         addKeyListener(keyListener);
@@ -139,6 +151,17 @@ public class Frame extends JFrame {
     //  This method redraws the GUI display.
     private void updateDisplay() {
         world.step(fps, 8, 3);
+        for(Impact impact : contacts) {
+            Body b1 = impact.getContact().getFixtureA().getBody();
+            Body b2 = impact.getContact().getFixtureB().getBody();
+            PolygonalObject object1 = (PolygonalObject) b1.getUserData();
+            PolygonalObject object2 = (PolygonalObject) b2.getUserData();
+            double d[] = impact.getImpulse().normalImpulses;
+            double impulseStrength = new Vec2(d[0], d[1]).length() / 2;
+            object1.setHealth(object1.getHealth() - (int)impulseStrength);
+            object2.setHealth(object2.getHealth() - (int)impulseStrength);
+        }
+        contacts.clear();
         drawingPanel.repaint();
     }
 
@@ -183,13 +206,21 @@ class DrawPanel extends JPanel {
         g.drawString("Vector: " + ((int)((body.getLinearVelocity().x) * fps)) + "/" + ((int)(body.getLinearVelocity().y * fps)), 10, 85);
         double speed = Math.sqrt(body.getLinearVelocity().x * body.getLinearVelocity().x + body.getLinearVelocity().y * body.getLinearVelocity().y);
         g.drawString("Speed: " + (speed * fps) * 3600 / 1000, 10, 100);
+        g.drawString("Health: " + (spaceShip.getHealth()), 10, 115);
 
 
        body = world.getBodyList();
        int scale = 1;
        while(body != null) {
-           Fixture fixture = body.getFixtureList();
            PolygonalObject object = (PolygonalObject) body.getUserData();
+           if(object.getHealth() < 0 || !object.isAlive()) {
+               object.destroy();
+               Body toDestroy = body;
+               body = body.getNext();
+               world.destroyBody(toDestroy);
+               continue;
+           }
+           Fixture fixture = body.getFixtureList();
            if (object != null) {
                object.update();
            }
@@ -204,6 +235,7 @@ class DrawPanel extends JPanel {
                    a = body.getWorldPoint(a);
                    b = body.getWorldPoint(b);
                    g.drawLine((int) a.x * scale, (int) a.y * scale, (int) b.x * scale, (int) b.y * scale);
+                   g.drawString(object.getHealth() + "", (int)body.getPosition().x, (int)body.getPosition().y);
                }
 
                fixture = fixture.getNext();
@@ -229,7 +261,16 @@ class DrawPanel extends JPanel {
            }
            body = body.getNext();
        }
-
+        DriftWorld driftWorld = (DriftWorld)world;
+       Iterator<DriftWorld.RayWrapper> iterator = driftWorld.rays.iterator();
+       while(iterator.hasNext()) {
+           DriftWorld.RayWrapper ray = iterator.next();
+           g.drawLine((int)ray.ray.p1.x,(int)ray.ray.p1.y,(int)ray.ray.p2.x,(int)ray.ray.p2.y);
+           ray.iteration++;
+           if(ray.iteration > 6) {
+               iterator.remove();
+           }
+       }
     }
 
     private float angle(Angle angle) {

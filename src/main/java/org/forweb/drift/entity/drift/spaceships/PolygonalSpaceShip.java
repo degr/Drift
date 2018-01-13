@@ -25,12 +25,14 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
 
     private boolean alive;
     private boolean invincible;
+    private int maxHealth;
 
     public PolygonalSpaceShip(World world, PolygonalObjectEntity configuration, int maxEnergy, int energyRegeneration) {
         super(world, configuration);
         cargo = new Cargo(configuration.getCapacity());
         slots = new ArrayList<>();
         setAlive(true);
+        setMaxHealth(getHealth());
         setMaxEnergy(maxEnergy);
         setEnergy(maxEnergy);
         setEnergyRegeneration(energyRegeneration);
@@ -99,6 +101,17 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         return null;
     }
 
+    public void addHealth(int health) {
+        int current = getHealth();
+        int max = getMaxHealth();
+        int amount;
+        if (current + health > max) {
+            amount = max - current;
+        } else {
+            amount = health;
+        }
+        setHealth(current + amount);
+    }
     public void addEnergy(int energy) {
         int current = getEnergy();
         int max = getMaxEnergy();
@@ -151,7 +164,8 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
     @Override
     public void update() {
         super.update();
-        addEnergy(this.getEnergyRegeneration());
+        addEnergy(getEnergyRegeneration());
+        addHealth(getHealthRegeneration());
         for(InventorySlot slot : slots) {
             if(slot.isActive()) {
                 slot.affect(this);
@@ -159,4 +173,13 @@ public abstract class PolygonalSpaceShip extends PolygonalObject {
         }
     }
 
+    protected abstract int getHealthRegeneration();
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
 }

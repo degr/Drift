@@ -16,7 +16,7 @@ public class HeavyEngine extends Engine{
 
     @Override
     public double getPower() {
-        return 7;
+        return 4;
     }
 
     @Override

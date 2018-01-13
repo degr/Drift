@@ -7,9 +7,16 @@ public class SmallGenerator extends AbstractGenerator {
         super(configuration, 7);
     }
 
+    private int step = 0;
     @Override
     public int getEnergyProduction() {
-        return 3;
+        if(step == 2) {
+            step = 0;
+            return 1 ;
+        } else {
+            step++;
+            return 0;
+        }
     }
 
 }

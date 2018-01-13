@@ -27,9 +27,9 @@ public class PolygonalAsteroid extends PolygonalObject {
     public PolygonalAsteroid(World world, PolygonalObjectEntity configuration) {
         super(world, configuration);
         Random random = new Random();
-        /*Body body = getBody();
-        body.setLinearVelocity(new Vec2(random.nextDouble() * 2 - 1, random.nextDouble() * 2 - 1));
-        body.setAngularVelocity(Math.random() * 0.2 - 0.1);*/
+        Body body = getBody();
+        body.setLinearVelocity(new Vec2(random.nextDouble() * 0.2 - 0.1, random.nextDouble() * 0.2 - 0.1));
+        body.setAngularVelocity(Math.random() * 0.02 - 0.01);
         this.alive = true;
     }
 
@@ -54,8 +54,9 @@ public class PolygonalAsteroid extends PolygonalObject {
     }
 
 
-    public PolygonalObject[] onImpact(World world, BaseObject object) {
-        return AsteroidUtils.onImpact(world, this, object);
+    public void destroy() {
+        setAlive(false);
+        AsteroidUtils.onImpact(this);
     }
 
 
